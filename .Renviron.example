@@ -1,1 +1,7 @@
 AEMET_API_KEY=pon_aqui_tu_api_key_de_aemet
+
+# Opcionales. AEMET puede devolver 404 para combinaciones sin producto disponible;
+# el script las marca como "missing" y sigue.
+AEMET_AREAS=p,b,c
+AEMET_FORECAST_DAYS=1,2,3,4,5,6,7
+AEMET_PRODUCTS=previsto,estimado

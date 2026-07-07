@@ -89,6 +89,30 @@ js <- sprintf(
     legend.innerHTML = html;
   }
 
+  function colourForRisk(v, layer) {
+    if (v === null || v === undefined || v === '') return '#888888';
+    const n = parseInt(v);
+    if (!isNaN(n) && layer.legend_colours && layer.legend_colours.length > 0) {
+      const idx0 = Math.max(0, Math.min(layer.legend_colours.length - 1, n));
+      const idx1 = Math.max(0, Math.min(layer.legend_colours.length - 1, n - 1));
+      return layer.legend_colours[idx1] || layer.legend_colours[idx0] || '#888888';
+    }
+    return '#888888';
+  }
+
+  function riskValue(props) {
+    if (!props) return null;
+    const candidates = [
+      'nivel', 'NIVEL', 'riesgo', 'RIESGO', 'peligro', 'PELIGRO',
+      'level', 'LEVEL', 'value', 'VALUE', 'dn', 'DN', 'gridcode', 'GRIDCODE',
+      'band1', 'Band1', 'BAND1'
+    ];
+    for (const k of candidates) {
+      if (props[k] !== undefined && props[k] !== null) return props[k];
+    }
+    return null;
+  }
+
   function setLayer(index) {
     if (currentOverlay) {
       map.removeLayer(currentOverlay);
@@ -99,12 +123,40 @@ js <- sprintf(
       updateLegend(null);
       return;
     }
-    currentOverlay = L.imageOverlay(layer.url, layer.bounds, {
-      opacity: currentOpacity,
-      interactive: false
-    }).addTo(map);
-    try { map.fitBounds(layer.bounds); } catch(e) {}
-    updateLegend(layer);
+
+    if (layer.layer_kind === 'geojson') {
+      fetch(layer.url)
+        .then(response => response.json())
+        .then(data => {
+          currentOverlay = L.geoJSON(data, {
+            style: function(feature) {
+              const v = riskValue(feature.properties || {});
+              return {
+                color: colourForRisk(v, layer),
+                weight: 0.2,
+                fillColor: colourForRisk(v, layer),
+                fillOpacity: currentOpacity
+              };
+            },
+            onEachFeature: function(feature, lyr) {
+              const p = feature.properties || {};
+              const v = riskValue(p);
+              lyr.bindTooltip('Nivel: ' + (v === null ? 'sin dato' : v));
+            }
+          }).addTo(map);
+          try { map.fitBounds(currentOverlay.getBounds()); } catch(e) {
+            try { map.fitBounds(layer.bounds); } catch(e2) {}
+          }
+          updateLegend(layer);
+        });
+    } else {
+      currentOverlay = L.imageOverlay(layer.url, layer.bounds, {
+        opacity: currentOpacity,
+        interactive: false
+      }).addTo(map);
+      try { map.fitBounds(layer.bounds); } catch(e) {}
+      updateLegend(layer);
+    }
   }
 
   const panel = L.control({position: 'topright'});

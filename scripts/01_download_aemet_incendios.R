@@ -4,7 +4,7 @@ source("R/utils.R", encoding = "UTF-8")
 source("R/aemet.R", encoding = "UTF-8")
 
 check_required_packages(c(
-  "httr2", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
+  "curl", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
   "fs", "glue", "tidyr"
 ))
 
@@ -19,20 +19,25 @@ if (!nzchar(api_key)) {
 
 fs::dir_create("data/raw/aemet")
 
-# AEMET puede devolver 404 para algunas combinaciones según el producto disponible
-# en ese momento. El script las registra como status = "missing" y sigue.
-areas <- parse_csv_env("AEMET_AREAS", "p,b,c")
-days <- parse_csv_env("AEMET_FORECAST_DAYS", "1,2,3,4,5,6,7") |>
+previous_manifest <- if (file.exists("data/raw/aemet/manifest.csv")) {
+  tryCatch(readr::read_csv("data/raw/aemet/manifest.csv", show_col_types = FALSE), error = function(e) tibble::tibble())
+} else {
+  tibble::tibble()
+}
+
+areas <- strsplit(Sys.getenv("AEMET_AREAS", unset = "p,b,c"), ",")[[1]] |>
+  trimws()
+
+days <- strsplit(Sys.getenv("AEMET_FORECAST_DAYS", unset = "1,2,3,4,5,6,7"), ",")[[1]] |>
+  trimws() |>
   as.integer()
-products_requested <- parse_csv_env("AEMET_PRODUCTS", "previsto,estimado")
 
-products <- fire_endpoints(
-  days = days,
-  areas = areas,
-  products = products_requested
-)
+products_env <- Sys.getenv("AEMET_PRODUCTS", unset = "estimado,previsto")
+products <- strsplit(products_env, ",")[[1]] |> trimws()
 
-manifest <- purrr::pmap_dfr(products, function(tipo, dia, area, endpoint) {
+products_tbl <- fire_endpoints(days = days, areas = areas, products = products)
+
+manifest <- purrr::pmap_dfr(products_tbl, function(tipo, dia, area, endpoint) {
   tryCatch(
     download_one_fire_product(
       tipo = tipo,
@@ -43,34 +48,26 @@ manifest <- purrr::pmap_dfr(products, function(tipo, dia, area, endpoint) {
     ),
     error = function(e) {
       message("  - error: ", conditionMessage(e))
-      tibble::tibble(
-        downloaded_at = format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z"),
-        date = as.character(Sys.Date()),
+      manifest_row(
         tipo = tipo,
         dia = dia,
         area = area,
-        area_label = area_label(area),
         endpoint = endpoint,
-        datos_url = NA_character_,
-        metadatos_url = NA_character_,
-        descripcion = conditionMessage(e),
-        estado = NA_integer_,
-        http_status = NA_integer_,
         status = "error",
-        file = NA_character_,
-        file_type = NA_character_
+        descripcion = conditionMessage(e)
       )
     }
   )
 })
 
+manifest <- use_previous_downloads_after_errors(manifest, previous_manifest)
+
 readr::write_csv(manifest, "data/raw/aemet/manifest.csv")
+message("Manifest guardado en data/raw/aemet/manifest.csv")
 
 summary <- manifest |>
-  dplyr::count(status, name = "n") |>
+  dplyr::count(status) |>
   dplyr::mutate(txt = paste0(status, "=", n)) |>
   dplyr::pull(txt) |>
   paste(collapse = "; ")
-
-message("Manifest guardado en data/raw/aemet/manifest.csv")
 message("Resumen: ", summary)
