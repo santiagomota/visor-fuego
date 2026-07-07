@@ -62,9 +62,9 @@ map <- leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = TRUE)
     position = "bottomleft"
   )
 
-js <- sprintf(
-"function(el, x) {
-  const layers = %s;
+js_template <- r"(
+function(el, x) {
+  const layers = __LAYERS_JSON__;
   const map = this;
   let currentOverlay = null;
   let currentOpacity = 0.68;
@@ -111,6 +111,15 @@ js <- sprintf(
       if (props[k] !== undefined && props[k] !== null) return props[k];
     }
     return null;
+  }
+
+  function setOverlayOpacity(value) {
+    if (!currentOverlay) return;
+    if (typeof currentOverlay.setOpacity === 'function') {
+      currentOverlay.setOpacity(value);
+    } else if (typeof currentOverlay.setStyle === 'function') {
+      currentOverlay.setStyle({fillOpacity: value});
+    }
   }
 
   function setLayer(index) {
@@ -199,13 +208,15 @@ js <- sprintf(
     if (opacity) {
       opacity.addEventListener('input', function(e) {
         currentOpacity = parseFloat(e.target.value);
-        if (currentOverlay) currentOverlay.setOpacity(currentOpacity);
+        setOverlayOpacity(currentOpacity);
       });
     }
   }
-}",
-  layers_json
-)
+}
+)"
+
+parts <- strsplit(js_template, "__LAYERS_JSON__", fixed = TRUE)[[1]]
+js <- paste0(parts[1], layers_json, parts[2])
 
 htmlwidgets::onRender(map, js)
 ```

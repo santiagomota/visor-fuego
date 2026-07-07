@@ -1,0 +1,42 @@
+.quarto-title-block .quarto-title-banner {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.fire-panel {
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.35);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.fire-panel label {
+  display: block;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.fire-panel select {
+  width: 220px;
+  max-width: 220px;
+  margin-top: 2px;
+}
+
+.fire-legend {
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.35);
+  font-size: 13px;
+}
+
+.fire-legend .swatch {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border: 1px solid #555;
+}
