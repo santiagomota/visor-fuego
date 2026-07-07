@@ -1,0 +1,25 @@
+Package: visorfuego
+Title: Quarto Leaflet Viewer for AEMET Fire Risk Maps
+Version: 0.1.0
+Authors@R: person("Santiago", "Mota", role = c("aut", "cre"))
+Description: Static Quarto dashboard for AEMET fire risk maps using AEMET OpenData.
+License: MIT
+Encoding: UTF-8
+Depends:
+    R (>= 4.2)
+Imports:
+    dplyr,
+    fs,
+    glue,
+    htmltools,
+    htmlwidgets,
+    httr2,
+    jsonlite,
+    leaflet,
+    png,
+    purrr,
+    readr,
+    stringr,
+    terra,
+    tibble,
+    tidyr

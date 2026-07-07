@@ -1,0 +1,23 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Visor Fuego"
+  navbar:
+    left:
+      - text: "Mapa"
+        href: index.html
+    right:
+      - icon: github
+        href: https://github.com/TU_USUARIO/visor-fuego
+
+format:
+  html:
+    theme: cosmo
+    page-layout: full
+    toc: false
+    code-fold: true
+    css: styles.css
+execute:
+  freeze: auto

@@ -1,0 +1,72 @@
+name: Update dashboard
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 08:30 UTC. En verano peninsular equivale aproximadamente a 10:30 CEST.
+    - cron: "30 8 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    env:
+      AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+      AEMET_AREAS: "p,b,c"
+      AEMET_FORECAST_DAYS: "1,2,3,4,5,6,7"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libgdal-dev libproj-dev libgeos-dev libudunits2-dev
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::dplyr
+            any::fs
+            any::glue
+            any::htmltools
+            any::htmlwidgets
+            any::httr2
+            any::jsonlite
+            any::leaflet
+            any::png
+            any::purrr
+            any::readr
+            any::stringr
+            any::terra
+            any::tibble
+            any::tidyr
+
+      - name: Download and prepare AEMET layers
+        run: Rscript scripts/99_run_all.R
+
+      - name: Render Quarto site
+        run: quarto render
+
+      - name: Commit rendered site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs data/processed
+          git commit -m "Update AEMET fire risk dashboard" || echo "No changes to commit"
+          git push
