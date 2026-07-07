@@ -2,6 +2,9 @@ project:
   type: website
   output-dir: docs
 
+resources:
+  - assets/aemet/**
+
 website:
   title: "Visor Fuego"
   navbar:
@@ -20,4 +23,4 @@ format:
     code-fold: true
     css: styles.css
 execute:
-  freeze: auto
+  freeze: false

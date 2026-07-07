@@ -98,7 +98,7 @@ is_probably_geojson <- function(file) {
     any(grepl('"type"\\s*:\\s*"Feature"', txt))
 }
 
-prepare_image_layer <- function(row, file = row$file, file_type = row$file_type, out_dir = "docs/assets/aemet") {
+prepare_image_layer <- function(row, file = row$file, file_type = row$file_type, out_dir = "assets/aemet") {
   ext <- tolower(tools::file_ext(file))
   layer_id <- paste(
     "aemet",
@@ -318,6 +318,7 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
   })
 
   fs::dir_create("data/processed")
+  fs::dir_create("assets/aemet")
   fs::dir_create("docs/assets/aemet")
 
   readr::write_csv(layers, "data/processed/layers.csv")
@@ -330,13 +331,39 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
     ) |>
     dplyr::select(-bounds_json)
 
+  # Guardamos el catálogo fuera de docs/. Quarto puede limpiar docs/ durante el render,
+  # así que index.qmd debe leer de data/processed/layers.json y los assets fuente
+  # deben vivir en assets/aemet/. El directorio docs/ se genera después.
   jsonlite::write_json(
     json_layers,
-    "docs/assets/aemet/layers.json",
+    "data/processed/layers.json",
     dataframe = "rows",
     auto_unbox = TRUE,
     pretty = TRUE,
     null = "null"
+  )
+
+  jsonlite::write_json(
+    json_layers,
+    "assets/aemet/layers.json",
+    dataframe = "rows",
+    auto_unbox = TRUE,
+    pretty = TRUE,
+    null = "null"
+  )
+
+  # Copia opcional para inspección local si docs/ ya existe; no se usa como fuente
+  # principal porque Quarto puede recrear docs/.
+  try(
+    jsonlite::write_json(
+      json_layers,
+      "docs/assets/aemet/layers.json",
+      dataframe = "rows",
+      auto_unbox = TRUE,
+      pretty = TRUE,
+      null = "null"
+    ),
+    silent = TRUE
   )
 
   message("Capas web generadas: ", nrow(layers))

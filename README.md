@@ -89,7 +89,7 @@ readr::read_csv("data/raw/aemet/manifest.csv", show_col_types = FALSE) |>
 
 ```bash
 Rscript scripts/99_run_all.R
-quarto render
+quarto render --execute
 ```
 
 Después abre:
@@ -174,3 +174,8 @@ input string 1 is invalid UTF-8
 Desde v0.7 la descarga usa `curl` a bajo nivel para leer el cuerpo en bruto y evitar el parseo problemático de cabeceras. Además, si una petición falla temporalmente pero ya existe una descarga válida anterior para la misma fecha/producto/área/día, el manifest la conserva con `status = "cached"`.
 
 El preparador también busca ficheros PNG/TIFF/ZIP/GeoJSON ya existentes en `data/raw/aemet`, aunque el manifest haya sido sobrescrito por una ejecución fallida.
+
+
+## Nota v0.8: normalización de fechas en manifest
+
+`readr::read_csv()` puede interpretar la columna `date` como `Date`, mientras que las capas descubiertas en disco la generan como texto. Desde v0.8 se normalizan los tipos del `manifest` antes de hacer `left_join()` o `bind_rows()`, evitando errores como `Can't join x$date with y$date` o `Can't combine ..1$date <date> and ..2$date <character>`.

@@ -15,18 +15,63 @@ library(leaflet)
 library(htmltools)
 library(htmlwidgets)
 library(jsonlite)
+library(readr)
+library(dplyr)
+library(purrr)
 
-layers_path <- "docs/assets/aemet/layers.json"
-layers_data <- if (file.exists(layers_path)) {
-  jsonlite::fromJSON(layers_path, simplifyVector = FALSE)
-} else {
-  list()
+read_layers_json <- function() {
+  candidates <- c(
+    "data/processed/layers.json",
+    "assets/aemet/layers.json",
+    "docs/assets/aemet/layers.json"
+  )
+
+  for (path in candidates) {
+    if (file.exists(path) && file.info(path)$size > 2) {
+      layers <- tryCatch(
+        jsonlite::fromJSON(path, simplifyVector = FALSE),
+        error = function(e) list()
+      )
+      if (length(layers) > 0) {
+        attr(layers, "source_path") <- path
+        return(layers)
+      }
+    }
+  }
+
+  # Fallback: reconstruye el JSON desde layers.csv si no está layers.json.
+  csv_path <- "data/processed/layers.csv"
+  if (file.exists(csv_path) && file.info(csv_path)$size > 0) {
+    layers_csv <- readr::read_csv(csv_path, show_col_types = FALSE)
+    if (nrow(layers_csv) > 0) {
+      layers <- layers_csv |>
+        mutate(
+          bounds = purrr::map(bounds_json, jsonlite::fromJSON),
+          legend_labels = strsplit(legend_labels, "\\|"),
+          legend_colours = strsplit(legend_colours, "\\|")
+        ) |>
+        select(-bounds_json) |>
+        jsonlite::toJSON(dataframe = "rows", auto_unbox = TRUE, null = "null") |>
+        jsonlite::fromJSON(simplifyVector = FALSE)
+      attr(layers, "source_path") <- csv_path
+      return(layers)
+    }
+  }
+
+  layers <- list()
+  attr(layers, "source_path") <- NA_character_
+  layers
 }
 
+layers_data <- read_layers_json()
+layers_source <- attr(layers_data, "source_path")
 n_layers <- length(layers_data)
 layers_json <- jsonlite::toJSON(layers_data, auto_unbox = TRUE, null = "null")
 last_update <- if (n_layers > 0) {
-  unique(vapply(layers_data, `[[`, character(1), "date"))[1]
+  unique(vapply(layers_data, function(x) {
+    value <- x[["date"]]
+    if (is.null(value) || length(value) == 0 || is.na(value)) NA_character_ else as.character(value)
+  }, character(1)))[1]
 } else {
   NA_character_
 }
@@ -40,9 +85,9 @@ La información de AEMET se reutiliza citando a AEMET como autora.
 
 ```{r}
 if (n_layers == 0) {
-  cat("No hay capas descargadas todavía. Ejecuta `Rscript scripts/99_run_all.R` y después `quarto render`.")
+  cat("No hay capas descargadas todavía. Ejecuta `Rscript scripts/99_run_all.R` y después `quarto render --execute`.")
 } else {
-  cat("Capas disponibles:", n_layers, "· Fecha de descarga/proceso:", last_update)
+  cat("Capas disponibles:", n_layers, "· Fecha:", last_update, "· Catálogo:", layers_source)
 }
 ```
 :::
