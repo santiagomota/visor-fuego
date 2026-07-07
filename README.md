@@ -4,6 +4,7 @@ Visor Quarto + Leaflet para publicar online los mapas de riesgo meteorológico d
 
 La fuente principal es **AEMET OpenData**, no el raspado HTML del visor web. El repositorio descarga los productos de incendios, prepara los ficheros para publicación estática y renderiza un sitio Quarto en `docs/`, listo para GitHub Pages.
 
+
 ## Estructura
 
 ```text
@@ -30,6 +31,7 @@ visor-fuego/
     └── update-dashboard.yml
 ```
 
+
 ## Requisitos locales
 
 En Ubuntu/Debian:
@@ -50,6 +52,7 @@ install.packages(c(
 ```
 
 También necesitas [Quarto](https://quarto.org/).
+
 
 ## API key de AEMET
 
@@ -85,6 +88,7 @@ readr::read_csv("data/raw/aemet/manifest.csv", show_col_types = FALSE) |>
   dplyr::count(status, tipo, area_label, dia)
 ```
 
+
 ## Ejecutar localmente
 
 ```bash
@@ -98,6 +102,7 @@ Después abre:
 xdg-open docs/index.html
 ```
 
+
 ## Publicar en GitHub Pages
 
 1. Crea el repositorio en GitHub con nombre `visor-fuego`.
@@ -108,6 +113,7 @@ xdg-open docs/index.html
    - Branch: `main`
    - Folder: `/docs`
 5. Ejecuta manualmente el workflow `Update dashboard`, o espera a la actualización programada.
+
 
 ## Comandos iniciales sugeridos
 
@@ -121,15 +127,18 @@ git remote add origin git@github.com:TU_USUARIO/visor-fuego.git
 git push -u origin main
 ```
 
+
 ## Nota sobre georreferenciación
 
 AEMET OpenData expone endpoints de incendios para mapas de riesgo estimado y previsto. Si el recurso descargado es una imagen no georreferenciada, el visor la superpone con bounds aproximados por área (`p`, `b`, `c`). Si el recurso descargado es GeoTIFF, el script intenta convertirlo a PNG georreferenciado para `leaflet`.
 
 Para análisis cuantitativo serio por municipio, celda o superficie conviene sustituir la imagen por una fuente raster/vectorial georreferenciada oficial cuando esté disponible.
 
+
 ## Licencia y atribución
 
 La información de AEMET puede reutilizarse citando a AEMET como autora. Mantén visible la atribución incluida en el mapa.
+
 
 ## Nota v0.3: recursos AEMET sin extensión clara
 
