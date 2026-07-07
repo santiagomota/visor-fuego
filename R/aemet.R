@@ -2,57 +2,88 @@ source("R/utils.R", encoding = "UTF-8")
 
 AEMET_BASE <- "https://opendata.aemet.es/opendata"
 
-fire_endpoints <- function(days = 1:7, areas = c("p", "b", "c")) {
-  estimated <- tibble::tibble(
-    tipo = "estimado",
-    dia = NA_integer_,
-    area = areas,
-    endpoint = sprintf("/api/incendios/mapasriesgo/estimado/area/%s", areas)
-  )
+parse_csv_env <- function(name, default) {
+  value <- Sys.getenv(name, unset = default)
+  value <- strsplit(value, ",")[[1]]
+  trimws(value[nzchar(trimws(value))])
+}
 
-  forecast <- tidyr::crossing(
-    dia = days,
-    area = areas
-  ) |>
-    dplyr::mutate(
-      tipo = "previsto",
-      endpoint = sprintf("/api/incendios/mapasriesgo/previsto/dia/%s/area/%s", dia, area)
+fire_endpoints <- function(days = 1:7,
+                           areas = c("p", "b", "c"),
+                           products = c("previsto", "estimado")) {
+  products <- intersect(products, c("previsto", "estimado"))
+
+  pieces <- list()
+
+  if ("estimado" %in% products) {
+    pieces$estimated <- tibble::tibble(
+      tipo = "estimado",
+      dia = NA_integer_,
+      area = areas,
+      endpoint = sprintf("/api/incendios/mapasriesgo/estimado/area/%s", areas)
+    )
+  }
+
+  if ("previsto" %in% products) {
+    pieces$forecast <- tidyr::crossing(
+      dia = days,
+      area = areas
     ) |>
-    dplyr::select(tipo, dia, area, endpoint)
+      dplyr::mutate(
+        tipo = "previsto",
+        endpoint = sprintf("/api/incendios/mapasriesgo/previsto/dia/%s/area/%s", dia, area)
+      ) |>
+      dplyr::select(tipo, dia, area, endpoint)
+  }
 
-  dplyr::bind_rows(estimated, forecast)
+  dplyr::bind_rows(pieces)
 }
 
 request_aemet_metadata <- function(endpoint, api_key) {
   url <- paste0(AEMET_BASE, endpoint)
 
-  resp <- httr2::request(url) |>
-    httr2::req_headers(
-      api_key = api_key,
-      `User-Agent` = "visor-fuego/0.1"
-    ) |>
-    httr2::req_error(is_error = function(resp) FALSE) |>
-    httr2::req_perform()
+  resp <- suppressWarnings(
+    httr2::request(url) |>
+      httr2::req_headers(
+        api_key = api_key,
+        `User-Agent` = "visor-fuego/0.2"
+      ) |>
+      httr2::req_error(is_error = function(resp) FALSE) |>
+      httr2::req_timeout(60) |>
+      httr2::req_perform()
+  )
 
   status <- httr2::resp_status(resp)
-  body <- httr2::resp_body_json(resp, simplifyVector = TRUE)
 
-  if (status >= 400) {
-    stop("Error HTTP ", status, " consultando ", endpoint, call. = FALSE)
-  }
+  body <- tryCatch(
+    httr2::resp_body_json(resp, simplifyVector = TRUE),
+    error = function(e) {
+      list(
+        estado = status,
+        descripcion = paste("No se pudo leer JSON de metadatos:", conditionMessage(e))
+      )
+    }
+  )
 
-  if (!is.null(body$estado) && as.integer(body$estado) != 200L) {
-    stop("AEMET respondió estado ", body$estado, ": ", body$descripcion %||% "sin descripción", call. = FALSE)
-  }
-
+  body$http_status <- status
   body
 }
 
+metadata_is_available <- function(meta) {
+  http_ok <- isTRUE(as.integer(meta$http_status %||% 0L) < 400L)
+  aemet_ok <- is.null(meta$estado) || isTRUE(as.integer(meta$estado) == 200L)
+  has_data <- !is.null(meta$datos) && length(meta$datos) == 1L && !is.na(meta$datos) && nzchar(meta$datos)
+  http_ok && aemet_ok && has_data
+}
+
 download_aemet_data_url <- function(datos_url, out_stem) {
-  resp <- httr2::request(datos_url) |>
-    httr2::req_headers(`User-Agent` = "visor-fuego/0.1") |>
-    httr2::req_error(is_error = function(resp) FALSE) |>
-    httr2::req_perform()
+  resp <- suppressWarnings(
+    httr2::request(datos_url) |>
+      httr2::req_headers(`User-Agent` = "visor-fuego/0.2") |>
+      httr2::req_error(is_error = function(resp) FALSE) |>
+      httr2::req_timeout(120) |>
+      httr2::req_perform()
+  )
 
   status <- httr2::resp_status(resp)
   if (status >= 400) {
@@ -69,14 +100,45 @@ download_aemet_data_url <- function(datos_url, out_stem) {
   out
 }
 
+manifest_row <- function(tipo, dia, area, endpoint, meta, file = NA_character_,
+                         status = "missing", note = NA_character_) {
+  tibble::tibble(
+    downloaded_at = format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z"),
+    date = as.character(Sys.Date()),
+    tipo = tipo,
+    dia = dia,
+    area = area,
+    area_label = area_label(area),
+    endpoint = endpoint,
+    datos_url = meta$datos %||% NA_character_,
+    metadatos_url = meta$metadatos %||% NA_character_,
+    descripcion = meta$descripcion %||% note %||% NA_character_,
+    estado = suppressWarnings(as.integer(meta$estado %||% NA_integer_)),
+    http_status = suppressWarnings(as.integer(meta$http_status %||% NA_integer_)),
+    status = status,
+    file = file,
+    file_type = if (!is.na(file) && nzchar(file)) infer_file_type(file) else NA_character_
+  )
+}
+
 download_one_fire_product <- function(tipo, dia, area, endpoint, api_key, date = Sys.Date()) {
-  message("AEMET: ", tipo, " ", area_label(area), if (!is.na(dia)) paste0(" día ", dia) else "")
+  label <- paste0(tipo, " ", area_label(area), if (!is.na(dia)) paste0(" día ", dia) else "")
+  message("AEMET: ", label)
 
   meta <- request_aemet_metadata(endpoint, api_key)
-  datos_url <- meta$datos %||% NA_character_
 
-  if (is.na(datos_url) || !nzchar(datos_url)) {
-    stop("La respuesta de AEMET no incluye campo 'datos' para ", endpoint, call. = FALSE)
+  if (!metadata_is_available(meta)) {
+    desc <- meta$descripcion %||% "sin datos disponibles"
+    message("  - sin datos: ", desc)
+    return(manifest_row(
+      tipo = tipo,
+      dia = dia,
+      area = area,
+      endpoint = endpoint,
+      meta = meta,
+      status = "missing",
+      note = desc
+    ))
   }
 
   stem <- paste(
@@ -88,21 +150,15 @@ download_one_fire_product <- function(tipo, dia, area, endpoint, api_key, date =
     sep = "_"
   )
 
-  file <- download_aemet_data_url(datos_url, stem)
+  file <- download_aemet_data_url(meta$datos, stem)
 
-  tibble::tibble(
-    downloaded_at = format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z"),
-    date = as.character(as.Date(date)),
+  manifest_row(
     tipo = tipo,
     dia = dia,
     area = area,
-    area_label = area_label(area),
     endpoint = endpoint,
-    datos_url = datos_url,
-    metadatos_url = meta$metadatos %||% NA_character_,
-    descripcion = meta$descripcion %||% NA_character_,
-    estado = meta$estado %||% NA_integer_,
+    meta = meta,
     file = file,
-    file_type = infer_file_type(file)
+    status = "downloaded"
   )
 }
