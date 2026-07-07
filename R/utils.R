@@ -2,6 +2,37 @@
   if (is.null(x) || length(x) == 0 || all(is.na(x))) y else x
 }
 
+
+normalise_manifest_types <- function(x) {
+  if (is.null(x) || !is.data.frame(x) || nrow(x) == 0) return(x)
+
+  char_cols <- intersect(
+    c(
+      "downloaded_at", "date", "status", "tipo", "area", "area_label",
+      "endpoint", "datos_url", "metadatos_url", "descripcion",
+      "file", "file_type"
+    ),
+    names(x)
+  )
+
+  if (length(char_cols) > 0) {
+    x <- x |>
+      dplyr::mutate(dplyr::across(dplyr::all_of(char_cols), ~ as.character(.x)))
+  }
+
+  if ("dia" %in% names(x)) {
+    x$dia <- suppressWarnings(as.integer(x$dia))
+  }
+  if ("estado" %in% names(x)) {
+    x$estado <- suppressWarnings(as.integer(x$estado))
+  }
+  if ("http_status" %in% names(x)) {
+    x$http_status <- suppressWarnings(as.integer(x$http_status))
+  }
+
+  x
+}
+
 check_required_packages <- function(pkgs) {
   missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
   if (length(missing) > 0) {

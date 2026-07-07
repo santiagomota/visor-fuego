@@ -35,7 +35,7 @@ build_aemet_api_url <- function(endpoint, api_key) {
   paste0(AEMET_BASE, endpoint, sep, "api_key=", utils::URLencode(api_key, reserved = TRUE))
 }
 
-curl_fetch_raw <- function(url, api_key = NULL, user_agent = "visor-fuego/0.7", timeout = 60, connecttimeout = 20, retries = 2) {
+curl_fetch_raw <- function(url, api_key = NULL, user_agent = "visor-fuego/0.8", timeout = 60, connecttimeout = 20, retries = 2) {
   if (!requireNamespace("curl", quietly = TRUE)) {
     stop("Falta el paquete R 'curl'. Instala con install.packages('curl').", call. = FALSE)
   }
@@ -124,7 +124,7 @@ request_aemet_metadata <- function(endpoint, api_key) {
 
   # Usamos curl a bajo nivel para evitar que las cabeceras no UTF-8 de AEMET
   # provoquen errores en httr2/curl al intentar parsearlas como texto.
-  resp <- curl_fetch_raw(url, api_key = api_key, user_agent = "visor-fuego/0.7", timeout = 60, connecttimeout = 20, retries = 2)
+  resp <- curl_fetch_raw(url, api_key = api_key, user_agent = "visor-fuego/0.8", timeout = 60, connecttimeout = 20, retries = 2)
   http_status <- resp$status_code
 
   body <- parse_aemet_json_raw(resp$content, http_status = http_status)
@@ -157,7 +157,7 @@ safe_url_extension <- function(url) {
 }
 
 download_aemet_data_url <- function(datos_url, out_stem) {
-  resp <- curl_fetch_raw(datos_url, api_key = NULL, user_agent = "visor-fuego/0.7", timeout = 120, connecttimeout = 30, retries = 2)
+  resp <- curl_fetch_raw(datos_url, api_key = NULL, user_agent = "visor-fuego/0.8", timeout = 120, connecttimeout = 30, retries = 2)
 
   status <- resp$status_code
   if (status >= 400) {
@@ -281,12 +281,15 @@ download_one_fire_product <- function(tipo, dia, area, endpoint, api_key, date =
 }
 
 use_previous_downloads_after_errors <- function(new_manifest, old_manifest) {
+  new_manifest <- normalise_manifest_types(new_manifest)
+  old_manifest <- normalise_manifest_types(old_manifest)
+
   if (is.null(old_manifest) || nrow(old_manifest) == 0) return(new_manifest)
   if (!all(c("date", "tipo", "dia", "area", "status", "file") %in% names(old_manifest))) return(new_manifest)
 
-  char_cols <- intersect(c("status", "file", "file_type", "datos_url", "metadatos_url", "descripcion"), names(new_manifest))
+  char_cols <- intersect(c("date", "tipo", "area", "area_label", "status", "file", "file_type", "datos_url", "metadatos_url", "descripcion"), names(new_manifest))
   new_manifest <- new_manifest |> dplyr::mutate(dplyr::across(dplyr::all_of(char_cols), as.character))
-  char_cols_old <- intersect(c("status", "file", "file_type", "datos_url", "metadatos_url", "descripcion"), names(old_manifest))
+  char_cols_old <- intersect(c("date", "tipo", "area", "area_label", "status", "file", "file_type", "datos_url", "metadatos_url", "descripcion"), names(old_manifest))
   old_manifest <- old_manifest |> dplyr::mutate(dplyr::across(dplyr::all_of(char_cols_old), as.character))
 
   old_good <- old_manifest |>

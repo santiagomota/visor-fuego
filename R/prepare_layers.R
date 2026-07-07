@@ -274,7 +274,8 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
     return(tibble::tibble())
   }
 
-  manifest <- readr::read_csv(manifest_file, show_col_types = FALSE)
+  manifest <- readr::read_csv(manifest_file, show_col_types = FALSE) |>
+    normalise_manifest_types()
 
   if (nrow(manifest) == 0) {
     message("Manifest vacío")
@@ -283,10 +284,15 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
 
   if (!"status" %in% names(manifest)) manifest$status <- "downloaded"
 
-  orphan_rows <- discover_orphan_raw_downloads(manifest)
+  orphan_rows <- discover_orphan_raw_downloads(manifest) |>
+    normalise_manifest_types()
   if (nrow(orphan_rows) > 0) {
     message("Capas encontradas en data/raw/aemet fuera del manifest: ", nrow(orphan_rows))
-    manifest <- dplyr::bind_rows(manifest, orphan_rows)
+    manifest <- dplyr::bind_rows(
+      normalise_manifest_types(manifest),
+      normalise_manifest_types(orphan_rows)
+    ) |>
+      normalise_manifest_types()
   }
 
   supported <- discover_supported_files(manifest)

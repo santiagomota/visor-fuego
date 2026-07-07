@@ -44,7 +44,7 @@ En R:
 
 ```r
 install.packages(c(
-  "httr2", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
+  "curl", "httr2", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
   "fs", "glue", "leaflet", "htmltools", "htmlwidgets", "terra", "png", "tidyr"
 ))
 ```
@@ -146,9 +146,9 @@ manifest |> count(status, file_type, tipo, area_label, dia) |> print(n = Inf)
 ```
 
 
-## Nota v0.4: JSON de AEMET servido como text/plain
+## Nota v0.5: JSON de AEMET servido como text/plain
 
-AEMET OpenData puede devolver la respuesta JSON de metadatos con `Content-Type: text/plain` y con cabeceras en ISO-8859-1. Desde v0.4 el script no usa `httr2::resp_body_json()` para esa primera respuesta: lee el cuerpo en bruto y lo interpreta con `jsonlite::fromJSON()`, probando UTF-8, latin1 y CP1252. Esto evita errores del tipo:
+AEMET OpenData puede devolver la respuesta JSON de metadatos con `Content-Type: text/plain` y con cabeceras en ISO-8859-1. Desde v0.5 el script no usa `httr2::resp_body_json()` para esa primera respuesta: lee el cuerpo en bruto y lo interpreta con `jsonlite::fromJSON()`, probando UTF-8, latin1 y CP1252. Esto evita errores del tipo:
 
 ```text
 Unexpected content type "text/plain". Expecting type "application/json" or suffix "json".
@@ -161,3 +161,16 @@ source("scripts/03_diagnose_downloads.R", encoding = "UTF-8")
 ```
 
 Ese diagnóstico imprime el tipo detectado por contenido, tamaño y una previsualización de los ficheros que no sean imagen, raster, ZIP o GeoJSON.
+
+
+## Nota v0.7: cabeceras no UTF-8 y descargas cacheadas
+
+Algunas respuestas de AEMET incluyen cabeceras con caracteres no UTF-8, por ejemplo `predicción` codificado como latin1. En algunos sistemas eso puede terminar como:
+
+```text
+input string 1 is invalid UTF-8
+```
+
+Desde v0.7 la descarga usa `curl` a bajo nivel para leer el cuerpo en bruto y evitar el parseo problemático de cabeceras. Además, si una petición falla temporalmente pero ya existe una descarga válida anterior para la misma fecha/producto/área/día, el manifest la conserva con `status = "cached"`.
+
+El preparador también busca ficheros PNG/TIFF/ZIP/GeoJSON ya existentes en `data/raw/aemet`, aunque el manifest haya sido sobrescrito por una ejecución fallida.

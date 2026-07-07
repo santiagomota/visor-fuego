@@ -20,7 +20,11 @@ if (!nzchar(api_key)) {
 fs::dir_create("data/raw/aemet")
 
 previous_manifest <- if (file.exists("data/raw/aemet/manifest.csv")) {
-  tryCatch(readr::read_csv("data/raw/aemet/manifest.csv", show_col_types = FALSE), error = function(e) tibble::tibble())
+  tryCatch(
+    readr::read_csv("data/raw/aemet/manifest.csv", show_col_types = FALSE) |>
+      normalise_manifest_types(),
+    error = function(e) tibble::tibble()
+  )
 } else {
   tibble::tibble()
 }
@@ -60,7 +64,8 @@ manifest <- purrr::pmap_dfr(products_tbl, function(tipo, dia, area, endpoint) {
   )
 })
 
-manifest <- use_previous_downloads_after_errors(manifest, previous_manifest)
+manifest <- use_previous_downloads_after_errors(manifest, previous_manifest) |>
+  normalise_manifest_types()
 
 readr::write_csv(manifest, "data/raw/aemet/manifest.csv")
 message("Manifest guardado en data/raw/aemet/manifest.csv")
