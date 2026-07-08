@@ -2,7 +2,7 @@
 
 Visor Quarto + Leaflet para publicar online un mapa estático de riesgo y situación de incendios.
 
-La capa base del proyecto es **AEMET OpenData** para riesgo meteorológico previsto. Desde `v0.2.0` incorpora **NASA FIRMS** y **EFFIS/Copernicus EMS**. Desde `v0.3.0` añade una capa analítica con límites administrativos **Eurostat/GISCO NUTS** para resumir detecciones FIRMS por CCAA y provincia.
+La capa base del proyecto es **AEMET OpenData** para riesgo meteorológico previsto. Desde `v0.2.0` incorpora **NASA FIRMS** y **EFFIS/Copernicus EMS**. Desde `v0.3.0` añade una capa analítica con límites administrativos **Eurostat/GISCO NUTS** para resumir detecciones FIRMS por CCAA y provincia. Desde `v0.4.0` incorpora **alertas operativas automáticas** mediante clústeres de detecciones FIRMS recientes.
 
 El proyecto renderiza un sitio estático en `docs/`, compatible con GitHub Pages.
 
@@ -17,7 +17,9 @@ El proyecto renderiza un sitio estático en `docs/`, compatible con GitHub Pages
   - focos en las últimas 6 h y 24 h;
   - FRP total;
   - CCAA y provincias con detecciones;
-  - tabla de provincias con más focos.
+  - tabla de provincias con más focos;
+  - clústeres/alertas operativas a partir de detecciones FIRMS;
+  - informe operativo estático en `report.html`.
 
 ## Estructura
 
@@ -25,8 +27,10 @@ El proyecto renderiza un sitio estático en `docs/`, compatible con GitHub Pages
 visor-fuego/
 ├── _quarto.yml
 ├── index.qmd
+├── report.qmd
 ├── R/
 │   ├── admin.R
+│   ├── alerts.R
 │   ├── aemet.R
 │   ├── effis.R
 │   ├── firms.R
@@ -41,9 +45,11 @@ visor-fuego/
 │   ├── 05_download_firms_active_fires.R
 │   ├── 06_download_admin_boundaries.R
 │   ├── 07_build_operational_summary.R
+│   ├── 08_build_operational_alerts.R
 │   └── 99_run_all.R
 ├── assets/
 │   ├── admin/
+│   ├── alerts/
 │   ├── aemet/
 │   ├── firms/
 │   └── summary/
@@ -113,6 +119,9 @@ EFFIS_DATE=2026-07-08
 ADMIN_ENABLE=true
 ADMIN_NUTS_YEAR=2021
 ADMIN_RESOLUTION=10
+
+ALERT_CLUSTER_KM=12
+ALERT_MAX_AGE_HOURS=48
 ```
 
 Si `EFFIS_DATE` no se define, se usa `Sys.Date()` durante el render.
@@ -138,6 +147,7 @@ source("scripts/05_download_firms_active_fires.R", encoding = "UTF-8")
 source("scripts/06_download_admin_boundaries.R", encoding = "UTF-8")
 source("scripts/02_prepare_web_assets.R", encoding = "UTF-8")
 source("scripts/07_build_operational_summary.R", encoding = "UTF-8")
+source("scripts/08_build_operational_alerts.R", encoding = "UTF-8")
 ```
 
 ## Comprobación
@@ -156,6 +166,8 @@ data/processed/admin_nuts3_provincias.geojson
 data/processed/firms_summary_ccaa.csv
 data/processed/firms_summary_provincias.csv
 data/processed/dashboard_summary.csv
+data/processed/operational_alerts.csv
+data/processed/operational_report.md
 ```
 
 ## Publicar en GitHub Pages
@@ -179,6 +191,7 @@ data/processed/dashboard_summary.csv
 | NASA FIRMS | Focos activos recientes / anomalías térmicas | CSV descargado y GeoJSON/markers |
 | EFFIS/Copernicus EMS | Fire Weather Index europeo | WMS directo |
 | Eurostat/GISCO | CCAA y provincias NUTS | GeoJSON y tablas resumen |
+| Alertas FIRMS | Agrupación espacial de detecciones recientes | CSV/GeoJSON e informe Markdown |
 
 ## Limitaciones
 
@@ -188,6 +201,7 @@ data/processed/dashboard_summary.csv
 - El resumen por CCAA/provincia depende de límites NUTS y no sustituye delimitaciones administrativas oficiales de emergencias.
 - El WMS EFFIS depende de la disponibilidad del parámetro `TIME` para la fecha indicada.
 - Este visor es informativo y no sustituye a avisos oficiales ni a servicios de emergencia.
+- Las alertas operativas son clústeres automáticos de anomalías térmicas FIRMS; requieren revisión humana.
 
 ## Licencia y atribución
 
@@ -201,4 +215,4 @@ EFFIS/Copernicus indica que sus datos son accesibles mediante WMS y que sus cont
 
 ## Versión
 
-`v0.3.0` añade límites administrativos y resumen operativo por CCAA/provincia sobre la versión `v0.2.0`.
+`v0.4.0` añade alertas operativas automáticas, clústeres FIRMS y un informe estático `report.html` sobre la versión `v0.3.0`.

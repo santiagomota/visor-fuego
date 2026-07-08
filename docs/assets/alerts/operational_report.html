@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>changelog – Visor Fuego</title>
+<title>operational_report – Visor Fuego</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,23 +26,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-76af1169a4586be73940889218fbedb3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-76af1169a4586be73940889218fbedb3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,7 +72,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -82,7 +82,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Visor Fuego</span>
     </a>
   </div>
@@ -93,11 +93,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Mapa</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./report.html"> 
+    <a class="nav-link" href="../../report.html"> 
 <span class="menu-text">Informe</span></a>
   </li>  
 </ul>
@@ -125,84 +125,179 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="changelog" class="level1">
-<h1>Changelog</h1>
-<section id="v0.4.0---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.4.0---2026-07-08">v0.4.0 - 2026-07-08</h2>
-<p>Añade una capa operativa de alertas automáticas basada en clústeres de detecciones NASA FIRMS recientes.</p>
-<section id="incluye" class="level3">
-<h3 class="anchored" data-anchor-id="incluye">Incluye</h3>
+<section id="informe-operativo-automático" class="level1">
+<h1>Informe operativo automático</h1>
+<p>Generado UTC: <code>2026-07-08T05:57:00Z</code></p>
+<section id="resumen" class="level2">
+<h2 class="anchored" data-anchor-id="resumen">Resumen</h2>
 <ul>
-<li>Nuevo módulo <code>R/alerts.R</code>.</li>
-<li>Script <code>scripts/08_build_operational_alerts.R</code>.</li>
-<li>Agrupación espacial configurable con <code>ALERT_CLUSTER_KM</code>.</li>
-<li>Filtro de antigüedad configurable con <code>ALERT_MAX_AGE_HOURS</code>.</li>
-<li>CSV y GeoJSON de alertas operativas.</li>
-<li>Capa Leaflet <code>Alertas operativas FIRMS</code>.</li>
-<li>Tabla de alertas en el dashboard principal.</li>
-<li>Página <code>report.qmd</code> / <code>report.html</code> con informe operativo estático.</li>
+<li>Focos FIRMS procesados: <strong>680</strong>.</li>
+<li>Clústeres/alertas generadas: <strong>117</strong>.</li>
+<li>Alertas altas: <strong>41</strong>.</li>
+<li>Alertas medias: <strong>34</strong>.</li>
 </ul>
 </section>
-</section>
-<section id="v0.3.0---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.3.0---2026-07-08">v0.3.0 - 2026-07-08</h2>
-<section id="añadido" class="level3">
-<h3 class="anchored" data-anchor-id="añadido">Añadido</h3>
+<section id="criterio-de-clasificación" class="level2">
+<h2 class="anchored" data-anchor-id="criterio-de-clasificación">Criterio de clasificación</h2>
 <ul>
-<li>Descarga de límites administrativos Eurostat/GISCO NUTS2 y NUTS3 para España.</li>
-<li>Nuevos scripts:
-<ul>
-<li><code>scripts/06_download_admin_boundaries.R</code>.</li>
-<li><code>scripts/07_build_operational_summary.R</code>.</li>
-</ul></li>
-<li>Nuevos módulos R:
-<ul>
-<li><code>R/admin.R</code>.</li>
-<li><code>R/summary.R</code>.</li>
-</ul></li>
-<li>Resumen operativo con focos FIRMS totales, últimas 6 h, últimas 24 h, FRP total y territorios afectados.</li>
-<li>Tablas resumen:
-<ul>
-<li><code>data/processed/firms_summary_ccaa.csv</code>.</li>
-<li><code>data/processed/firms_summary_provincias.csv</code>.</li>
-<li><code>data/processed/dashboard_summary.csv</code>.</li>
-</ul></li>
-<li>Capas Leaflet opcionales de CCAA y provincias.</li>
-<li>Recursos publicados en <code>assets/admin/</code> y <code>assets/summary/</code>.</li>
+<li><strong>Alta</strong>: varios focos muy recientes o FRP total elevado.</li>
+<li><strong>Media</strong>: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.</li>
+<li><strong>Seguimiento</strong>: detecciones recientes sin concentración clara.</li>
 </ul>
+<p>Este informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.</p>
 </section>
-<section id="cambiado" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado">Cambiado</h3>
-<ul>
-<li><code>scripts/99_run_all.R</code> pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.</li>
-<li>El dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.</li>
-<li>Workflow de GitHub Actions actualizado con <code>sf</code>, <code>giscoR</code>, <code>knitr</code> y nuevos assets.</li>
-</ul>
-</section>
-</section>
-<section id="v0.2.0---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.2.0---2026-07-08">v0.2.0 - 2026-07-08</h2>
-<section id="añadido-1" class="level3">
-<h3 class="anchored" data-anchor-id="añadido-1">Añadido</h3>
-<ul>
-<li>Capa NASA FIRMS de focos activos recientes mediante la API Area CSV.</li>
-<li>Exportación FIRMS a <code>data/processed/firms_active_fires.csv</code> y GeoJSON.</li>
-<li>Capa WMS EFFIS/Copernicus EMS para Fire Weather Index (<code>ecmwf007.fwi</code>).</li>
-<li>Variables de entorno <code>FIRMS_MAP_KEY</code>, <code>FIRMS_SOURCES</code>, <code>FIRMS_DAYS</code>, <code>FIRMS_BBOX</code>, <code>EFFIS_ENABLE</code>, <code>EFFIS_WMS_LAYERS</code> y <code>EFFIS_DATE</code>.</li>
-<li>Workflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.</li>
-</ul>
-</section>
-<section id="cambiado-1" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado-1">Cambiado</h3>
-<ul>
-<li>El dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.</li>
-<li><code>scripts/99_run_all.R</code> ejecuta ahora tres fases: AEMET, FIRMS y preparación web.</li>
-</ul>
-</section>
-</section>
-<section id="v0.1.0" class="level2">
-<h2 class="anchored" data-anchor-id="v0.1.0">v0.1.0</h2>
-<p>Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales.</p>
+<section id="principales-alertas" class="level2">
+<h2 class="anchored" data-anchor-id="principales-alertas">Principales alertas</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th style="text-align: right;">Nivel</th>
+<th style="text-align: right;">Score</th>
+<th style="text-align: right;">Focos</th>
+<th style="text-align: right;">≤6 h</th>
+<th style="text-align: right;">≤24 h</th>
+<th style="text-align: right;">FRP MW</th>
+<th>Última UTC</th>
+<th style="text-align: right;">Lat</th>
+<th style="text-align: right;">Lon</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ALERT-20260708-001</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">314.9</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">86.0</td>
+<td>2026-07-08 02:32:00</td>
+<td style="text-align: right;">32.89307</td>
+<td style="text-align: right;">3.2194212</td>
+</tr>
+<tr class="even">
+<td>ALERT-20260708-002</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">128.6</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">43.9</td>
+<td>2026-07-08 02:30:00</td>
+<td style="text-align: right;">33.12416</td>
+<td style="text-align: right;">3.3284841</td>
+</tr>
+<tr class="odd">
+<td>ALERT-20260708-003</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">123.2</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">35.9</td>
+<td>2026-07-08 02:30:00</td>
+<td style="text-align: right;">36.67410</td>
+<td style="text-align: right;">3.1289723</td>
+</tr>
+<tr class="even">
+<td>ALERT-20260708-004</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">121.6</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">123.1</td>
+<td>2026-07-08 02:30:00</td>
+<td style="text-align: right;">40.40091</td>
+<td style="text-align: right;">-7.2594386</td>
+</tr>
+<tr class="odd">
+<td>ALERT-20260708-005</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">113.5</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">516.9</td>
+<td>2026-07-08 02:11:00</td>
+<td style="text-align: right;">41.63979</td>
+<td style="text-align: right;">2.1271242</td>
+</tr>
+<tr class="even">
+<td>ALERT-20260708-006</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">113.1</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">95.0</td>
+<td>2026-07-08 02:28:00</td>
+<td style="text-align: right;">42.70400</td>
+<td style="text-align: right;">-6.1682138</td>
+</tr>
+<tr class="odd">
+<td>ALERT-20260708-007</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">89.5</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">24.7</td>
+<td>2026-07-08 02:30:00</td>
+<td style="text-align: right;">35.78814</td>
+<td style="text-align: right;">-0.2597455</td>
+</tr>
+<tr class="even">
+<td>ALERT-20260708-008</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">88.2</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">447.9</td>
+<td>2026-07-07 14:12:00</td>
+<td style="text-align: right;">41.77384</td>
+<td style="text-align: right;">-8.0317747</td>
+</tr>
+<tr class="odd">
+<td>ALERT-20260708-009</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">78.2</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">35.1</td>
+<td>2026-07-08 02:32:00</td>
+<td style="text-align: right;">28.19999</td>
+<td style="text-align: right;">-0.5173136</td>
+</tr>
+<tr class="even">
+<td>ALERT-20260708-010</td>
+<td style="text-align: right;">alta</td>
+<td style="text-align: right;">74.1</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">255.9</td>
+<td>2026-07-08 02:28:00</td>
+<td style="text-align: right;">41.55956</td>
+<td style="text-align: right;">1.6640270</td>
+</tr>
+</tbody>
+</table>
 
 
 </section>

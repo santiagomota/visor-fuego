@@ -7,6 +7,7 @@ resources:
   - assets/firms/**
   - assets/admin/**
   - assets/summary/**
+  - assets/alerts/**
 
 website:
   title: "Visor Fuego"
@@ -14,6 +15,8 @@ website:
     left:
       - text: "Mapa"
         href: index.html
+      - text: "Informe"
+        href: report.html
     right:
       - icon: github
         href: https://github.com/TU_USUARIO/visor-fuego

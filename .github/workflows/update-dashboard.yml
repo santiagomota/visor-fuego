@@ -15,8 +15,21 @@ jobs:
 
     env:
       AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+      FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
       AEMET_AREAS: "p,b,c"
       AEMET_FORECAST_DAYS: "1,2,3,4,5,6,7"
+      AEMET_PRODUCTS: "previsto,estimado"
+      FIRMS_SOURCES: "VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT"
+      FIRMS_DAYS: "2"
+      FIRMS_BBOX: "-19,27,5,44.6"
+      EFFIS_ENABLE: "true"
+      EFFIS_WMS_LAYERS: "ecmwf007.fwi"
+      EFFIS_WMS_LABELS: "EFFIS - FWI"
+      ADMIN_ENABLE: "true"
+      ADMIN_NUTS_YEAR: "2021"
+      ADMIN_RESOLUTION: "10"
+      ALERT_CLUSTER_KM: "12"
+      ALERT_MAX_AGE_HOURS: "48"
 
     steps:
       - name: Checkout
@@ -41,8 +54,12 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages: |
+            any::curl
             any::dplyr
             any::fs
+            any::sf
+            any::knitr
+            any::giscoR
             any::glue
             any::htmltools
             any::htmlwidgets
@@ -57,16 +74,16 @@ jobs:
             any::tibble
             any::tidyr
 
-      - name: Download and prepare AEMET layers
+      - name: Download and prepare dashboard layers
         run: Rscript scripts/99_run_all.R
 
       - name: Render Quarto site
-        run: quarto render
+        run: quarto render --execute
 
       - name: Commit rendered site
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs data/processed
-          git commit -m "Update AEMET fire risk dashboard" || echo "No changes to commit"
+          git add docs data/processed assets/aemet assets/firms assets/admin assets/summary assets/alerts
+          git commit -m "Update fire risk dashboard" || echo "No changes to commit"
           git push

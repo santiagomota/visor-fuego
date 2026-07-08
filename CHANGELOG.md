@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.4.0 - 2026-07-08
+
+Añade una capa operativa de alertas automáticas basada en clústeres de detecciones NASA FIRMS recientes.
+
+### Incluye
+
+- Nuevo módulo `R/alerts.R`.
+- Script `scripts/08_build_operational_alerts.R`.
+- Agrupación espacial configurable con `ALERT_CLUSTER_KM`.
+- Filtro de antigüedad configurable con `ALERT_MAX_AGE_HOURS`.
+- CSV y GeoJSON de alertas operativas.
+- Capa Leaflet `Alertas operativas FIRMS`.
+- Tabla de alertas en el dashboard principal.
+- Página `report.qmd` / `report.html` con informe operativo estático.
+
 ## v0.3.0 - 2026-07-08
 
 ### Añadido

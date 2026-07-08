@@ -1,0 +1,86 @@
+---
+title: "Informe operativo"
+subtitle: "Clústeres de detecciones NASA FIRMS"
+format:
+  html:
+    page-layout: article
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(readr)
+library(dplyr)
+library(knitr)
+library(htmltools)
+
+read_optional_csv <- function(path) {
+  if (!file.exists(path) || file.info(path)$size == 0) return(tibble::tibble())
+  tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
+}
+
+alerts <- read_optional_csv("data/processed/operational_alerts.csv")
+alerts_summary <- read_optional_csv("data/processed/operational_alerts_summary.csv")
+report_path <- if (file.exists("data/processed/operational_report.md")) {
+  "data/processed/operational_report.md"
+} else if (file.exists("assets/alerts/operational_report.md")) {
+  "assets/alerts/operational_report.md"
+} else {
+  NA_character_
+}
+```
+
+::: {.callout-important}
+Este informe es **informativo**. No sustituye a AEMET, EFFIS/Copernicus, NASA FIRMS, Protección Civil ni servicios de emergencia.
+:::
+
+```{r summary-cards, results='asis'}
+if (nrow(alerts_summary) > 0) {
+  htmltools::tags$div(
+    class = "summary-grid",
+    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas"), htmltools::tags$strong(alerts_summary$n_alertas[1])),
+    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Altas"), htmltools::tags$strong(alerts_summary$n_alertas_altas[1])),
+    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Medias"), htmltools::tags$strong(alerts_summary$n_alertas_medias[1])),
+    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Radio clúster"), htmltools::tags$strong(paste0(alerts_summary$cluster_km[1], " km")))
+  )
+} else {
+  cat("No hay resumen de alertas. Ejecuta `Rscript scripts/99_run_all.R`.")
+}
+```
+
+## Alertas principales
+
+```{r alerts-table}
+if (nrow(alerts) > 0) {
+  alerts |>
+    select(
+      ID = cluster_id,
+      Nivel = alerta_operativa,
+      Score = score,
+      Focos = n_focos,
+      `≤6 h` = n_ultimas_6h,
+      `≤24 h` = n_ultimas_24h,
+      `FRP total MW` = frp_total_mw,
+      `FRP máximo MW` = frp_max_mw,
+      `Edad mínima h` = edad_min_h,
+      `Última detección UTC` = ultima_deteccion_utc,
+      Lat = latitude,
+      Lon = longitude
+    ) |>
+    knitr::kable()
+} else {
+  cat("No hay alertas operativas para el periodo seleccionado.")
+}
+```
+
+## Informe Markdown generado
+
+```{r md-report, results='asis'}
+if (!is.na(report_path)) {
+  cat(paste(readLines(report_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n"))
+} else {
+  cat("No se encontró `operational_report.md`.")
+}
+```
