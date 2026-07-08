@@ -1,6 +1,6 @@
 ---
-title: "Visor de riesgo de incendios AEMET"
-subtitle: "Mapa operativo para publicación online con Quarto y Leaflet"
+title: "Visor de riesgo de incendios"
+subtitle: "AEMET OpenData · NASA FIRMS · EFFIS/Copernicus"
 format:
   html:
     page-layout: full
@@ -18,6 +18,8 @@ library(jsonlite)
 library(readr)
 library(dplyr)
 library(purrr)
+
+source("R/effis.R", encoding = "UTF-8")
 
 read_layers_json <- function() {
   candidates <- c(
@@ -39,7 +41,6 @@ read_layers_json <- function() {
     }
   }
 
-  # Fallback: reconstruye el JSON desde layers.csv si no está layers.json.
   csv_path <- "data/processed/layers.csv"
   if (file.exists(csv_path) && file.info(csv_path)$size > 0) {
     layers_csv <- readr::read_csv(csv_path, show_col_types = FALSE)
@@ -63,6 +64,25 @@ read_layers_json <- function() {
   layers
 }
 
+read_firms_csv <- function() {
+  candidates <- c(
+    "data/processed/firms_active_fires.csv",
+    "assets/firms/firms_active_fires.csv"
+  )
+  for (path in candidates) {
+    if (file.exists(path) && file.info(path)$size > 0) {
+      out <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
+      if (nrow(out) > 0 && all(c("longitude", "latitude") %in% names(out))) {
+        attr(out, "source_path") <- path
+        return(out)
+      }
+    }
+  }
+  out <- tibble::tibble()
+  attr(out, "source_path") <- NA_character_
+  out
+}
+
 layers_data <- read_layers_json()
 layers_source <- attr(layers_data, "source_path")
 n_layers <- length(layers_data)
@@ -75,37 +95,113 @@ last_update <- if (n_layers > 0) {
 } else {
   NA_character_
 }
+
+firms_data <- read_firms_csv()
+firms_source <- attr(firms_data, "source_path")
+n_firms <- nrow(firms_data)
+effis_groups <- effis_overlay_groups()
+effis_cfg <- effis_layer_config()
 ```
 
 ::: {.callout-note collapse="true"}
 ## Fuente y actualización
 
-Este visor usa los productos de riesgo de incendios de **AEMET OpenData**.  
-La información de AEMET se reutiliza citando a AEMET como autora.
+Este visor combina:
+
+- **AEMET OpenData**: riesgo meteorológico de incendios previsto.
+- **NASA FIRMS**: detecciones satelitales recientes de focos activos/thermal anomalies.
+- **EFFIS/Copernicus EMS**: capa WMS europea de Fire Weather Index.
 
 ```{r}
-if (n_layers == 0) {
-  cat("No hay capas descargadas todavía. Ejecuta `Rscript scripts/99_run_all.R` y después `quarto render --execute`.")
-} else {
-  cat("Capas disponibles:", n_layers, "· Fecha:", last_update, "· Catálogo:", layers_source)
-}
+cat("Capas AEMET:", n_layers)
+if (n_layers > 0) cat(" · Fecha:", last_update, "· Catálogo:", layers_source)
+cat("\nFocos NASA FIRMS:", n_firms)
+if (n_firms > 0) cat(" · Catálogo:", firms_source)
+cat("\nEFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") else "desactivado")
+if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
 ```
 :::
 
 ```{r fire-map}
+base_groups <- c("Base clara", "Satélite")
+overlay_groups <- character()
+
 map <- leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = TRUE)) |>
   addProviderTiles(providers$CartoDB.Positron, group = "Base clara") |>
   addProviderTiles(providers$Esri.WorldImagery, group = "Satélite") |>
-  setView(lng = -3.7, lat = 40.2, zoom = 6) |>
+  setView(lng = -3.7, lat = 40.2, zoom = 6)
+
+if (n_firms > 0) {
+  firms_data <- firms_data |>
+    mutate(
+      age_hours = suppressWarnings(as.numeric(age_hours)),
+      frp = suppressWarnings(as.numeric(frp))
+    )
+
+  if (!"popup_label" %in% names(firms_data)) {
+    firms_data <- firms_data |>
+      mutate(
+        popup_label = paste0(
+          "<strong>NASA FIRMS</strong><br>",
+          "Sensor: ", source_dataset, "<br>",
+          "Fecha UTC: ", acq_datetime_utc, "<br>",
+          "FRP: ", ifelse(is.na(frp), "s/d", paste0(frp, " MW"))
+        )
+      )
+  }
+
+  firms_data <- firms_data |>
+    mutate(
+      firms_colour = case_when(
+        is.na(age_hours) ~ "#666666",
+        age_hours <= 6 ~ "#d7191c",
+        age_hours <= 24 ~ "#fdae61",
+        age_hours <= 48 ~ "#ffffbf",
+        TRUE ~ "#999999"
+      ),
+      firms_radius = pmax(4, pmin(10, ifelse(is.na(frp), 5, sqrt(frp) + 3))),
+      popup = popup_label
+    )
+
+  map <- map |>
+    addCircleMarkers(
+      data = firms_data,
+      lng = ~longitude,
+      lat = ~latitude,
+      group = "NASA FIRMS - focos activos",
+      radius = ~firms_radius,
+      color = ~firms_colour,
+      fillColor = ~firms_colour,
+      fillOpacity = 0.82,
+      weight = 1,
+      popup = ~popup,
+      label = ~paste0("FIRMS · ", acq_datetime_utc)
+    )
+  overlay_groups <- c(overlay_groups, "NASA FIRMS - focos activos")
+}
+
+map <- add_effis_wms_layers(map)
+overlay_groups <- c(overlay_groups, effis_groups)
+
+map <- map |>
   addScaleBar(position = "bottomleft") |>
   addLayersControl(
-    baseGroups = c("Base clara", "Satélite"),
+    baseGroups = base_groups,
+    overlayGroups = unique(overlay_groups),
     options = layersControlOptions(collapsed = TRUE)
   ) |>
   addControl(
-    html = HTML("<strong>Fuente:</strong> AEMET OpenData · Reutilización citando a AEMET como autora"),
+    html = HTML("<strong>Fuentes:</strong> AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS<br><small>Visor informativo; no sustituye a avisos oficiales ni a servicios de emergencia.</small>"),
     position = "bottomleft"
   )
+
+if (n_firms > 0) {
+  map <- map |>
+    addControl(
+      html = HTML("<strong>NASA FIRMS</strong><br><span class='dot dot-red'></span>&lt; 6 h<br><span class='dot dot-orange'></span>6–24 h<br><span class='dot dot-yellow'></span>24–48 h<br><span class='dot dot-grey'></span>&gt; 48 h"),
+      position = "bottomright"
+    )
+}
 
 js_template <- r"(
 function(el, x) {
@@ -124,10 +220,10 @@ function(el, x) {
     const legend = document.getElementById('fire-risk-legend');
     if (!legend) return;
     if (!layer || !layer.legend_labels || !layer.legend_colours) {
-      legend.innerHTML = '<strong>Nivel de peligro</strong><br>No disponible';
+      legend.innerHTML = '<strong>Nivel de peligro AEMET</strong><br>No disponible';
       return;
     }
-    let html = '<strong>Nivel de peligro</strong>';
+    let html = '<strong>Nivel de peligro AEMET</strong>';
     for (let i = 0; i < layer.legend_labels.length; i++) {
       html += '<br><span class="swatch" style="background:' + layer.legend_colours[i] + '"></span>' + layer.legend_labels[i];
     }
@@ -227,8 +323,9 @@ function(el, x) {
     div.innerHTML = '<strong>Visor Fuego</strong>' +
       '<label for="fire-layer-select">Capa AEMET</label>' +
       '<select id="fire-layer-select">' + options + '</select>' +
-      '<label for="fire-opacity">Opacidad</label>' +
-      '<input id="fire-opacity" type="range" min="0" max="1" step="0.05" value="0.68" style="width:220px;">';
+      '<label for="fire-opacity">Opacidad AEMET</label>' +
+      '<input id="fire-opacity" type="range" min="0" max="1" step="0.05" value="0.68" style="width:220px;">' +
+      '<small>EFFIS y FIRMS se activan desde el control de capas de Leaflet.</small>';
     L.DomEvent.disableClickPropagation(div);
     return div;
   };
@@ -238,7 +335,7 @@ function(el, x) {
   legend.onAdd = function(map) {
     const div = L.DomUtil.create('div', 'fire-legend');
     div.id = 'fire-risk-legend';
-    div.innerHTML = '<strong>Nivel de peligro</strong><br>No disponible';
+    div.innerHTML = '<strong>Nivel de peligro AEMET</strong><br>No disponible';
     return div;
   };
   legend.addTo(map);
@@ -270,4 +367,5 @@ htmlwidgets::onRender(map, js)
 
 - [Visor oficial de incendios de AEMET](https://www.aemet.es/es/eltiempo/prediccion/incendios)
 - [AEMET OpenData](https://opendata.aemet.es/)
-
+- [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/)
+- [EFFIS / Copernicus EMS](https://forest-fire.emergency.copernicus.eu/)

@@ -2,15 +2,36 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Visor de riesgo de incendios AEMET",
+    "title": "Visor de riesgo de incendios",
     "section": "",
-    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor usa los productos de riesgo de incendios de AEMET OpenData.\nLa información de AEMET se reutiliza citando a AEMET como autora.\n\n\nCapas disponibles: 12 · Fecha: 2026-07-07 · Catálogo: data/processed/layers.json"
+    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\n\n\n\nCapas AEMET: 24\n\n\n · Fecha: 2026-07-08 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 680\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nEFFIS WMS: EFFIS - FWI\n\n\n · TIME: 2026-07-08"
   },
   {
     "objectID": "index.html#enlaces-útiles",
     "href": "index.html#enlaces-útiles",
-    "title": "Visor de riesgo de incendios AEMET",
+    "title": "Visor de riesgo de incendios",
     "section": "Enlaces útiles",
-    "text": "Enlaces útiles\n\nVisor oficial de incendios de AEMET\nAEMET OpenData"
+    "text": "Enlaces útiles\n\nVisor oficial de incendios de AEMET\nAEMET OpenData\nNASA FIRMS\nEFFIS / Copernicus EMS"
+  },
+  {
+    "objectID": "CHANGELOG.html",
+    "href": "CHANGELOG.html",
+    "title": "Changelog",
+    "section": "",
+    "text": "Capa NASA FIRMS de focos activos recientes mediante la API Area CSV.\nExportación FIRMS a data/processed/firms_active_fires.csv y GeoJSON.\nCapa WMS EFFIS/Copernicus EMS para Fire Weather Index (ecmwf007.fwi).\nVariables de entorno FIRMS_MAP_KEY, FIRMS_SOURCES, FIRMS_DAYS, FIRMS_BBOX, EFFIS_ENABLE, EFFIS_WMS_LAYERS y EFFIS_DATE.\nWorkflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.\n\n\n\n\n\nEl dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.\nscripts/99_run_all.R ejecuta ahora tres fases: AEMET, FIRMS y preparación web.\n\n\n\n\n\nPrimera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.2.0---2026-07-08",
+    "href": "CHANGELOG.html#v0.2.0---2026-07-08",
+    "title": "Changelog",
+    "section": "",
+    "text": "Capa NASA FIRMS de focos activos recientes mediante la API Area CSV.\nExportación FIRMS a data/processed/firms_active_fires.csv y GeoJSON.\nCapa WMS EFFIS/Copernicus EMS para Fire Weather Index (ecmwf007.fwi).\nVariables de entorno FIRMS_MAP_KEY, FIRMS_SOURCES, FIRMS_DAYS, FIRMS_BBOX, EFFIS_ENABLE, EFFIS_WMS_LAYERS y EFFIS_DATE.\nWorkflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.\n\n\n\n\n\nEl dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.\nscripts/99_run_all.R ejecuta ahora tres fases: AEMET, FIRMS y preparación web."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.1.0",
+    "href": "CHANGELOG.html#v0.1.0",
+    "title": "Changelog",
+    "section": "",
+    "text": "Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
   }
 ]

@@ -1,9 +1,13 @@
 # visor-fuego
 
-Visor Quarto + Leaflet para publicar online los mapas de riesgo meteorológico de incendios forestales de AEMET.
+Visor Quarto + Leaflet para publicar online un mapa estático de riesgo y situación de incendios.
 
-La fuente principal es **AEMET OpenData**, no el raspado HTML del visor web. El repositorio descarga los productos de incendios, prepara los ficheros para publicación estática y renderiza un sitio Quarto en `docs/`, listo para GitHub Pages.
+La capa base del proyecto es **AEMET OpenData** para riesgo meteorológico previsto. Desde `v0.2.0` se añaden:
 
+- **NASA FIRMS**: focos activos / anomalías térmicas recientes como puntos descargados en CSV/GeoJSON.
+- **EFFIS/Copernicus EMS**: capa WMS europea de Fire Weather Index.
+
+El proyecto renderiza un sitio estático en `docs/`, compatible con GitHub Pages.
 
 ## Estructura
 
@@ -11,26 +15,28 @@ La fuente principal es **AEMET OpenData**, no el raspado HTML del visor web. El 
 visor-fuego/
 ├── _quarto.yml
 ├── index.qmd
-├── DESCRIPTION
-├── README.md
 ├── R/
 │   ├── aemet.R
+│   ├── effis.R
+│   ├── firms.R
 │   ├── prepare_layers.R
 │   └── utils.R
 ├── scripts/
 │   ├── 01_download_aemet_incendios.R
 │   ├── 02_prepare_web_assets.R
 │   ├── 03_diagnose_downloads.R
+│   ├── 04_check_dashboard_inputs.R
+│   ├── 05_download_firms_active_fires.R
 │   └── 99_run_all.R
-├── docs/
-│   └── assets/aemet/
+├── assets/
+│   ├── aemet/
+│   └── firms/
 ├── data/
 │   ├── raw/aemet/
+│   ├── raw/firms/
 │   └── processed/
-└── .github/workflows/
-    └── update-dashboard.yml
+└── docs/
 ```
-
 
 ## Requisitos locales
 
@@ -53,41 +59,41 @@ install.packages(c(
 
 También necesitas [Quarto](https://quarto.org/).
 
+## Variables de entorno
 
-## API key de AEMET
-
-Solicita una API key en AEMET OpenData y guárdala como variable de entorno:
+Crea un `.Renviron` local a partir de `.Renviron.example`:
 
 ```bash
-export AEMET_API_KEY="TU_API_KEY"
+cp .Renviron.example .Renviron
 ```
 
-O crea un fichero `.Renviron` local, no versionado:
+Contenido mínimo:
 
 ```text
-AEMET_API_KEY=TU_API_KEY
+AEMET_API_KEY=TU_API_KEY_AEMET
+FIRMS_MAP_KEY=TU_MAP_KEY_FIRMS
 ```
 
+`FIRMS_MAP_KEY` es opcional. Si no está definida, el visor se renderiza sin focos FIRMS.
 
-## Productos disponibles y 404 de AEMET
-
-La API de AEMET puede responder `404: No hay datos que satisfagan esos criterios` para algunas combinaciones de producto, área o día. Esto no significa necesariamente que la API key esté mal: puede ocurrir, por ejemplo, con `estimado`, con Baleares o con el día 7 si ese producto no está publicado en ese momento.
-
-El script `scripts/01_download_aemet_incendios.R` registra esas combinaciones en `data/raw/aemet/manifest.csv` con `status = "missing"` y continúa con las capas que sí estén disponibles. Puedes limitar las peticiones con variables de entorno:
+Opciones útiles:
 
 ```text
 AEMET_AREAS=p,c
 AEMET_FORECAST_DAYS=1,2,3,4,5,6
 AEMET_PRODUCTS=previsto
+
+FIRMS_SOURCES=VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT
+FIRMS_DAYS=2
+FIRMS_BBOX=-19,27,5,44.6
+
+EFFIS_ENABLE=true
+EFFIS_WMS_LAYERS=ecmwf007.fwi
+EFFIS_WMS_LABELS=EFFIS - FWI
+EFFIS_DATE=2026-07-08
 ```
 
-Para revisar qué se ha descargado:
-
-```r
-readr::read_csv("data/raw/aemet/manifest.csv", show_col_types = FALSE) |>
-  dplyr::count(status, tipo, area_label, dia)
-```
-
+Si `EFFIS_DATE` no se define, se usa `Sys.Date()` durante el render.
 
 ## Ejecutar localmente
 
@@ -102,89 +108,53 @@ Después abre:
 xdg-open docs/index.html
 ```
 
+## Ejecutar por partes
+
+```r
+source("scripts/01_download_aemet_incendios.R", encoding = "UTF-8")
+source("scripts/05_download_firms_active_fires.R", encoding = "UTF-8")
+source("scripts/02_prepare_web_assets.R", encoding = "UTF-8")
+```
 
 ## Publicar en GitHub Pages
 
 1. Crea el repositorio en GitHub con nombre `visor-fuego`.
 2. Sube este contenido.
-3. En **Settings → Secrets and variables → Actions**, crea el secret `AEMET_API_KEY`.
+3. En **Settings → Secrets and variables → Actions**, crea los secrets:
+   - `AEMET_API_KEY`
+   - `FIRMS_MAP_KEY` si quieres NASA FIRMS.
 4. En **Settings → Pages**, selecciona:
    - Source: `Deploy from a branch`
    - Branch: `main`
    - Folder: `/docs`
 5. Ejecuta manualmente el workflow `Update dashboard`, o espera a la actualización programada.
 
+## Qué aporta cada fuente
 
-## Comandos iniciales sugeridos
+| Fuente | Uso en el visor | Tipo |
+|---|---|---|
+| AEMET OpenData | Riesgo meteorológico previsto | PNG/GeoTIFF/GeoJSON preparado como capa AEMET |
+| NASA FIRMS | Focos activos recientes / anomalías térmicas | CSV descargado y GeoJSON/markers |
+| EFFIS/Copernicus EMS | Fire Weather Index europeo | WMS directo |
 
-```bash
-cd visor-fuego
-git init
-git add .
-git commit -m "Initial Quarto Leaflet AEMET fire risk viewer"
-git branch -M main
-git remote add origin git@github.com:TU_USUARIO/visor-fuego.git
-git push -u origin main
-```
+## Limitaciones
 
-
-## Nota sobre georreferenciación
-
-AEMET OpenData expone endpoints de incendios para mapas de riesgo estimado y previsto. Si el recurso descargado es una imagen no georreferenciada, el visor la superpone con bounds aproximados por área (`p`, `b`, `c`). Si el recurso descargado es GeoTIFF, el script intenta convertirlo a PNG georreferenciado para `leaflet`.
-
-Para análisis cuantitativo serio por municipio, celda o superficie conviene sustituir la imagen por una fuente raster/vectorial georreferenciada oficial cuando esté disponible.
-
+- Las imágenes AEMET se superponen con bounds aproximados si el recurso no viene georreferenciado.
+- FIRMS detecta anomalías térmicas, no siempre incendios forestales confirmados.
+- El bbox FIRMS por defecto cubre España y entorno; puede incluir detecciones próximas fuera de España.
+- El WMS EFFIS depende de la disponibilidad del parámetro `TIME` para la fecha indicada.
+- Este visor es informativo y no sustituye a avisos oficiales ni a servicios de emergencia.
 
 ## Licencia y atribución
 
-La información de AEMET puede reutilizarse citando a AEMET como autora. Mantén visible la atribución incluida en el mapa.
-
-
-## Nota v0.3: recursos AEMET sin extensión clara
-
-Algunos recursos de AEMET OpenData pueden llegar con `Content-Type` genérico o sin nombre de fichero útil. En ese caso el descargador inspecciona los primeros bytes del fichero para reconocer PNG, JPEG, ZIP, GeoTIFF/TIFF o JSON/GeoJSON. También descomprime automáticamente ZIP en `data/raw/aemet/extracted/` y prepara las capas internas compatibles.
-
-Diagnóstico recomendado:
-
-```r
-library(readr)
-library(dplyr)
-
-manifest <- read_csv("data/raw/aemet/manifest.csv", show_col_types = FALSE)
-manifest |> count(status, file_type, tipo, area_label, dia) |> print(n = Inf)
-```
-
-
-## Nota v0.5: JSON de AEMET servido como text/plain
-
-AEMET OpenData puede devolver la respuesta JSON de metadatos con `Content-Type: text/plain` y con cabeceras en ISO-8859-1. Desde v0.5 el script no usa `httr2::resp_body_json()` para esa primera respuesta: lee el cuerpo en bruto y lo interpreta con `jsonlite::fromJSON()`, probando UTF-8, latin1 y CP1252. Esto evita errores del tipo:
+Mantén visible la atribución incluida en el mapa:
 
 ```text
-Unexpected content type "text/plain". Expecting type "application/json" or suffix "json".
+Fuentes: AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS
 ```
 
-Si después de descargar sigue sin generarse ninguna capa web, ejecuta:
+EFFIS/Copernicus indica que sus datos son accesibles mediante WMS y que sus contenidos se reutilizan bajo CC BY 4.0 salvo indicación contraria. NASA FIRMS requiere una MAP_KEY gratuita para la API.
 
-```r
-source("scripts/03_diagnose_downloads.R", encoding = "UTF-8")
-```
+## Versión
 
-Ese diagnóstico imprime el tipo detectado por contenido, tamaño y una previsualización de los ficheros que no sean imagen, raster, ZIP o GeoJSON.
-
-
-## Nota v0.7: cabeceras no UTF-8 y descargas cacheadas
-
-Algunas respuestas de AEMET incluyen cabeceras con caracteres no UTF-8, por ejemplo `predicción` codificado como latin1. En algunos sistemas eso puede terminar como:
-
-```text
-input string 1 is invalid UTF-8
-```
-
-Desde v0.7 la descarga usa `curl` a bajo nivel para leer el cuerpo en bruto y evitar el parseo problemático de cabeceras. Además, si una petición falla temporalmente pero ya existe una descarga válida anterior para la misma fecha/producto/área/día, el manifest la conserva con `status = "cached"`.
-
-El preparador también busca ficheros PNG/TIFF/ZIP/GeoJSON ya existentes en `data/raw/aemet`, aunque el manifest haya sido sobrescrito por una ejecución fallida.
-
-
-## Nota v0.8: normalización de fechas en manifest
-
-`readr::read_csv()` puede interpretar la columna `date` como `Date`, mientras que las capas descubiertas en disco la generan como texto. Desde v0.8 se normalizan los tipos del `manifest` antes de hacer `left_join()` o `bind_rows()`, evitando errores como `Can't join x$date with y$date` o `Can't combine ..1$date <date> and ..2$date <character>`.
+`v0.2.0` añade NASA FIRMS y EFFIS/Copernicus al visor AEMET original.

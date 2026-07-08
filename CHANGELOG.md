@@ -1,16 +1,20 @@
 # Changelog
 
-## v0.1.0 - 2026-07-07
+## v0.2.0 - 2026-07-08
 
-Primera versión funcional del visor de riesgo meteorológico de incendios forestales basado en AEMET OpenData.
+### Añadido
 
-### Incluye
+- Capa NASA FIRMS de focos activos recientes mediante la API Area CSV.
+- Exportación FIRMS a `data/processed/firms_active_fires.csv` y GeoJSON.
+- Capa WMS EFFIS/Copernicus EMS para Fire Weather Index (`ecmwf007.fwi`).
+- Variables de entorno `FIRMS_MAP_KEY`, `FIRMS_SOURCES`, `FIRMS_DAYS`, `FIRMS_BBOX`, `EFFIS_ENABLE`, `EFFIS_WMS_LAYERS` y `EFFIS_DATE`.
+- Workflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.
 
-- Descarga automática de mapas previstos de riesgo de incendios desde AEMET OpenData.
-- Soporte para Península y Canarias.
-- Preparación de imágenes PNG como capas web.
-- Dashboard Quarto con Leaflet.
-- Selector de capas por zona y día de predicción.
-- Publicación compatible con GitHub Pages.
-- Workflow de GitHub Actions para actualización automática.
-- Manejo robusto de respuestas sin datos de AEMET.
+### Cambiado
+
+- El dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.
+- `scripts/99_run_all.R` ejecuta ahora tres fases: AEMET, FIRMS y preparación web.
+
+## v0.1.0
+
+Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales.
