@@ -160,9 +160,19 @@ add_admin_boundaries <- function(map, path, group, weight = 1) {
 layers_data <- read_layers_json()
 layers_source <- attr(layers_data, "source_path")
 
-# Orden del selector AEMET en Leaflet. Queremos que Península y Baleares
-# aparezca antes que Canarias, aunque el paquete SIG de AEMET venga ordenado
-# alfabéticamente o se haya generado con un catálogo anterior.
+# Orden del selector AEMET en Leaflet. El paquete SIG clásico usa nombres
+# down_YYYYMMDD...D00..D07, donde YYYYMMDD es fecha de emisión y Dxx el
+# horizonte. En el catálogo ya se guarda valid_date = issue_date + D.
+# Queremos que Península/Baleares aparezca antes que Canarias y que, dentro
+# de cada zona, la primera capa sea la válida para la fecha de renderizado.
+aemet_valid_date_rank <- function(date_chr, today = Sys.Date()) {
+  d <- suppressWarnings(as.Date(date_chr))
+  if (is.na(d)) return(999999L)
+  if (identical(d, today)) return(0L)
+  if (d > today) return(as.integer(d - today))
+  10000L + as.integer(today - d)
+}
+
 aemet_layer_rank <- function(layer) {
   area <- layer$area %||% ""
   area_rank <- dplyr::case_when(
@@ -177,10 +187,18 @@ aemet_layer_rank <- function(layer) {
     tipo == "estimado" ~ 2L,
     TRUE ~ 99L
   )
+  valid_date <- layer$valid_date %||% layer$date %||% ""
+  valid_rank <- aemet_valid_date_rank(valid_date)
   dia <- suppressWarnings(as.integer(layer$dia %||% 0L))
   if (is.na(dia)) dia <- 0L
-  date_chr <- layer$date %||% ""
-  paste0(sprintf("%02d", area_rank), "_", sprintf("%02d", tipo_rank), "_", sprintf("%02d", dia), "_", date_chr)
+  issue_date <- layer$issue_date %||% ""
+  paste0(
+    sprintf("%02d", area_rank), "_",
+    sprintf("%06d", valid_rank), "_",
+    sprintf("%02d", tipo_rank), "_",
+    sprintf("%02d", dia), "_",
+    issue_date
+  )
 }
 
 if (length(layers_data) > 0) {
@@ -191,7 +209,7 @@ n_layers <- length(layers_data)
 layers_json <- jsonlite::toJSON(layers_data, auto_unbox = TRUE, null = "null")
 last_update <- if (n_layers > 0) {
   unique(vapply(layers_data, function(x) {
-    value <- x[["date"]]
+    value <- x[["valid_date"]] %||% x[["date"]]
     if (is.null(value) || length(value) == 0 || is.na(value)) NA_character_ else as.character(value)
   }, character(1)))[1]
 } else {
@@ -369,7 +387,7 @@ map <- map |>
     overlayGroups = unique(overlay_groups),
     options = layersControlOptions(collapsed = TRUE)
   ) |>
-  hideGroup(c("CCAA (NUTS2)", "Provincias (NUTS3)")) |>
+  hideGroup(c(effis_groups, "CCAA (NUTS2)", "Provincias (NUTS3)")) |>
   addControl(
     html = HTML("<strong>Fuentes:</strong> AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS · Eurostat/GISCO<br><small>Visor informativo; no sustituye a avisos oficiales ni a servicios de emergencia.</small>"),
     position = "bottomleft"
@@ -391,9 +409,14 @@ function(el, x) {
   let currentOpacity = 0.68;
 
   function labelForLayer(layer) {
-    const dia = (layer.dia === null || layer.dia === undefined || layer.dia === '') ? 'hoy' : ('D+' + layer.dia);
+    const dia = (layer.forecast_label !== null && layer.forecast_label !== undefined && layer.forecast_label !== '')
+      ? layer.forecast_label
+      : ((layer.dia === null || layer.dia === undefined || layer.dia === '') ? 'hoy' : ('D+' + layer.dia));
     const tipo = layer.tipo === 'estimado' ? 'Estimado' : 'Previsto';
-    return layer.date + ' · ' + layer.area_label + ' · ' + tipo + ' · ' + dia;
+    const validDate = layer.valid_date || layer.date || '';
+    const issueDate = layer.issue_date || '';
+    const issueTxt = (issueDate && issueDate !== validDate) ? (' · emitido ' + issueDate) : '';
+    return validDate + ' · ' + layer.area_label + ' · ' + tipo + ' · ' + dia + issueTxt;
   }
 
   function updateLegend(layer) {

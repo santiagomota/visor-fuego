@@ -1,4 +1,66 @@
+# Cambios
+
+## v0.5.28
+
+- Corrige los TIFFs WMS de EFFIS con canales RGB válidos pero banda alfa vacía.
+- Si el alfa del TIFF es completamente 0, reconstruye la transparencia desde la máscara de datos válidos.
+- Evita rechazar PNGs finales de EFFIS cuando el índice/categoría del raster es 0 pero contiene datos.
+
+## v0.5.27
+
+- Corrige la escritura de PNGs EFFIS conservando dimensiones de matrices/arrays tras el recorte de valores a `[0,1]`.
+- Evita el error `image must be a matrix or an array of two or three dimensions` al convertir TIFFs WMS a PNG.
+
+
+## v0.5.26
+
+- Añade conversión EFFIS TIFF→PNG mediante GDAL (`sf::gdal_utils` o `gdal_translate`) antes del fallback manual con `terra`.
+- Soluciona el caso en el que EFFIS devuelve `image/tiff` con píxeles válidos, pero `png::writePNG()` falla al reconstruir el PNG final.
+- Normaliza y limita explícitamente los arrays RGBA antes de escribir PNG.
+- Mantiene `image/png` como primera opción y `image/tiff` como alternativa operativa.
+
+## v0.5.25
+
+- Prioriza `image/png` para EFFIS estático y usa el PNG WMS directamente cuando ya contiene píxeles visibles.
+- Mantiene `image/tiff` como alternativa, pero evita que un fallo de conversión TIFF bloquee la publicación.
+- Registra errores de conversión en `data/raw/effis/effis_conversion_errors.csv`.
+- Añade `wms_bbox` y `file_type` al catálogo final EFFIS para depuración.
+- Recomienda `https://ies-ows.jrc.ec.europa.eu/effis` y `ecmwf.fwi.danger_index` como capa operativa.
+
+## v0.5.24
+
+- Corrige la construcción de URLs WMS de EFFIS para mantener BBOX con comas sin re-codificación.
+- Alinea la petición GetMap con el ejemplo oficial de EFFIS (`SERVICE=wms`, BBOX decimal y URL manual).
+- Detecta respuestas XML OGC como `xml` y extrae el mensaje de `ServiceException`.
+- Añade `wms_bbox` en el diagnóstico para distinguir el BBOX configurado del BBOX realmente enviado.
+
 # Changelog
+
+## v0.5.22
+
+- Refuerza el diagnóstico EFFIS: lee fechas disponibles desde GetCapabilities/TIME.
+- Prueba automáticamente los endpoints actual e histórico de EFFIS.
+- Prueba WMS 1.1.1 y 1.3.0, corrigiendo el orden BBOX de EPSG:4326 en WMS 1.3.0.
+- Añade matrices de prueba para formatos PNG/TIFF, BBOX oficial EFFIS y BBOX del visor.
+- El modo estático selecciona el primer GetMap con píxeles visibles y genera el overlay local desde esa respuesta.
+
+## v0.5.21
+
+- Cambia EFFIS a modo estático por defecto: descarga GetMap como `image/tiff`, convierte a PNG y lo publica en `assets/effis/`.
+- Añade `scripts/26_prepare_effis_assets.R` al pipeline.
+- Mejora `scripts/25_check_effis_wms.R` para probar `image/png` e `image/tiff`, registrar cabeceras, primeros bytes y píxeles válidos.
+- Añade panel Leaflet específico para activar/desactivar EFFIS FWI y controlar su opacidad.
+- Añade `assets/effis/**` a los recursos Quarto.
+
+## v0.5.20 - EFFIS WMS robusto
+
+- Corrige `scripts/25_check_effis_wms.R` para no usar `httr2::url_build(query=...)`, incompatible con algunas versiones de `httr2`.
+- Corrige la integración EFFIS/Copernicus WMS en Leaflet.
+- Envía parámetros WMS en mayúsculas, incluido `TIME`, tal como requiere el servicio.
+- Usa `EPSG:4326` para las peticiones WMS de EFFIS, coherente con el ejemplo oficial.
+- Crea un pane propio `effisPane` para que EFFIS quede visible por encima de AEMET cuando se active.
+- Deja EFFIS desactivado por defecto en el control de capas para evitar que quede oculto bajo AEMET.
+- Añade fechas fallback (`EFFIS_FALLBACK_DAYS`) y diagnóstico `scripts/25_check_effis_wms.R`.
 
 ## v0.5.18
 
@@ -138,3 +200,9 @@ Añade una capa operativa de alertas automáticas basada en clústeres de detecc
 ## v0.1.0
 
 Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales.
+
+## v0.5.24
+
+- EFFIS: cambia la configuración recomendada a `EFFIS_WMS_LAYERS=auto`.
+- EFFIS: extrae nombres reales de capa desde `GetCapabilities` y evita seguir probando `ecmwf007.fwi` si el servidor lo devuelve como capa inválida.
+- EFFIS: el diagnóstico `25_check_effis_wms.R` guarda `data/raw/effis/effis_available_layers.csv` y muestra las capas candidatas FWI/fire danger.

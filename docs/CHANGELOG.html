@@ -101,10 +101,6 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Resumen</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./aemet.html"> 
-<span class="menu-text">AEMET</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./report.html"> 
 <span class="menu-text">Informe</span></a>
   </li>  
@@ -137,8 +133,80 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+<section id="cambios" class="level1">
+<h1>Cambios</h1>
+<section id="v0.5.25" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.25">v0.5.25</h2>
+<ul>
+<li>Prioriza <code>image/png</code> para EFFIS estático y usa el PNG WMS directamente cuando ya contiene píxeles visibles.</li>
+<li>Mantiene <code>image/tiff</code> como alternativa, pero evita que un fallo de conversión TIFF bloquee la publicación.</li>
+<li>Registra errores de conversión en <code>data/raw/effis/effis_conversion_errors.csv</code>.</li>
+<li>Añade <code>wms_bbox</code> y <code>file_type</code> al catálogo final EFFIS para depuración.</li>
+<li>Recomienda <code>https://ies-ows.jrc.ec.europa.eu/effis</code> y <code>ecmwf.fwi.danger_index</code> como capa operativa.</li>
+</ul>
+</section>
+<section id="v0.5.24" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.24">v0.5.24</h2>
+<ul>
+<li>Corrige la construcción de URLs WMS de EFFIS para mantener BBOX con comas sin re-codificación.</li>
+<li>Alinea la petición GetMap con el ejemplo oficial de EFFIS (<code>SERVICE=wms</code>, BBOX decimal y URL manual).</li>
+<li>Detecta respuestas XML OGC como <code>xml</code> y extrae el mensaje de <code>ServiceException</code>.</li>
+<li>Añade <code>wms_bbox</code> en el diagnóstico para distinguir el BBOX configurado del BBOX realmente enviado.</li>
+</ul>
+</section>
+</section>
 <section id="changelog" class="level1">
 <h1>Changelog</h1>
+<section id="v0.5.22" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.22">v0.5.22</h2>
+<ul>
+<li>Refuerza el diagnóstico EFFIS: lee fechas disponibles desde GetCapabilities/TIME.</li>
+<li>Prueba automáticamente los endpoints actual e histórico de EFFIS.</li>
+<li>Prueba WMS 1.1.1 y 1.3.0, corrigiendo el orden BBOX de EPSG:4326 en WMS 1.3.0.</li>
+<li>Añade matrices de prueba para formatos PNG/TIFF, BBOX oficial EFFIS y BBOX del visor.</li>
+<li>El modo estático selecciona el primer GetMap con píxeles visibles y genera el overlay local desde esa respuesta.</li>
+</ul>
+</section>
+<section id="v0.5.21" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.21">v0.5.21</h2>
+<ul>
+<li>Cambia EFFIS a modo estático por defecto: descarga GetMap como <code>image/tiff</code>, convierte a PNG y lo publica en <code>assets/effis/</code>.</li>
+<li>Añade <code>scripts/26_prepare_effis_assets.R</code> al pipeline.</li>
+<li>Mejora <code>scripts/25_check_effis_wms.R</code> para probar <code>image/png</code> e <code>image/tiff</code>, registrar cabeceras, primeros bytes y píxeles válidos.</li>
+<li>Añade panel Leaflet específico para activar/desactivar EFFIS FWI y controlar su opacidad.</li>
+<li>Añade <code>assets/effis/**</code> a los recursos Quarto.</li>
+</ul>
+</section>
+<section id="v0.5.20---effis-wms-robusto" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.20---effis-wms-robusto">v0.5.20 - EFFIS WMS robusto</h2>
+<ul>
+<li>Corrige <code>scripts/25_check_effis_wms.R</code> para no usar <code>httr2::url_build(query=...)</code>, incompatible con algunas versiones de <code>httr2</code>.</li>
+<li>Corrige la integración EFFIS/Copernicus WMS en Leaflet.</li>
+<li>Envía parámetros WMS en mayúsculas, incluido <code>TIME</code>, tal como requiere el servicio.</li>
+<li>Usa <code>EPSG:4326</code> para las peticiones WMS de EFFIS, coherente con el ejemplo oficial.</li>
+<li>Crea un pane propio <code>effisPane</code> para que EFFIS quede visible por encima de AEMET cuando se active.</li>
+<li>Deja EFFIS desactivado por defecto en el control de capas para evitar que quede oculto bajo AEMET.</li>
+<li>Añade fechas fallback (<code>EFFIS_FALLBACK_DAYS</code>) y diagnóstico <code>scripts/25_check_effis_wms.R</code>.</li>
+</ul>
+</section>
+<section id="v0.5.18" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.18">v0.5.18</h2>
+<ul>
+<li>Corrige la convención temporal de los GeoTIFFs clásicos de AEMET: <code>D00</code> se interpreta como primer día previsto y, por defecto, válido para <code>YYYYMMDD + 1</code>.</li>
+<li>Añade la variable <code>AEMET_CLASSIC_VALID_START_OFFSET_DAYS=1</code> para ajustar la convención si AEMET cambiase el paquete.</li>
+<li>Cambia las etiquetas de horizonte a <code>Día 1</code>, <code>Día 2</code>, etc., en lugar de <code>D+0</code>, <code>D+1</code>.</li>
+</ul>
+</section>
+<section id="v0.5.17" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.17">v0.5.17</h2>
+<ul>
+<li>Corrige la interpretación temporal de los GeoTIFFs clásicos de AEMET: <code>down_YYYYMMDD_..._Dxx.tif</code> usa <code>YYYYMMDD</code> como fecha de emisión y <code>Dxx</code> como horizonte.</li>
+<li>El catálogo Leaflet usa ahora <code>valid_date = issue_date + D</code>, por lo que <code>D01</code> de un paquete emitido el 2026-07-07 se muestra como válido para 2026-07-08.</li>
+<li>El nombre de los GeoTIFFs instalados en <code>data/raw/aemet/</code> usa la fecha válida, no la fecha de emisión.</li>
+<li>El selector Leaflet mantiene primero Península/Baleares, pero dentro de cada zona prioriza la capa válida para la fecha de renderizado.</li>
+<li>Añade <code>scripts/24_check_aemet_valid_dates.R</code> para auditar <code>issue_date</code>, <code>valid_date</code> y las primeras capas del catálogo.</li>
+</ul>
+</section>
 <section id="v0.5.16" class="level2">
 <h2 class="anchored" data-anchor-id="v0.5.16">v0.5.16</h2>
 <ul>
@@ -295,6 +363,14 @@ ul.task-list li input[type="checkbox"] {
 <section id="v0.1.0" class="level2">
 <h2 class="anchored" data-anchor-id="v0.1.0">v0.1.0</h2>
 <p>Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales.</p>
+</section>
+<section id="v0.5.24-1" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.24-1">v0.5.24</h2>
+<ul>
+<li>EFFIS: cambia la configuración recomendada a <code>EFFIS_WMS_LAYERS=auto</code>.</li>
+<li>EFFIS: extrae nombres reales de capa desde <code>GetCapabilities</code> y evita seguir probando <code>ecmwf007.fwi</code> si el servidor lo devuelve como capa inválida.</li>
+<li>EFFIS: el diagnóstico <code>25_check_effis_wms.R</code> guarda <code>data/raw/effis/effis_available_layers.csv</code> y muestra las capas candidatas FWI/fire danger.</li>
+</ul>
 
 
 </section>

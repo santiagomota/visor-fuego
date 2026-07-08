@@ -1,6 +1,16 @@
 # visor-fuego
 
+
+### Nota EFFIS v0.5.26
+
+Si EFFIS devuelve `image/tiff`, el pipeline intenta convertirlo a PNG con GDAL (`sf::gdal_utils()` o `gdal_translate`) antes de usar la conversión manual con `terra`. Esto evita que una descarga WMS válida quede descartada por un fallo local de `png::writePNG()`.
+
 > v0.5.18: el mapa AEMET usa la fecha válida de la predicción (`issue_date + D`) y mantiene Península/Baleares antes que Canarias.
+
+
+### EFFIS v0.5.25
+
+Para EFFIS se recomienda usar el endpoint histórico `https://ies-ows.jrc.ec.europa.eu/effis` con la capa `ecmwf.fwi.danger_index`. El modo estático prioriza `image/png` y lo publica directamente como overlay local; `image/tiff` queda como alternativa. Si falla la conversión, revisar `data/raw/effis/effis_conversion_errors.csv`.
 
 ## Fechas AEMET desde v0.5.18
 
@@ -335,3 +345,110 @@ En la descarga clásica de AEMET, los ficheros tienen nombres como `down_YYYYMMD
 - `D01` -> `YYYYMMDD + 2` -> Día 2.
 
 Esto puede ajustarse con `AEMET_CLASSIC_VALID_START_OFFSET_DAYS`, cuyo valor recomendado es `1`.
+
+## Diagnóstico EFFIS WMS
+
+EFFIS se sirve como WMS estándar desde `https://maps.effis.emergency.copernicus.eu/effis`.
+Para las capas de peligro/FWI es importante enviar el parámetro `TIME` y usar WMS 1.1.1 con `SRS=EPSG:4326`.
+
+Variables recomendadas:
+
+```text
+EFFIS_ENABLE=true
+EFFIS_WMS_BASE=https://maps.effis.emergency.copernicus.eu/effis
+EFFIS_WMS_LAYERS=ecmwf007.fwi
+EFFIS_WMS_LABELS=EFFIS - FWI
+EFFIS_WMS_VERSION=1.1.1
+EFFIS_WMS_CRS=EPSG:4326
+EFFIS_FALLBACK_DAYS=2
+EFFIS_OPACITY=0.55
+EFFIS_ZINDEX=430
+```
+
+Para probar si el servicio devuelve imagen útil para España:
+
+```bash
+Rscript scripts/25_check_effis_wms.R
+```
+
+El script guarda:
+
+```text
+data/raw/effis/effis_getcapabilities.xml
+data/raw/effis/effis_wms_probe.csv
+assets/effis/effis_wms_probe.csv
+```
+
+
+## EFFIS en modo estático
+
+Desde v0.5.21, EFFIS se prepara por defecto en modo estático (`EFFIS_RENDER_MODE=static`). El WMS oficial de EFFIS documenta ejemplos de FWI con `FORMAT=image/tiff`; como los navegadores no renderizan TIFF como teselas Leaflet, el pipeline descarga el GetMap TIFF, lo convierte a PNG y lo publica en `assets/effis/`.
+
+Comandos útiles:
+
+```bash
+Rscript scripts/25_check_effis_wms.R
+Rscript scripts/26_prepare_effis_assets.R
+quarto render --execute
+```
+
+Variables principales:
+
+```text
+EFFIS_RENDER_MODE=static
+EFFIS_WMS_LAYERS=ecmwf007.fwi
+EFFIS_WMS_FORMAT=image/tiff
+EFFIS_BBOX=-19,27,5,44.6
+EFFIS_FALLBACK_DAYS=2
+```
+
+
+### EFFIS: diagnóstico robusto
+
+La integración EFFIS usa `EFFIS_RENDER_MODE=static` por defecto. El script `scripts/25_check_effis_wms.R` consulta GetCapabilities, extrae fechas TIME disponibles para la capa configurada y prueba varias combinaciones WMS antes de concluir que no hay imagen útil.
+
+Variables útiles:
+
+```text
+EFFIS_ENABLE=true
+EFFIS_RENDER_MODE=static
+EFFIS_WMS_BASE=https://maps.effis.emergency.copernicus.eu/effis
+EFFIS_WMS_BASES=https://maps.effis.emergency.copernicus.eu/effis,https://ies-ows.jrc.ec.europa.eu/effis
+EFFIS_WMS_LAYERS=ecmwf007.fwi
+EFFIS_WMS_LABELS=EFFIS - FWI
+EFFIS_WMS_VERSIONS=1.1.1,1.3.0
+EFFIS_PROBE_FORMATS=image/png,image/tiff
+EFFIS_STATIC_FORMATS=image/tiff,image/png
+EFFIS_BBOX=-18,27,42,72
+EFFIS_BBOXES=-18,27,42,72|-19,27,5,44.6
+EFFIS_MAX_DATES=10
+EFFIS_MAX_REQUESTS=120
+EFFIS_PROBE_MAX_REQUESTS=120
+```
+
+
+
+### Nota v0.5.24: EFFIS WMS
+
+EFFIS se prueba con URLs WMS construidas manualmente para evitar que las comas de `BBOX` se re-codifiquen como `%2C`. El diagnóstico `scripts/25_check_effis_wms.R` añade la columna `wms_bbox`, que muestra el BBOX enviado realmente al servidor, y extrae el texto de `ServiceException` cuando EFFIS devuelve XML de error.
+
+### EFFIS: descubrimiento automático de capa
+
+Si EFFIS devuelve `Invalid layer(s) given in the LAYERS parameter`, usa:
+
+```bash
+EFFIS_WMS_LAYERS=auto
+Rscript scripts/25_check_effis_wms.R
+```
+
+El script genera `data/raw/effis/effis_available_layers.csv` con los nombres reales de capa publicados por `GetCapabilities` y prueba las capas candidatas relacionadas con FWI/fire danger.
+
+### Nota EFFIS v0.5.27
+
+La conversión TIFF→PNG de EFFIS conserva explícitamente las dimensiones del `array` antes de llamar a `png::writePNG()`. Esto evita el error `image must be a matrix or an array of two or three dimensions` observado cuando `pmin()`/`pmax()` pierden atributos de dimensión durante el recorte de valores.
+
+
+
+### Nota EFFIS v0.5.28
+
+Para el modo estático de EFFIS se recomienda `EFFIS_STATIC_FORMATS=image/png,image/tiff`. Si el servidor solo devuelve TIFF útil, el conversor reconstruye el canal alfa desde la máscara de datos válidos cuando la banda alfa del WMS llega vacía. Esto evita que `ecmwf.fwi.danger_index` genere PNGs completamente transparentes aunque el raster tenga píxeles.

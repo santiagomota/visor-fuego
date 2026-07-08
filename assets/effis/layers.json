@@ -1,0 +1,27 @@
+[
+  {
+    "layer_id": "effis_ecmwf_fwi_danger_index_2026_07_08_1_1_1_bbox1_raster",
+    "layer": "ecmwf.fwi.danger_index",
+    "label": "EFFIS - Fire danger index",
+    "group_label": "EFFIS - Fire danger index · 2026-07-08",
+    "date": "2026-07-08",
+    "source_file": "data/raw/effis/effis_getmap_ecmwf_fwi_danger_index_2026_07_08_image_tiff_1_1_1_bbox1_https_ies_ows_jrc_ec_europa_eu_effis.tif",
+    "url": "assets/effis/effis_ecmwf_fwi_danger_index_2026_07_08_1_1_1_bbox1_raster.png",
+    "opacity": 0.55,
+    "zindex": 430,
+    "ncol": 1600,
+    "nrow": 1200,
+    "non_empty_pixels": 1920000,
+    "bbox": "-18.0,27.0,42.0,72.0",
+    "wms_bbox": "-18,27,42,72",
+    "source_url": "https://ies-ows.jrc.ec.europa.eu/effis?LAYERS=ecmwf.fwi.danger_index&FORMAT=image/tiff&TRANSPARENT=true&SINGLETILE=false&SERVICE=wms&VERSION=1.1.1&REQUEST=GetMap&STYLES=&BBOX=-18,27,42,72&WIDTH=1600&HEIGHT=1200&TIME=2026-07-08&EXCEPTIONS=application/vnd.ogc.se_xml&SRS=EPSG:4326",
+    "base_url": "https://ies-ows.jrc.ec.europa.eu/effis",
+    "version": "1.1.1",
+    "format": "image/tiff",
+    "file_type": "raster",
+    "bounds": [
+      [27, -18],
+      [72, 42]
+    ]
+  }
+]

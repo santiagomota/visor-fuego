@@ -124,6 +124,9 @@ sniff_file_extension <- function(raw, fallback = "bin") {
     if (startsWith(trimws(prefix), "{") || startsWith(trimws(prefix), "[")) return("json")
     if (grepl("<svg", prefix_low, fixed = TRUE)) return("svg")
     if (grepl("<kml", prefix_low, fixed = TRUE) || grepl("<gml", prefix_low, fixed = TRUE)) return("xml")
+    # Muchos WMS devuelven errores OGC como XML genérico: <?xml ...><ServiceExceptionReport>...
+    # Antes se clasificaban como bin/unknown y ocultaban el mensaje útil.
+    if (startsWith(trimws(prefix_low), "<?xml") || grepl("serviceexception", prefix_low, fixed = TRUE)) return("xml")
     if (grepl("<!doctype html", prefix_low, fixed = TRUE) || grepl("<html", prefix_low, fixed = TRUE)) return("html")
   }
   fallback

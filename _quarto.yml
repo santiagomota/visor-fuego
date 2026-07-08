@@ -9,6 +9,7 @@ resources:
   - assets/summary/**
   - assets/alerts/**
   - assets/history/**
+  - assets/effis/**
 
 website:
   title: "Visor Fuego"
@@ -18,8 +19,6 @@ website:
         href: index.html
       - text: "Resumen"
         href: summary.html
-      - text: "AEMET"
-        href: aemet.html
       - text: "Informe"
         href: report.html
       - text: "Evolución"

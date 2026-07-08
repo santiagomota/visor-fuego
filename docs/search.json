@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Mapa de riesgo de incendios",
     "section": "",
-    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-08 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 692\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 118 · Altas: 8 · Medias: 53\n\n\n\nEFFIS WMS: EFFIS - FWI\n\n\n · TIME: 2026-07-08"
+    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-08 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 692\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 118 · Altas: 8 · Medias: 53\n\n\n\nEFFIS WMS: EFFIS - Fire danger index · 2026-07-08\n\n\n · TIME: 2026-07-08"
   },
   {
     "objectID": "index.html#enlaces-útiles",
@@ -16,23 +16,23 @@
   {
     "objectID": "CHANGELOG.html",
     "href": "CHANGELOG.html",
-    "title": "Changelog",
+    "title": "Cambios",
     "section": "",
-    "text": "Ordena las capas AEMET del selector Leaflet para mostrar primero Península y Baleares, después Baleares si existe como producto independiente, y finalmente Canarias.\nRefuerza el mismo orden tanto al preparar layers.csv/layers.json como al leer catálogos existentes desde index.qmd.\n\n\n\n\n\n\n\nAjusta la generación del overlay AEMET para Leaflet: por defecto reproyecta los GeoTIFFs a EPSG:3857/Web Mercator antes de exportarlos a PNG.\nCalcula los LatLngBounds de Leaflet a partir de la extensión Web Mercator transformada de vuelta a EPSG:4326.\nAñade AEMET_LEAFLET_PROJECTION, AEMET_BOUNDS_NUDGE_LON y AEMET_BOUNDS_NUDGE_LAT para controlar el ajuste del overlay.\nAñade scripts/23_diagnose_aemet_alignment.R para auditar CRS, bounds y dimensiones de los PNG generados.\n\n\n\n\n\n\n\n\nIntegra la descarga SIG clásica de AEMET (/es/api-eltiempo/incendios/download) como proveedor principal.\nExtrae el paquete .tar.gz de AEMET y publica los GeoTIFFs down_YYYYMMDD_peligro_[p|c]_D00..D07.tif.\nEvita usar PNG de AEMET como imageOverlay salvo que AEMET_ALLOW_PNG_OVERLAY=true.\nAñade scripts/22_install_classic_probe_geotiffs.R para instalar GeoTIFFs desde el diagnóstico clásico ya ejecutado.\n\n\n\n\n\nAjustes de presentación y corrección de CRS para límites administrativos.\n\n\n\nEl mapa principal pasa a ocupar más altura de pantalla (84vh) y deja de compartir página con el resumen operativo.\nEl resumen operativo se mueve a una página independiente summary.qmd / summary.html.\nLa navegación añade una pestaña Resumen.\n\n\n\n\n\nLas geometrías NUTS se descargan en EPSG:3035 y se transforman explícitamente a EPSG:4326 antes de publicarse como GeoJSON.\nLa lectura de límites administrativos fuerza EPSG:4326 antes de dibujar en Leaflet y antes de hacer cruces espaciales con FIRMS.\nSe añade una comprobación de bbox para detectar geometrías administrativas fuera de rango lon/lat.\n\n\n\n\n\nCorrección de robustez del histórico temporal.\n\n\n\nNormalización estricta de tipos en dashboard_history.csv.\nEvita errores de bind_rows() cuando el histórico está vacío o contiene columnas NA interpretadas como logical.\nNormalización básica de tipos en históricos administrativos por CCAA y provincia.\n\n\n\n\n\nAñade histórico temporal del dashboard y página de evolución operativa.\n\n\n\nNuevo módulo R/history.R.\nScript scripts/09_update_dashboard_history.R.\nNueva página history.qmd / history.html.\nHistórico agregado en data/processed/dashboard_history.csv y assets/history/dashboard_history.csv.\nHistórico territorial de CCAA y provincias.\nGráficos de evolución de focos FIRMS, focos recientes, FRP total y alertas.\nVariables HISTORY_MODE y HISTORY_KEEP_DAYS.\nWorkflow actualizado para publicar assets históricos.\n\n\n\n\n\nAñade una capa operativa de alertas automáticas basada en clústeres de detecciones NASA FIRMS recientes.\n\n\n\nNuevo módulo R/alerts.R.\nScript scripts/08_build_operational_alerts.R.\nAgrupación espacial configurable con ALERT_CLUSTER_KM.\nFiltro de antigüedad configurable con ALERT_MAX_AGE_HOURS.\nCSV y GeoJSON de alertas operativas.\nCapa Leaflet Alertas operativas FIRMS.\nTabla de alertas en el dashboard principal.\nPágina report.qmd / report.html con informe operativo estático.\n\n\n\n\n\n\n\n\nDescarga de límites administrativos Eurostat/GISCO NUTS2 y NUTS3 para España.\nNuevos scripts:\n\nscripts/06_download_admin_boundaries.R.\nscripts/07_build_operational_summary.R.\n\nNuevos módulos R:\n\nR/admin.R.\nR/summary.R.\n\nResumen operativo con focos FIRMS totales, últimas 6 h, últimas 24 h, FRP total y territorios afectados.\nTablas resumen:\n\ndata/processed/firms_summary_ccaa.csv.\ndata/processed/firms_summary_provincias.csv.\ndata/processed/dashboard_summary.csv.\n\nCapas Leaflet opcionales de CCAA y provincias.\nRecursos publicados en assets/admin/ y assets/summary/.\n\n\n\n\n\nscripts/99_run_all.R pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.\nEl dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.\nWorkflow de GitHub Actions actualizado con sf, giscoR, knitr y nuevos assets.\n\n\n\n\n\n\n\n\nCapa NASA FIRMS de focos activos recientes mediante la API Area CSV.\nExportación FIRMS a data/processed/firms_active_fires.csv y GeoJSON.\nCapa WMS EFFIS/Copernicus EMS para Fire Weather Index (ecmwf007.fwi).\nVariables de entorno FIRMS_MAP_KEY, FIRMS_SOURCES, FIRMS_DAYS, FIRMS_BBOX, EFFIS_ENABLE, EFFIS_WMS_LAYERS y EFFIS_DATE.\nWorkflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.\n\n\n\n\n\nEl dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.\nscripts/99_run_all.R ejecuta ahora tres fases: AEMET, FIRMS y preparación web.\n\n\n\n\n\nPrimera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
+    "text": "Prioriza image/png para EFFIS estático y usa el PNG WMS directamente cuando ya contiene píxeles visibles.\nMantiene image/tiff como alternativa, pero evita que un fallo de conversión TIFF bloquee la publicación.\nRegistra errores de conversión en data/raw/effis/effis_conversion_errors.csv.\nAñade wms_bbox y file_type al catálogo final EFFIS para depuración.\nRecomienda https://ies-ows.jrc.ec.europa.eu/effis y ecmwf.fwi.danger_index como capa operativa.\n\n\n\n\n\nCorrige la construcción de URLs WMS de EFFIS para mantener BBOX con comas sin re-codificación.\nAlinea la petición GetMap con el ejemplo oficial de EFFIS (SERVICE=wms, BBOX decimal y URL manual).\nDetecta respuestas XML OGC como xml y extrae el mensaje de ServiceException.\nAñade wms_bbox en el diagnóstico para distinguir el BBOX configurado del BBOX realmente enviado."
   },
   {
     "objectID": "CHANGELOG.html#v0.2.0---2026-07-08",
     "href": "CHANGELOG.html#v0.2.0---2026-07-08",
-    "title": "Changelog",
-    "section": "",
-    "text": "Capa NASA FIRMS de focos activos recientes mediante la API Area CSV.\nExportación FIRMS a data/processed/firms_active_fires.csv y GeoJSON.\nCapa WMS EFFIS/Copernicus EMS para Fire Weather Index (ecmwf007.fwi).\nVariables de entorno FIRMS_MAP_KEY, FIRMS_SOURCES, FIRMS_DAYS, FIRMS_BBOX, EFFIS_ENABLE, EFFIS_WMS_LAYERS y EFFIS_DATE.\nWorkflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.\n\n\n\n\n\nEl dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.\nscripts/99_run_all.R ejecuta ahora tres fases: AEMET, FIRMS y preparación web."
+    "title": "Cambios",
+    "section": "v0.2.0 - 2026-07-08",
+    "text": "v0.2.0 - 2026-07-08\n\nAñadido\n\nCapa NASA FIRMS de focos activos recientes mediante la API Area CSV.\nExportación FIRMS a data/processed/firms_active_fires.csv y GeoJSON.\nCapa WMS EFFIS/Copernicus EMS para Fire Weather Index (ecmwf007.fwi).\nVariables de entorno FIRMS_MAP_KEY, FIRMS_SOURCES, FIRMS_DAYS, FIRMS_BBOX, EFFIS_ENABLE, EFFIS_WMS_LAYERS y EFFIS_DATE.\nWorkflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.\n\n\n\nCambiado\n\nEl dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.\nscripts/99_run_all.R ejecuta ahora tres fases: AEMET, FIRMS y preparación web."
   },
   {
     "objectID": "CHANGELOG.html#v0.1.0",
     "href": "CHANGELOG.html#v0.1.0",
-    "title": "Changelog",
-    "section": "",
-    "text": "Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
+    "title": "Cambios",
+    "section": "v0.1.0",
+    "text": "v0.1.0\nPrimera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
   },
   {
     "objectID": "index.html#resumen-operativo",
@@ -44,9 +44,9 @@
   {
     "objectID": "CHANGELOG.html#v0.3.0---2026-07-08",
     "href": "CHANGELOG.html#v0.3.0---2026-07-08",
-    "title": "Changelog",
-    "section": "",
-    "text": "Descarga de límites administrativos Eurostat/GISCO NUTS2 y NUTS3 para España.\nNuevos scripts:\n\nscripts/06_download_admin_boundaries.R.\nscripts/07_build_operational_summary.R.\n\nNuevos módulos R:\n\nR/admin.R.\nR/summary.R.\n\nResumen operativo con focos FIRMS totales, últimas 6 h, últimas 24 h, FRP total y territorios afectados.\nTablas resumen:\n\ndata/processed/firms_summary_ccaa.csv.\ndata/processed/firms_summary_provincias.csv.\ndata/processed/dashboard_summary.csv.\n\nCapas Leaflet opcionales de CCAA y provincias.\nRecursos publicados en assets/admin/ y assets/summary/.\n\n\n\n\n\nscripts/99_run_all.R pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.\nEl dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.\nWorkflow de GitHub Actions actualizado con sf, giscoR, knitr y nuevos assets."
+    "title": "Cambios",
+    "section": "v0.3.0 - 2026-07-08",
+    "text": "v0.3.0 - 2026-07-08\n\nAñadido\n\nDescarga de límites administrativos Eurostat/GISCO NUTS2 y NUTS3 para España.\nNuevos scripts:\n\nscripts/06_download_admin_boundaries.R.\nscripts/07_build_operational_summary.R.\n\nNuevos módulos R:\n\nR/admin.R.\nR/summary.R.\n\nResumen operativo con focos FIRMS totales, últimas 6 h, últimas 24 h, FRP total y territorios afectados.\nTablas resumen:\n\ndata/processed/firms_summary_ccaa.csv.\ndata/processed/firms_summary_provincias.csv.\ndata/processed/dashboard_summary.csv.\n\nCapas Leaflet opcionales de CCAA y provincias.\nRecursos publicados en assets/admin/ y assets/summary/.\n\n\n\nCambiado\n\nscripts/99_run_all.R pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.\nEl dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.\nWorkflow de GitHub Actions actualizado con sf, giscoR, knitr y nuevos assets."
   },
   {
     "objectID": "report.html",
@@ -93,23 +93,23 @@
   {
     "objectID": "CHANGELOG.html#v0.4.0---2026-07-08",
     "href": "CHANGELOG.html#v0.4.0---2026-07-08",
-    "title": "Changelog",
-    "section": "",
-    "text": "Añade una capa operativa de alertas automáticas basada en clústeres de detecciones NASA FIRMS recientes.\n\n\n\nNuevo módulo R/alerts.R.\nScript scripts/08_build_operational_alerts.R.\nAgrupación espacial configurable con ALERT_CLUSTER_KM.\nFiltro de antigüedad configurable con ALERT_MAX_AGE_HOURS.\nCSV y GeoJSON de alertas operativas.\nCapa Leaflet Alertas operativas FIRMS.\nTabla de alertas en el dashboard principal.\nPágina report.qmd / report.html con informe operativo estático."
+    "title": "Cambios",
+    "section": "v0.4.0 - 2026-07-08",
+    "text": "v0.4.0 - 2026-07-08\nAñade una capa operativa de alertas automáticas basada en clústeres de detecciones NASA FIRMS recientes.\n\nIncluye\n\nNuevo módulo R/alerts.R.\nScript scripts/08_build_operational_alerts.R.\nAgrupación espacial configurable con ALERT_CLUSTER_KM.\nFiltro de antigüedad configurable con ALERT_MAX_AGE_HOURS.\nCSV y GeoJSON de alertas operativas.\nCapa Leaflet Alertas operativas FIRMS.\nTabla de alertas en el dashboard principal.\nPágina report.qmd / report.html con informe operativo estático."
   },
   {
     "objectID": "assets/alerts/operational_report.html",
     "href": "assets/alerts/operational_report.html",
     "title": "Informe operativo automático",
     "section": "",
-    "text": "Generado UTC: 2026-07-08T07:51:44Z\n\n\n\nFocos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 40.\nAlertas medias: 35.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n254.9\n65\n21\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.2194212\n\n\nALERT-20260708-002\nalta\n162.1\n19\n19\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.1701358\n\n\nALERT-20260708-003\nalta\n121.6\n14\n14\n14\n123.1\n2026-07-08 02:30:00\n40.40091\n-7.2594386\n\n\nALERT-20260708-004\nalta\n113.5\n59\n2\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.1271242\n\n\nALERT-20260708-005\nalta\n108.6\n27\n8\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.3284841\n\n\nALERT-20260708-006\nalta\n103.2\n26\n8\n15\n35.9\n2026-07-08 02:30:00\n36.67410\n3.1289723\n\n\nALERT-20260708-007\nalta\n89.5\n11\n10\n11\n24.7\n2026-07-08 02:30:00\n35.78814\n-0.2597455\n\n\nALERT-20260708-008\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.0317747\n\n\nALERT-20260708-009\nalta\n74.1\n27\n4\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.6640270\n\n\nALERT-20260708-010\nalta\n71.6\n8\n8\n8\n43.9\n2026-07-08 02:28:00\n43.35963\n-4.7465675"
+    "text": "Generado UTC: 2026-07-08T08:42:51Z\n\n\n\nFocos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 8.\nAlertas medias: 53.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n103.5\n59\n0\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.127124\n\n\nALERT-20260708-002\nalta\n97.1\n19\n6\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.170136\n\n\nALERT-20260708-003\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.031775\n\n\nALERT-20260708-004\nalta\n54.1\n27\n0\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.664027\n\n\nALERT-20260708-005\nalta\n41.7\n10\n0\n10\n350.6\n2026-07-07 13:53:00\n43.62309\n3.204440\n\n\nALERT-20260708-006\nalta\n36.9\n7\n2\n7\n17.8\n2026-07-08 03:49:00\n42.98116\n-6.428216\n\n\nALERT-20260708-007\nalta\n36.1\n8\n0\n8\n427.9\n2026-07-07 14:10:00\n35.46572\n-1.117398\n\n\nALERT-20260708-008\nalta\n30.1\n7\n2\n4\n11.8\n2026-07-08 03:49:00\n43.02468\n-5.531967\n\n\nALERT-20260708-009\nmedia\n149.9\n65\n0\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.219421\n\n\nALERT-20260708-010\nmedia\n68.6\n27\n0\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.328484"
   },
   {
     "objectID": "assets/alerts/operational_report.html#resumen",
     "href": "assets/alerts/operational_report.html#resumen",
     "title": "Informe operativo automático",
     "section": "",
-    "text": "Focos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 40.\nAlertas medias: 35."
+    "text": "Focos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 8.\nAlertas medias: 53."
   },
   {
     "objectID": "assets/alerts/operational_report.html#criterio-de-clasificación",
@@ -123,21 +123,21 @@
     "href": "assets/alerts/operational_report.html#principales-alertas",
     "title": "Informe operativo automático",
     "section": "",
-    "text": "ID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n254.9\n65\n21\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.2194212\n\n\nALERT-20260708-002\nalta\n162.1\n19\n19\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.1701358\n\n\nALERT-20260708-003\nalta\n121.6\n14\n14\n14\n123.1\n2026-07-08 02:30:00\n40.40091\n-7.2594386\n\n\nALERT-20260708-004\nalta\n113.5\n59\n2\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.1271242\n\n\nALERT-20260708-005\nalta\n108.6\n27\n8\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.3284841\n\n\nALERT-20260708-006\nalta\n103.2\n26\n8\n15\n35.9\n2026-07-08 02:30:00\n36.67410\n3.1289723\n\n\nALERT-20260708-007\nalta\n89.5\n11\n10\n11\n24.7\n2026-07-08 02:30:00\n35.78814\n-0.2597455\n\n\nALERT-20260708-008\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.0317747\n\n\nALERT-20260708-009\nalta\n74.1\n27\n4\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.6640270\n\n\nALERT-20260708-010\nalta\n71.6\n8\n8\n8\n43.9\n2026-07-08 02:28:00\n43.35963\n-4.7465675"
+    "text": "ID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n103.5\n59\n0\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.127124\n\n\nALERT-20260708-002\nalta\n97.1\n19\n6\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.170136\n\n\nALERT-20260708-003\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.031775\n\n\nALERT-20260708-004\nalta\n54.1\n27\n0\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.664027\n\n\nALERT-20260708-005\nalta\n41.7\n10\n0\n10\n350.6\n2026-07-07 13:53:00\n43.62309\n3.204440\n\n\nALERT-20260708-006\nalta\n36.9\n7\n2\n7\n17.8\n2026-07-08 03:49:00\n42.98116\n-6.428216\n\n\nALERT-20260708-007\nalta\n36.1\n8\n0\n8\n427.9\n2026-07-07 14:10:00\n35.46572\n-1.117398\n\n\nALERT-20260708-008\nalta\n30.1\n7\n2\n4\n11.8\n2026-07-08 03:49:00\n43.02468\n-5.531967\n\n\nALERT-20260708-009\nmedia\n149.9\n65\n0\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.219421\n\n\nALERT-20260708-010\nmedia\n68.6\n27\n0\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.328484"
   },
   {
     "objectID": "data/processed/operational_report.html",
     "href": "data/processed/operational_report.html",
     "title": "Informe operativo automático",
     "section": "",
-    "text": "Generado UTC: 2026-07-08T07:51:44Z\n\n\n\nFocos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 40.\nAlertas medias: 35.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n254.9\n65\n21\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.2194212\n\n\nALERT-20260708-002\nalta\n162.1\n19\n19\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.1701358\n\n\nALERT-20260708-003\nalta\n121.6\n14\n14\n14\n123.1\n2026-07-08 02:30:00\n40.40091\n-7.2594386\n\n\nALERT-20260708-004\nalta\n113.5\n59\n2\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.1271242\n\n\nALERT-20260708-005\nalta\n108.6\n27\n8\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.3284841\n\n\nALERT-20260708-006\nalta\n103.2\n26\n8\n15\n35.9\n2026-07-08 02:30:00\n36.67410\n3.1289723\n\n\nALERT-20260708-007\nalta\n89.5\n11\n10\n11\n24.7\n2026-07-08 02:30:00\n35.78814\n-0.2597455\n\n\nALERT-20260708-008\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.0317747\n\n\nALERT-20260708-009\nalta\n74.1\n27\n4\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.6640270\n\n\nALERT-20260708-010\nalta\n71.6\n8\n8\n8\n43.9\n2026-07-08 02:28:00\n43.35963\n-4.7465675"
+    "text": "Generado UTC: 2026-07-08T08:42:51Z\n\n\n\nFocos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 8.\nAlertas medias: 53.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n103.5\n59\n0\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.127124\n\n\nALERT-20260708-002\nalta\n97.1\n19\n6\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.170136\n\n\nALERT-20260708-003\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.031775\n\n\nALERT-20260708-004\nalta\n54.1\n27\n0\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.664027\n\n\nALERT-20260708-005\nalta\n41.7\n10\n0\n10\n350.6\n2026-07-07 13:53:00\n43.62309\n3.204440\n\n\nALERT-20260708-006\nalta\n36.9\n7\n2\n7\n17.8\n2026-07-08 03:49:00\n42.98116\n-6.428216\n\n\nALERT-20260708-007\nalta\n36.1\n8\n0\n8\n427.9\n2026-07-07 14:10:00\n35.46572\n-1.117398\n\n\nALERT-20260708-008\nalta\n30.1\n7\n2\n4\n11.8\n2026-07-08 03:49:00\n43.02468\n-5.531967\n\n\nALERT-20260708-009\nmedia\n149.9\n65\n0\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.219421\n\n\nALERT-20260708-010\nmedia\n68.6\n27\n0\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.328484"
   },
   {
     "objectID": "data/processed/operational_report.html#resumen",
     "href": "data/processed/operational_report.html#resumen",
     "title": "Informe operativo automático",
     "section": "",
-    "text": "Focos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 40.\nAlertas medias: 35."
+    "text": "Focos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 8.\nAlertas medias: 53."
   },
   {
     "objectID": "data/processed/operational_report.html#criterio-de-clasificación",
@@ -151,21 +151,21 @@
     "href": "data/processed/operational_report.html#principales-alertas",
     "title": "Informe operativo automático",
     "section": "",
-    "text": "ID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n254.9\n65\n21\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.2194212\n\n\nALERT-20260708-002\nalta\n162.1\n19\n19\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.1701358\n\n\nALERT-20260708-003\nalta\n121.6\n14\n14\n14\n123.1\n2026-07-08 02:30:00\n40.40091\n-7.2594386\n\n\nALERT-20260708-004\nalta\n113.5\n59\n2\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.1271242\n\n\nALERT-20260708-005\nalta\n108.6\n27\n8\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.3284841\n\n\nALERT-20260708-006\nalta\n103.2\n26\n8\n15\n35.9\n2026-07-08 02:30:00\n36.67410\n3.1289723\n\n\nALERT-20260708-007\nalta\n89.5\n11\n10\n11\n24.7\n2026-07-08 02:30:00\n35.78814\n-0.2597455\n\n\nALERT-20260708-008\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.0317747\n\n\nALERT-20260708-009\nalta\n74.1\n27\n4\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.6640270\n\n\nALERT-20260708-010\nalta\n71.6\n8\n8\n8\n43.9\n2026-07-08 02:28:00\n43.35963\n-4.7465675"
+    "text": "ID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n103.5\n59\n0\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.127124\n\n\nALERT-20260708-002\nalta\n97.1\n19\n6\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.170136\n\n\nALERT-20260708-003\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.031775\n\n\nALERT-20260708-004\nalta\n54.1\n27\n0\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.664027\n\n\nALERT-20260708-005\nalta\n41.7\n10\n0\n10\n350.6\n2026-07-07 13:53:00\n43.62309\n3.204440\n\n\nALERT-20260708-006\nalta\n36.9\n7\n2\n7\n17.8\n2026-07-08 03:49:00\n42.98116\n-6.428216\n\n\nALERT-20260708-007\nalta\n36.1\n8\n0\n8\n427.9\n2026-07-07 14:10:00\n35.46572\n-1.117398\n\n\nALERT-20260708-008\nalta\n30.1\n7\n2\n4\n11.8\n2026-07-08 03:49:00\n43.02468\n-5.531967\n\n\nALERT-20260708-009\nmedia\n149.9\n65\n0\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.219421\n\n\nALERT-20260708-010\nmedia\n68.6\n27\n0\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.328484"
   },
   {
     "objectID": "CHANGELOG.html#v0.5.1---2026-07-08",
     "href": "CHANGELOG.html#v0.5.1---2026-07-08",
-    "title": "Changelog",
-    "section": "",
-    "text": "Corrección de robustez del histórico temporal.\n\n\n\nNormalización estricta de tipos en dashboard_history.csv.\nEvita errores de bind_rows() cuando el histórico está vacío o contiene columnas NA interpretadas como logical.\nNormalización básica de tipos en históricos administrativos por CCAA y provincia."
+    "title": "Cambios",
+    "section": "v0.5.1 - 2026-07-08",
+    "text": "v0.5.1 - 2026-07-08\nCorrección de robustez del histórico temporal.\n\nCorregido\n\nNormalización estricta de tipos en dashboard_history.csv.\nEvita errores de bind_rows() cuando el histórico está vacío o contiene columnas NA interpretadas como logical.\nNormalización básica de tipos en históricos administrativos por CCAA y provincia."
   },
   {
     "objectID": "CHANGELOG.html#v0.5.0---2026-07-08",
     "href": "CHANGELOG.html#v0.5.0---2026-07-08",
-    "title": "Changelog",
-    "section": "",
-    "text": "Añade histórico temporal del dashboard y página de evolución operativa.\n\n\n\nNuevo módulo R/history.R.\nScript scripts/09_update_dashboard_history.R.\nNueva página history.qmd / history.html.\nHistórico agregado en data/processed/dashboard_history.csv y assets/history/dashboard_history.csv.\nHistórico territorial de CCAA y provincias.\nGráficos de evolución de focos FIRMS, focos recientes, FRP total y alertas.\nVariables HISTORY_MODE y HISTORY_KEEP_DAYS.\nWorkflow actualizado para publicar assets históricos."
+    "title": "Cambios",
+    "section": "v0.5.0 - 2026-07-08",
+    "text": "v0.5.0 - 2026-07-08\nAñade histórico temporal del dashboard y página de evolución operativa.\n\nIncluye\n\nNuevo módulo R/history.R.\nScript scripts/09_update_dashboard_history.R.\nNueva página history.qmd / history.html.\nHistórico agregado en data/processed/dashboard_history.csv y assets/history/dashboard_history.csv.\nHistórico territorial de CCAA y provincias.\nGráficos de evolución de focos FIRMS, focos recientes, FRP total y alertas.\nVariables HISTORY_MODE y HISTORY_KEEP_DAYS.\nWorkflow actualizado para publicar assets históricos."
   },
   {
     "objectID": "history.html",
@@ -240,9 +240,9 @@
   {
     "objectID": "CHANGELOG.html#v0.5.2---2026-07-08",
     "href": "CHANGELOG.html#v0.5.2---2026-07-08",
-    "title": "Changelog",
-    "section": "",
-    "text": "Ajustes de presentación y corrección de CRS para límites administrativos.\n\n\n\nEl mapa principal pasa a ocupar más altura de pantalla (84vh) y deja de compartir página con el resumen operativo.\nEl resumen operativo se mueve a una página independiente summary.qmd / summary.html.\nLa navegación añade una pestaña Resumen.\n\n\n\n\n\nLas geometrías NUTS se descargan en EPSG:3035 y se transforman explícitamente a EPSG:4326 antes de publicarse como GeoJSON.\nLa lectura de límites administrativos fuerza EPSG:4326 antes de dibujar en Leaflet y antes de hacer cruces espaciales con FIRMS.\nSe añade una comprobación de bbox para detectar geometrías administrativas fuera de rango lon/lat."
+    "title": "Cambios",
+    "section": "v0.5.2 - 2026-07-08",
+    "text": "v0.5.2 - 2026-07-08\nAjustes de presentación y corrección de CRS para límites administrativos.\n\nCambiado\n\nEl mapa principal pasa a ocupar más altura de pantalla (84vh) y deja de compartir página con el resumen operativo.\nEl resumen operativo se mueve a una página independiente summary.qmd / summary.html.\nLa navegación añade una pestaña Resumen.\n\n\n\nCorregido\n\nLas geometrías NUTS se descargan en EPSG:3035 y se transforman explícitamente a EPSG:4326 antes de publicarse como GeoJSON.\nLa lectura de límites administrativos fuerza EPSG:4326 antes de dibujar en Leaflet y antes de hacer cruces espaciales con FIRMS.\nSe añade una comprobación de bbox para detectar geometrías administrativas fuera de rango lon/lat."
   },
   {
     "objectID": "CHANGELOG.html#v0.5.3---2026-07-08",
@@ -310,22 +310,78 @@
   {
     "objectID": "CHANGELOG.html#v0.5.14---2026-07-08",
     "href": "CHANGELOG.html#v0.5.14---2026-07-08",
-    "title": "Changelog",
-    "section": "",
-    "text": "Integra la descarga SIG clásica de AEMET (/es/api-eltiempo/incendios/download) como proveedor principal.\nExtrae el paquete .tar.gz de AEMET y publica los GeoTIFFs down_YYYYMMDD_peligro_[p|c]_D00..D07.tif.\nEvita usar PNG de AEMET como imageOverlay salvo que AEMET_ALLOW_PNG_OVERLAY=true.\nAñade scripts/22_install_classic_probe_geotiffs.R para instalar GeoTIFFs desde el diagnóstico clásico ya ejecutado."
+    "title": "Cambios",
+    "section": "v0.5.14 - 2026-07-08",
+    "text": "v0.5.14 - 2026-07-08\n\nFixed\n\nIntegra la descarga SIG clásica de AEMET (/es/api-eltiempo/incendios/download) como proveedor principal.\nExtrae el paquete .tar.gz de AEMET y publica los GeoTIFFs down_YYYYMMDD_peligro_[p|c]_D00..D07.tif.\nEvita usar PNG de AEMET como imageOverlay salvo que AEMET_ALLOW_PNG_OVERLAY=true.\nAñade scripts/22_install_classic_probe_geotiffs.R para instalar GeoTIFFs desde el diagnóstico clásico ya ejecutado."
   },
   {
     "objectID": "CHANGELOG.html#v0.5.16",
     "href": "CHANGELOG.html#v0.5.16",
-    "title": "Changelog",
-    "section": "",
-    "text": "Ordena las capas AEMET del selector Leaflet para mostrar primero Península y Baleares, después Baleares si existe como producto independiente, y finalmente Canarias.\nRefuerza el mismo orden tanto al preparar layers.csv/layers.json como al leer catálogos existentes desde index.qmd."
+    "title": "Cambios",
+    "section": "v0.5.16",
+    "text": "v0.5.16\n\nOrdena las capas AEMET del selector Leaflet para mostrar primero Península y Baleares, después Baleares si existe como producto independiente, y finalmente Canarias.\nRefuerza el mismo orden tanto al preparar layers.csv/layers.json como al leer catálogos existentes desde index.qmd."
   },
   {
     "objectID": "CHANGELOG.html#v0.5.15---2026-07-08",
     "href": "CHANGELOG.html#v0.5.15---2026-07-08",
-    "title": "Changelog",
+    "title": "Cambios",
+    "section": "v0.5.15 - 2026-07-08",
+    "text": "v0.5.15 - 2026-07-08\n\nFixed\n\nAjusta la generación del overlay AEMET para Leaflet: por defecto reproyecta los GeoTIFFs a EPSG:3857/Web Mercator antes de exportarlos a PNG.\nCalcula los LatLngBounds de Leaflet a partir de la extensión Web Mercator transformada de vuelta a EPSG:4326.\nAñade AEMET_LEAFLET_PROJECTION, AEMET_BOUNDS_NUDGE_LON y AEMET_BOUNDS_NUDGE_LAT para controlar el ajuste del overlay.\nAñade scripts/23_diagnose_aemet_alignment.R para auditar CRS, bounds y dimensiones de los PNG generados."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.24",
+    "href": "CHANGELOG.html#v0.5.24",
+    "title": "Cambios",
     "section": "",
-    "text": "Ajusta la generación del overlay AEMET para Leaflet: por defecto reproyecta los GeoTIFFs a EPSG:3857/Web Mercator antes de exportarlos a PNG.\nCalcula los LatLngBounds de Leaflet a partir de la extensión Web Mercator transformada de vuelta a EPSG:4326.\nAñade AEMET_LEAFLET_PROJECTION, AEMET_BOUNDS_NUDGE_LON y AEMET_BOUNDS_NUDGE_LAT para controlar el ajuste del overlay.\nAñade scripts/23_diagnose_aemet_alignment.R para auditar CRS, bounds y dimensiones de los PNG generados."
+    "text": "Corrige la construcción de URLs WMS de EFFIS para mantener BBOX con comas sin re-codificación.\nAlinea la petición GetMap con el ejemplo oficial de EFFIS (SERVICE=wms, BBOX decimal y URL manual).\nDetecta respuestas XML OGC como xml y extrae el mensaje de ServiceException.\nAñade wms_bbox en el diagnóstico para distinguir el BBOX configurado del BBOX realmente enviado."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.22",
+    "href": "CHANGELOG.html#v0.5.22",
+    "title": "Cambios",
+    "section": "v0.5.22",
+    "text": "v0.5.22\n\nRefuerza el diagnóstico EFFIS: lee fechas disponibles desde GetCapabilities/TIME.\nPrueba automáticamente los endpoints actual e histórico de EFFIS.\nPrueba WMS 1.1.1 y 1.3.0, corrigiendo el orden BBOX de EPSG:4326 en WMS 1.3.0.\nAñade matrices de prueba para formatos PNG/TIFF, BBOX oficial EFFIS y BBOX del visor.\nEl modo estático selecciona el primer GetMap con píxeles visibles y genera el overlay local desde esa respuesta."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.21",
+    "href": "CHANGELOG.html#v0.5.21",
+    "title": "Cambios",
+    "section": "v0.5.21",
+    "text": "v0.5.21\n\nCambia EFFIS a modo estático por defecto: descarga GetMap como image/tiff, convierte a PNG y lo publica en assets/effis/.\nAñade scripts/26_prepare_effis_assets.R al pipeline.\nMejora scripts/25_check_effis_wms.R para probar image/png e image/tiff, registrar cabeceras, primeros bytes y píxeles válidos.\nAñade panel Leaflet específico para activar/desactivar EFFIS FWI y controlar su opacidad.\nAñade assets/effis/** a los recursos Quarto."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.20---effis-wms-robusto",
+    "href": "CHANGELOG.html#v0.5.20---effis-wms-robusto",
+    "title": "Cambios",
+    "section": "v0.5.20 - EFFIS WMS robusto",
+    "text": "v0.5.20 - EFFIS WMS robusto\n\nCorrige scripts/25_check_effis_wms.R para no usar httr2::url_build(query=...), incompatible con algunas versiones de httr2.\nCorrige la integración EFFIS/Copernicus WMS en Leaflet.\nEnvía parámetros WMS en mayúsculas, incluido TIME, tal como requiere el servicio.\nUsa EPSG:4326 para las peticiones WMS de EFFIS, coherente con el ejemplo oficial.\nCrea un pane propio effisPane para que EFFIS quede visible por encima de AEMET cuando se active.\nDeja EFFIS desactivado por defecto en el control de capas para evitar que quede oculto bajo AEMET.\nAñade fechas fallback (EFFIS_FALLBACK_DAYS) y diagnóstico scripts/25_check_effis_wms.R."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.18",
+    "href": "CHANGELOG.html#v0.5.18",
+    "title": "Cambios",
+    "section": "v0.5.18",
+    "text": "v0.5.18\n\nCorrige la convención temporal de los GeoTIFFs clásicos de AEMET: D00 se interpreta como primer día previsto y, por defecto, válido para YYYYMMDD + 1.\nAñade la variable AEMET_CLASSIC_VALID_START_OFFSET_DAYS=1 para ajustar la convención si AEMET cambiase el paquete.\nCambia las etiquetas de horizonte a Día 1, Día 2, etc., en lugar de D+0, D+1."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.17",
+    "href": "CHANGELOG.html#v0.5.17",
+    "title": "Cambios",
+    "section": "v0.5.17",
+    "text": "v0.5.17\n\nCorrige la interpretación temporal de los GeoTIFFs clásicos de AEMET: down_YYYYMMDD_..._Dxx.tif usa YYYYMMDD como fecha de emisión y Dxx como horizonte.\nEl catálogo Leaflet usa ahora valid_date = issue_date + D, por lo que D01 de un paquete emitido el 2026-07-07 se muestra como válido para 2026-07-08.\nEl nombre de los GeoTIFFs instalados en data/raw/aemet/ usa la fecha válida, no la fecha de emisión.\nEl selector Leaflet mantiene primero Península/Baleares, pero dentro de cada zona prioriza la capa válida para la fecha de renderizado.\nAñade scripts/24_check_aemet_valid_dates.R para auditar issue_date, valid_date y las primeras capas del catálogo."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.24-1",
+    "href": "CHANGELOG.html#v0.5.24-1",
+    "title": "Cambios",
+    "section": "v0.5.24",
+    "text": "v0.5.24\n\nEFFIS: cambia la configuración recomendada a EFFIS_WMS_LAYERS=auto.\nEFFIS: extrae nombres reales de capa desde GetCapabilities y evita seguir probando ecmwf007.fwi si el servidor lo devuelve como capa inválida.\nEFFIS: el diagnóstico 25_check_effis_wms.R guarda data/raw/effis/effis_available_layers.csv y muestra las capas candidatas FWI/fire danger."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.25",
+    "href": "CHANGELOG.html#v0.5.25",
+    "title": "Cambios",
+    "section": "",
+    "text": "Prioriza image/png para EFFIS estático y usa el PNG WMS directamente cuando ya contiene píxeles visibles.\nMantiene image/tiff como alternativa, pero evita que un fallo de conversión TIFF bloquee la publicación.\nRegistra errores de conversión en data/raw/effis/effis_conversion_errors.csv.\nAñade wms_bbox y file_type al catálogo final EFFIS para depuración.\nRecomienda https://ies-ows.jrc.ec.europa.eu/effis y ecmwf.fwi.danger_index como capa operativa."
   }
 ]
