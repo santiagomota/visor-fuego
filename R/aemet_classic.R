@@ -80,28 +80,36 @@ parse_classic_tif_filename <- function(file) {
   issue_date <- as.Date(m[1, 2], format = "%Y%m%d")
   classic_d <- as.integer(m[1, 4])
 
-  # En el paquete clásico, YYYYMMDD identifica la generación/emisión del paquete.
-  # La serie D00..D07 representa los mapas previstos disponibles a partir del
-  # primer día de validez. En la práctica operativa observada, un paquete
-  # down_20260707_..._D00 contiene el primer mapa previsto visible el 2026-07-08.
-  # Por eso el desplazamiento por defecto es +1 día respecto a YYYYMMDD.
+  # En el paquete clásico, YYYYMMDD identifica la fecha del mapa D00.
+  # La serie D00..D07 representa días consecutivos: D00 = YYYYMMDD,
+  # D01 = YYYYMMDD + 1, etc. La web de AEMET etiqueta los mapas como fechas
+  # civiles 00-24h, por lo que no se debe sumar un día adicional por defecto.
+  #
+  # El índice operativo que mostramos al usuario sigue siendo Día 1, Día 2, ...
+  # para D00, D01, ... respectivamente. Es decir:
+  #   down_20260709_..._D00 -> válido 2026-07-09 -> Día 1
+  #   down_20260709_..._D01 -> válido 2026-07-10 -> Día 2
+  #
+  # La variable permite corregir un cambio futuro de convención sin tocar código,
+  # pero el valor recomendado desde v0.5.36 es 0.
   valid_start_offset_days <- suppressWarnings(as.integer(Sys.getenv(
     "AEMET_CLASSIC_VALID_START_OFFSET_DAYS",
-    "1"
+    "0"
   )))
-  if (is.na(valid_start_offset_days)) valid_start_offset_days <- 1L
+  if (is.na(valid_start_offset_days)) valid_start_offset_days <- 0L
 
-  forecast_day <- classic_d + valid_start_offset_days
-  valid_date <- issue_date + forecast_day
+  forecast_lead_days <- classic_d + valid_start_offset_days
+  valid_date <- issue_date + forecast_lead_days
+  display_day <- classic_d + 1L
 
   tibble::tibble(
     issue_date = as.character(issue_date),
     valid_date = as.character(valid_date),
     date = as.character(valid_date),
     area = m[1, 3],
-    dia = forecast_day,
-    forecast_day = forecast_day,
-    forecast_label = paste0("Día ", forecast_day),
+    dia = display_day,
+    forecast_day = display_day,
+    forecast_label = paste0("Día ", display_day),
     original_file = as.character(file)
   )
 }

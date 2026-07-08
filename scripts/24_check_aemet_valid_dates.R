@@ -18,10 +18,10 @@ if (!"valid_date" %in% names(manifest)) {
   message("  Rscript scripts/01_download_aemet_incendios.R")
   message("  Rscript scripts/02_prepare_web_assets.R")
 } else {
-  message("Manifest AEMET: fechas de emisión, primer día de validez y horizonte")
+  message("Manifest AEMET: fechas de fichero, fecha válida y horizonte visible")
   message("
-Nota: en la fuente clásica, down_YYYYMMDD_..._D00 se interpreta por defecto como Día 1, válido para YYYYMMDD + 1.")
-  message("Puedes cambiarlo con AEMET_CLASSIC_VALID_START_OFFSET_DAYS si AEMET cambia la convención.")
+Nota v0.5.36: en la fuente clásica, down_YYYYMMDD_..._D00 se interpreta como Día 1, válido para YYYYMMDD. D01 es Día 2 y válido para YYYYMMDD + 1.")
+  message("El valor recomendado de AEMET_CLASSIC_VALID_START_OFFSET_DAYS es 0.")
   manifest |>
     dplyr::filter(status == "downloaded", file_type == "raster") |>
     dplyr::mutate(
