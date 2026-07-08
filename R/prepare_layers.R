@@ -22,6 +22,38 @@ allow_aemet_png_overlay <- function() {
   tolower(Sys.getenv("AEMET_ALLOW_PNG_OVERLAY", unset = "false")) %in% c("1", "true", "yes", "si", "sí")
 }
 
+# Leaflet usa EPSG:3857/Web Mercator para la vista del mapa. Si se genera un PNG
+# directamente desde un raster EPSG:4326 y se estira con L.imageOverlay(), el ajuste
+# puede desviarse ligeramente en áreas grandes. Por defecto reproyectamos a 3857
+# antes de generar el PNG y luego pasamos a Leaflet los bounds equivalentes en lon/lat.
+aemet_leaflet_projection <- function() {
+  value <- tolower(trimws(Sys.getenv("AEMET_LEAFLET_PROJECTION", unset = "3857")))
+  if (value %in% c("3857", "epsg:3857", "webmercator", "web_mercator", "mercator")) {
+    return("EPSG:3857")
+  }
+  if (value %in% c("4326", "epsg:4326", "lonlat", "lon_lat", "geographic", "wgs84")) {
+    return("EPSG:4326")
+  }
+  warning("AEMET_LEAFLET_PROJECTION no reconocido: ", value, ". Uso EPSG:3857.", call. = FALSE)
+  "EPSG:3857"
+}
+
+read_numeric_env <- function(name, default = 0) {
+  value <- suppressWarnings(as.numeric(Sys.getenv(name, unset = as.character(default))))
+  if (length(value) == 0 || is.na(value)) default else value
+}
+
+apply_bounds_nudge <- function(bounds) {
+  lon <- read_numeric_env("AEMET_BOUNDS_NUDGE_LON", 0)
+  lat <- read_numeric_env("AEMET_BOUNDS_NUDGE_LAT", 0)
+  if (identical(lon, 0) && identical(lat, 0)) return(bounds)
+
+  list(
+    list(bounds[[1]][[1]] + lat, bounds[[1]][[2]] + lon),
+    list(bounds[[2]][[1]] + lat, bounds[[2]][[2]] + lon)
+  )
+}
+
 hex_to_rgba <- function(hex, alpha = 1) {
   rgb <- grDevices::col2rgb(hex) / 255
   c(rgb[, 1], alpha)
@@ -34,20 +66,66 @@ label_for_values <- function(vals) {
   paste("Nivel", vals)
 }
 
-write_spatraster_png <- function(file, out_png) {
-  r <- terra::rast(file)
+extent_vector <- function(r) {
+  ev <- as.vector(terra::ext(r)) # xmin, xmax, ymin, ymax
+  stats::setNames(as.numeric(ev), c("xmin", "xmax", "ymin", "ymax"))
+}
 
-  crs_txt <- terra::crs(r)
+extent_to_leaflet_bounds <- function(r, crs_hint = terra::crs(r)) {
+  ev <- extent_vector(r)
+
+  if (grepl("3857", crs_hint, fixed = TRUE)) {
+    # Un PNG en Web Mercator debe estirarse en la proyección interna de Leaflet.
+    # Transformamos solo las esquinas del rectángulo proyectado de vuelta a lon/lat
+    # para suministrar LatLngBounds a L.imageOverlay().
+    pts <- terra::vect(
+      data.frame(x = c(ev[["xmin"]], ev[["xmax"]]), y = c(ev[["ymin"]], ev[["ymax"]])),
+      geom = c("x", "y"),
+      crs = "EPSG:3857"
+    )
+    pts_4326 <- terra::project(pts, "EPSG:4326")
+    xy <- terra::crds(pts_4326)
+    bounds <- list(
+      list(as.numeric(min(xy[, 2])), as.numeric(min(xy[, 1]))),
+      list(as.numeric(max(xy[, 2])), as.numeric(max(xy[, 1])))
+    )
+  } else {
+    # Caso EPSG:4326 u otra proyección lon/lat ya normalizada.
+    bounds <- list(
+      list(as.numeric(ev[["ymin"]]), as.numeric(ev[["xmin"]])),
+      list(as.numeric(ev[["ymax"]]), as.numeric(ev[["xmax"]]))
+    )
+  }
+
+  apply_bounds_nudge(bounds)
+}
+
+project_for_leaflet <- function(r, target_crs = aemet_leaflet_projection()) {
+  source_crs <- terra::crs(r)
+  if (is.na(source_crs) || !nzchar(source_crs)) {
+    stop("Raster sin CRS", call. = FALSE)
+  }
+
+  if (grepl(sub("EPSG:", "", target_crs, fixed = TRUE), source_crs, fixed = TRUE)) {
+    return(r)
+  }
+
+  terra::project(r, target_crs, method = "near")
+}
+
+write_spatraster_png <- function(file, out_png) {
+  r_source <- terra::rast(file)
+
+  crs_txt <- terra::crs(r_source)
   if (is.na(crs_txt) || !nzchar(crs_txt)) {
     stop("Raster sin CRS: ", file, call. = FALSE)
   }
 
-  if (!grepl("4326", crs_txt, fixed = TRUE)) {
-    r <- terra::project(r, "EPSG:4326", method = "near")
-  }
+  target_crs <- aemet_leaflet_projection()
+  r_render <- project_for_leaflet(r_source, target_crs = target_crs)
+  r_render <- r_render[[1]]
 
-  r <- r[[1]]
-  m <- terra::as.matrix(r, wide = TRUE)
+  m <- terra::as.matrix(r_render, wide = TRUE)
   vals <- sort(unique(as.vector(m[!is.na(m)])))
 
   if (length(vals) == 0) {
@@ -77,18 +155,22 @@ write_spatraster_png <- function(file, out_png) {
   fs::dir_create(dirname(out_png))
   png::writePNG(arr, target = out_png)
 
-  e <- terra::ext(r)
-  ev <- as.vector(e) # xmin, xmax, ymin, ymax
+  res <- terra::res(r_render)
 
   list(
     url = out_png,
-    bounds = list(
-      list(as.numeric(ev[3]), as.numeric(ev[1])),
-      list(as.numeric(ev[4]), as.numeric(ev[2]))
-    ),
+    bounds = extent_to_leaflet_bounds(r_render, crs_hint = target_crs),
     values = vals,
     colours = unname(palette),
-    labels = label_for_values(vals)
+    labels = label_for_values(vals),
+    source_crs = crs_txt,
+    render_crs = target_crs,
+    source_extent = extent_vector(r_source),
+    render_extent = extent_vector(r_render),
+    ncol = terra::ncol(r_render),
+    nrow = terra::nrow(r_render),
+    resolution_x = as.numeric(res[1]),
+    resolution_y = as.numeric(res[2])
   )
 }
 
@@ -130,6 +212,14 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     labels <- risk_labels
     colours <- risk_palette
     layer_kind <- "image"
+    source_crs <- NA_character_
+    render_crs <- NA_character_
+    source_extent <- c(xmin = NA_real_, xmax = NA_real_, ymin = NA_real_, ymax = NA_real_)
+    render_extent <- c(xmin = NA_real_, xmax = NA_real_, ymin = NA_real_, ymax = NA_real_)
+    raster_ncol <- NA_integer_
+    raster_nrow <- NA_integer_
+    raster_res_x <- NA_real_
+    raster_res_y <- NA_real_
   } else if (file_type == "raster") {
     out_file <- file.path(out_dir, paste0(layer_id, ".png"))
     raster_info <- write_spatraster_png(file, out_file)
@@ -139,6 +229,14 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     labels <- raster_info$labels
     colours <- raster_info$colours
     layer_kind <- "image"
+    source_crs <- raster_info$source_crs
+    render_crs <- raster_info$render_crs
+    source_extent <- raster_info$source_extent
+    render_extent <- raster_info$render_extent
+    raster_ncol <- raster_info$ncol
+    raster_nrow <- raster_info$nrow
+    raster_res_x <- raster_info$resolution_x
+    raster_res_y <- raster_info$resolution_y
   } else if (file_type == "json" && is_probably_geojson(file)) {
     out_file <- file.path(out_dir, paste0(layer_id, ".geojson"))
     fs::file_copy(file, out_file, overwrite = TRUE)
@@ -148,6 +246,14 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     labels <- risk_labels
     colours <- risk_palette
     layer_kind <- "geojson"
+    source_crs <- NA_character_
+    render_crs <- NA_character_
+    source_extent <- c(xmin = NA_real_, xmax = NA_real_, ymin = NA_real_, ymax = NA_real_)
+    render_extent <- c(xmin = NA_real_, xmax = NA_real_, ymin = NA_real_, ymax = NA_real_)
+    raster_ncol <- NA_integer_
+    raster_nrow <- NA_integer_
+    raster_res_x <- NA_real_
+    raster_res_y <- NA_real_
   } else {
     stop("Formato no soportado para visor web: ", file, " [", file_type, "]", call. = FALSE)
   }
@@ -164,6 +270,14 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     source_file = file,
     url = layer_url,
     bounds_json = as.character(jsonlite::toJSON(bounds, auto_unbox = TRUE)),
+    source_crs = source_crs,
+    render_crs = render_crs,
+    source_extent_json = as.character(jsonlite::toJSON(as.list(source_extent), auto_unbox = TRUE)),
+    render_extent_json = as.character(jsonlite::toJSON(as.list(render_extent), auto_unbox = TRUE)),
+    raster_ncol = raster_ncol,
+    raster_nrow = raster_nrow,
+    raster_res_x = raster_res_x,
+    raster_res_y = raster_res_y,
     legend_labels = paste(labels, collapse = "|"),
     legend_colours = paste(colours, collapse = "|")
   )

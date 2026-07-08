@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5.15 - 2026-07-08
+
+### Fixed
+
+- Ajusta la generación del overlay AEMET para Leaflet: por defecto reproyecta los GeoTIFFs a EPSG:3857/Web Mercator antes de exportarlos a PNG.
+- Calcula los `LatLngBounds` de Leaflet a partir de la extensión Web Mercator transformada de vuelta a EPSG:4326.
+- Añade `AEMET_LEAFLET_PROJECTION`, `AEMET_BOUNDS_NUDGE_LON` y `AEMET_BOUNDS_NUDGE_LAT` para controlar el ajuste del overlay.
+- Añade `scripts/23_diagnose_aemet_alignment.R` para auditar CRS, bounds y dimensiones de los PNG generados.
+
+
 ## v0.5.14 - 2026-07-08
 
 ### Fixed

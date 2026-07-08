@@ -5,6 +5,14 @@
 AEMET_PROVIDER=classic
 AEMET_ALLOW_PNG_OVERLAY=false
 
+# Conversión AEMET para Leaflet.
+# 3857 reproyecta el GeoTIFF a Web Mercator antes de generar el PNG,
+# que suele alinear mejor con Leaflet que estirar un PNG en EPSG:4326.
+AEMET_LEAFLET_PROJECTION=3857
+# Ajuste manual residual en grados. Déjalo a 0 salvo que valides un desplazamiento sistemático.
+AEMET_BOUNDS_NUDGE_LON=0
+AEMET_BOUNDS_NUDGE_LAT=0
+
 # AEMET OpenData, solo necesario si AEMET_PROVIDER=opendata
 AEMET_API_KEY=pon_aqui_tu_api_key_de_aemet
 AEMET_AREAS=p,b,c

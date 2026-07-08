@@ -1,5 +1,35 @@
 # visor-fuego
 
+## Ajuste fino AEMET/Leaflet desde v0.5.15
+
+Desde `v0.5.15`, los GeoTIFFs de AEMET se convierten por defecto a PNG en **EPSG:3857/Web Mercator** antes de publicarse como `L.imageOverlay()`. Esto reduce la discrepancia visual frente al mapa base de Leaflet, porque Leaflet renderiza internamente en Web Mercator.
+
+Configuración recomendada:
+
+```text
+AEMET_PROVIDER=classic
+AEMET_ALLOW_PNG_OVERLAY=false
+AEMET_LEAFLET_PROJECTION=3857
+AEMET_BOUNDS_NUDGE_LON=0
+AEMET_BOUNDS_NUDGE_LAT=0
+```
+
+Regenera los assets AEMET:
+
+```bash
+Rscript scripts/02_prepare_web_assets.R
+quarto render --execute
+```
+
+Para auditar CRS, bounds y dimensiones PNG:
+
+```bash
+Rscript scripts/23_diagnose_aemet_alignment.R
+```
+
+Si después de validar visualmente queda un desplazamiento sistemático muy pequeño, puedes aplicar un ajuste manual residual en grados con `AEMET_BOUNDS_NUDGE_LON` y `AEMET_BOUNDS_NUDGE_LAT`. Déjalos a `0` salvo que hayas medido el desplazamiento.
+
+
 ## AEMET: proveedor recomendado
 
 Desde `v0.5.14`, el proveedor recomendado para AEMET es:
