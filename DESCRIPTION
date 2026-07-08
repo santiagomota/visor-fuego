@@ -1,8 +1,8 @@
 Package: visorfuego
 Title: Quarto Leaflet Viewer for Fire Risk and Active Fires
-Version: 0.5.15
+Version: 0.5.18
 Authors@R: person("Santiago", "Mota", role = c("aut", "cre"))
-Description: Static Quarto dashboard for AEMET GeoTIFF fire risk maps, NASA FIRMS active fire detections, EFFIS/Copernicus WMS layers, GISCO/NUTS operational summaries, automatic FIRMS cluster alerts and historical trend tracking and Web Mercator-aligned AEMET overlays.
+Description: Static Quarto dashboard for AEMET GeoTIFF fire risk maps, NASA FIRMS active fire detections, EFFIS/Copernicus WMS layers, GISCO/NUTS operational summaries, automatic FIRMS cluster alerts and historical trend tracking and Web Mercator-aligned AEMET overlays and valid-date handling for AEMET classic forecasts.
 License: MIT
 Encoding: UTF-8
 Depends:

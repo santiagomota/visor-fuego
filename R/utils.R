@@ -8,8 +8,8 @@ normalise_manifest_types <- function(x) {
 
   char_cols <- intersect(
     c(
-      "downloaded_at", "date", "status", "tipo", "area", "area_label",
-      "endpoint", "datos_url", "metadatos_url", "descripcion",
+      "downloaded_at", "date", "issue_date", "valid_date", "status", "tipo", "area", "area_label",
+      "endpoint", "datos_url", "metadatos_url", "descripcion", "forecast_label",
       "file", "file_type"
     ),
     names(x)
@@ -22,6 +22,9 @@ normalise_manifest_types <- function(x) {
 
   if ("dia" %in% names(x)) {
     x$dia <- suppressWarnings(as.integer(x$dia))
+  }
+  if ("forecast_day" %in% names(x)) {
+    x$forecast_day <- suppressWarnings(as.integer(x$forecast_day))
   }
   if ("estado" %in% names(x)) {
     x$estado <- suppressWarnings(as.integer(x$estado))

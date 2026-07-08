@@ -74,13 +74,34 @@ raw_preview_text <- function(raw, n = 300) {
 
 parse_classic_tif_filename <- function(file) {
   base <- basename(file)
-  m <- stringr::str_match(base, "^down_(\\d{8})_peligro_([pc])_D(\\d{2})\\.tif$")
+  m <- stringr::str_match(base, "^down_([0-9]{8})_peligro_([pc])_D([0-9]{2})\\.tif$")
   if (is.na(m[1, 1])) return(NULL)
 
+  issue_date <- as.Date(m[1, 2], format = "%Y%m%d")
+  classic_d <- as.integer(m[1, 4])
+
+  # En el paquete clásico, YYYYMMDD identifica la generación/emisión del paquete.
+  # La serie D00..D07 representa los mapas previstos disponibles a partir del
+  # primer día de validez. En la práctica operativa observada, un paquete
+  # down_20260707_..._D00 contiene el primer mapa previsto visible el 2026-07-08.
+  # Por eso el desplazamiento por defecto es +1 día respecto a YYYYMMDD.
+  valid_start_offset_days <- suppressWarnings(as.integer(Sys.getenv(
+    "AEMET_CLASSIC_VALID_START_OFFSET_DAYS",
+    "1"
+  )))
+  if (is.na(valid_start_offset_days)) valid_start_offset_days <- 1L
+
+  forecast_day <- classic_d + valid_start_offset_days
+  valid_date <- issue_date + forecast_day
+
   tibble::tibble(
-    date = as.character(as.Date(m[1, 2], format = "%Y%m%d")),
+    issue_date = as.character(issue_date),
+    valid_date = as.character(valid_date),
+    date = as.character(valid_date),
     area = m[1, 3],
-    dia = as.integer(m[1, 4]),
+    dia = forecast_day,
+    forecast_day = forecast_day,
+    forecast_label = paste0("Día ", forecast_day),
     original_file = as.character(file)
   )
 }
@@ -149,33 +170,53 @@ extract_classic_geotiffs <- function(archive_path, out_dir = "data/raw/aemet_cla
   # todos los D00..D07 para Península/Baleares (p) y Canarias (c), sin necesidad
   # de probar parámetros adicionales.
   meta |>
-    dplyr::arrange(area, dia, original_file) |>
-    dplyr::distinct(date, area, dia, .keep_all = TRUE)
+    dplyr::arrange(area, valid_date, dia, original_file) |>
+    dplyr::distinct(issue_date, area, dia, .keep_all = TRUE)
 }
 
 install_classic_geotiffs <- function(tif_meta, raw_dir = "data/raw/aemet") {
   fs::dir_create(raw_dir)
 
-  purrr::pmap_dfr(tif_meta, function(date, area, dia, original_file) {
-    date_compact <- format(as.Date(date), "%Y%m%d")
+  # Evita que queden GeoTIFFs clásicos con la fecha de emisión antigua en el
+  # nombre. Desde v0.5.17 el nombre usa la fecha válida de la predicción.
+  old_classic <- tryCatch(
+    fs::dir_ls(
+      raw_dir,
+      regexp = "aemet_incendios_[0-9]{8}_[pc]_previsto_d[0-9]+\\.tif$",
+      recurse = FALSE,
+      type = "file"
+    ),
+    error = function(e) character()
+  )
+  if (length(old_classic) > 0) fs::file_delete(old_classic)
+
+  purrr::pmap_dfr(tif_meta, function(issue_date, valid_date, date, area, dia, forecast_day, forecast_label, original_file) {
+    valid_compact <- format(as.Date(valid_date), "%Y%m%d")
     out_file <- file.path(
       raw_dir,
-      sprintf("aemet_incendios_%s_%s_previsto_d%s.tif", date_compact, area, dia)
+      sprintf("aemet_incendios_%s_%s_previsto_d%s.tif", valid_compact, area, dia)
     )
     fs::file_copy(original_file, out_file, overwrite = TRUE)
 
     tibble::tibble(
       downloaded_at = format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z"),
-      date = as.character(date),
+      date = as.character(valid_date),
+      issue_date = as.character(issue_date),
+      valid_date = as.character(valid_date),
       status = "downloaded",
       tipo = "previsto",
       dia = as.integer(dia),
+      forecast_day = as.integer(forecast_day),
+      forecast_label = as.character(forecast_label),
       area = as.character(area),
       area_label = area_label(area),
       endpoint = "/es/api-eltiempo/incendios/download",
       datos_url = AEMET_CLASSIC_DOWNLOAD,
       metadatos_url = NA_character_,
-      descripcion = "AEMET clásico: paquete SIG GeoTIFF extraído de /es/api-eltiempo/incendios/download",
+      descripcion = paste0(
+        "AEMET clásico: paquete SIG GeoTIFF extraído de /es/api-eltiempo/incendios/download; ",
+        "fecha de emisión ", issue_date, "; válido para ", valid_date, "; ", forecast_label
+      ),
       estado = 200L,
       http_status = 200L,
       file = as.character(out_file),
@@ -200,8 +241,8 @@ download_aemet_classic_incendios <- function(out_dir = "data/raw/aemet_classic",
   message("Manifest guardado en ", file.path(raw_dir, "manifest.csv"))
 
   summary <- manifest |>
-    dplyr::count(area_label, dia, file_type) |>
-    dplyr::arrange(area_label, dia)
+    dplyr::count(area_label, valid_date, dia, file_type) |>
+    dplyr::arrange(area_label, valid_date, dia)
   print(summary, n = Inf)
 
   invisible(manifest)
@@ -229,8 +270,8 @@ install_classic_probe_geotiffs <- function(contents_csv = "data/raw/aemet_classi
   tif_meta <- purrr::map(x$extracted_file, parse_classic_tif_filename) |>
     purrr::compact() |>
     dplyr::bind_rows() |>
-    dplyr::arrange(area, dia, original_file) |>
-    dplyr::distinct(date, area, dia, .keep_all = TRUE)
+    dplyr::arrange(area, valid_date, dia, original_file) |>
+    dplyr::distinct(issue_date, area, dia, .keep_all = TRUE)
 
   if (nrow(tif_meta) == 0) {
     stop("No se encontraron GeoTIFFs AEMET válidos en ", contents_csv, call. = FALSE)

@@ -12,6 +12,7 @@ AEMET_LEAFLET_PROJECTION=3857
 # Ajuste manual residual en grados. Déjalo a 0 salvo que valides un desplazamiento sistemático.
 AEMET_BOUNDS_NUDGE_LON=0
 AEMET_BOUNDS_NUDGE_LAT=0
+AEMET_CLASSIC_VALID_START_OFFSET_DAYS=1
 
 # AEMET OpenData, solo necesario si AEMET_PROVIDER=opendata
 AEMET_API_KEY=pon_aqui_tu_api_key_de_aemet

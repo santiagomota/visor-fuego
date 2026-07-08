@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.5.18
+
+- Corrige la convención temporal de los GeoTIFFs clásicos de AEMET: `D00` se interpreta como primer día previsto y, por defecto, válido para `YYYYMMDD + 1`.
+- Añade la variable `AEMET_CLASSIC_VALID_START_OFFSET_DAYS=1` para ajustar la convención si AEMET cambiase el paquete.
+- Cambia las etiquetas de horizonte a `Día 1`, `Día 2`, etc., en lugar de `D+0`, `D+1`.
+
+## v0.5.17
+
+- Corrige la interpretación temporal de los GeoTIFFs clásicos de AEMET: `down_YYYYMMDD_..._Dxx.tif` usa `YYYYMMDD` como fecha de emisión y `Dxx` como horizonte.
+- El catálogo Leaflet usa ahora `valid_date = issue_date + D`, por lo que `D01` de un paquete emitido el 2026-07-07 se muestra como válido para 2026-07-08.
+- El nombre de los GeoTIFFs instalados en `data/raw/aemet/` usa la fecha válida, no la fecha de emisión.
+- El selector Leaflet mantiene primero Península/Baleares, pero dentro de cada zona prioriza la capa válida para la fecha de renderizado.
+- Añade `scripts/24_check_aemet_valid_dates.R` para auditar `issue_date`, `valid_date` y las primeras capas del catálogo.
+
 ## v0.5.16
 
 - Ordena las capas AEMET del selector Leaflet para mostrar primero Península y Baleares, después Baleares si existe como producto independiente, y finalmente Canarias.

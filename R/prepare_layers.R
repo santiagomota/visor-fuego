@@ -56,6 +56,20 @@ aemet_area_display_rank <- function(area) {
   as.integer(rank)
 }
 
+valid_date_sort_rank <- function(valid_date, today = Sys.Date()) {
+  d <- suppressWarnings(as.Date(valid_date))
+  ifelse(
+    is.na(d),
+    999999L,
+    dplyr::case_when(
+      d == today ~ 0L,
+      d > today ~ as.integer(d - today),
+      TRUE ~ 10000L + as.integer(today - d)
+    )
+  ) |>
+    as.integer()
+}
+
 apply_bounds_nudge <- function(bounds) {
   lon <- read_numeric_env("AEMET_BOUNDS_NUDGE_LON", 0)
   lat <- read_numeric_env("AEMET_BOUNDS_NUDGE_LAT", 0)
@@ -275,8 +289,12 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     layer_id = layer_id,
     layer_kind = layer_kind,
     date = row$date,
+    issue_date = row$issue_date %||% NA_character_,
+    valid_date = row$valid_date %||% row$date,
     tipo = row$tipo,
     dia = row$dia,
+    forecast_day = row$forecast_day %||% row$dia,
+    forecast_label = row$forecast_label %||% ifelse(is.na(row$dia), NA_character_, paste0("D+", row$dia)),
     area = row$area,
     area_label = row$area_label,
     file_type = file_type,
@@ -349,7 +367,7 @@ parse_aemet_filename <- function(file) {
   base <- basename(file)
   m <- stringr::str_match(
     base,
-    "^aemet_incendios_(\\d{8})_([pbc])_(estimado|previsto)_(d\\d+|hoy)\\.(png|jpg|jpeg|webp|gif|tif|tiff|zip|json|geojson|bin)$"
+    "^aemet_incendios_([0-9]{8})_([pbc])_(estimado|previsto)_(d[0-9]+|hoy)\\.(png|jpg|jpeg|webp|gif|tif|tiff|zip|json|geojson|bin)$"
   )
 
   if (is.na(m[1, 1])) return(NULL)
@@ -363,9 +381,13 @@ parse_aemet_filename <- function(file) {
   tibble::tibble(
     downloaded_at = NA_character_,
     date = as.character(as.Date(date_txt, format = "%Y%m%d")),
+    issue_date = NA_character_,
+    valid_date = as.character(as.Date(date_txt, format = "%Y%m%d")),
     status = "downloaded",
     tipo = tipo,
     dia = dia,
+    forecast_day = dia,
+    forecast_label = ifelse(is.na(dia), NA_character_, paste0("D+", dia)),
     area = area,
     area_label = area_label(area),
     endpoint = NA_character_,
@@ -461,7 +483,9 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
 
   layers <- layers |>
     dplyr::mutate(
+      valid_date = dplyr::coalesce(valid_date, date),
       area_display_rank = aemet_area_display_rank(area),
+      valid_date_display_rank = valid_date_sort_rank(valid_date),
       tipo_display_rank = dplyr::case_when(
         tipo == "previsto" ~ 1L,
         tipo == "estimado" ~ 2L,
@@ -469,13 +493,14 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
       )
     ) |>
     dplyr::arrange(
-      dplyr::desc(date),
       area_display_rank,
+      valid_date_display_rank,
       tipo_display_rank,
       dplyr::coalesce(as.integer(dia), 0L),
+      dplyr::desc(issue_date),
       layer_id
     ) |>
-    dplyr::select(-area_display_rank, -tipo_display_rank)
+    dplyr::select(-area_display_rank, -valid_date_display_rank, -tipo_display_rank)
 
   readr::write_csv(layers, "data/processed/layers.csv")
 

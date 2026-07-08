@@ -1,6 +1,24 @@
 # visor-fuego
 
-> v0.5.16: el selector de capas AEMET muestra primero Península y Baleares y después Canarias.
+> v0.5.18: el mapa AEMET usa la fecha válida de la predicción (`issue_date + D`) y mantiene Península/Baleares antes que Canarias.
+
+## Fechas AEMET desde v0.5.18
+
+El paquete SIG clásico de AEMET contiene ficheros como `down_20260707_peligro_p_D01.tif`. En ese nombre, `20260707` es la **fecha de emisión** del paquete y `D01` es el horizonte de predicción. Por tanto, la fecha válida que debe aparecer en Leaflet es `2026-07-08`.
+
+Para auditarlo:
+
+```bash
+Rscript scripts/24_check_aemet_valid_dates.R
+```
+
+Regenera desde cero cuando quieras actualizar la fecha válida del mapa:
+
+```bash
+Rscript scripts/01_download_aemet_incendios.R
+Rscript scripts/02_prepare_web_assets.R
+quarto render --execute
+```
 
 ## Ajuste fino AEMET/Leaflet desde v0.5.15
 
@@ -307,3 +325,13 @@ EFFIS/Copernicus indica que sus datos son accesibles mediante WMS y que sus cont
 ## Versión
 
 `v0.4.0` añade alertas operativas automáticas, clústeres FIRMS y un informe estático `report.html` sobre la versión `v0.3.0`.
+
+
+### Convención temporal AEMET clásica
+
+En la descarga clásica de AEMET, los ficheros tienen nombres como `down_YYYYMMDD_peligro_p_D00.tif`. En el visor se interpreta `YYYYMMDD` como fecha de emisión/generación del paquete y `D00` como el **primer día previsto**. Por defecto:
+
+- `D00` -> `YYYYMMDD + 1` -> Día 1.
+- `D01` -> `YYYYMMDD + 2` -> Día 2.
+
+Esto puede ajustarse con `AEMET_CLASSIC_VALID_START_OFFSET_DAYS`, cuyo valor recomendado es `1`.
