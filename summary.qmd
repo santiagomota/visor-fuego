@@ -1,6 +1,6 @@
 ---
-title: "Mapa de riesgo de incendios"
-subtitle: "AEMET OpenData · NASA FIRMS · EFFIS/Copernicus · GISCO/NUTS"
+title: "Resumen operativo"
+subtitle: "Focos FIRMS · alertas · resumen territorial"
 format:
   html:
     page-layout: full
@@ -201,12 +201,6 @@ n_alerts_high <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data))
 n_alerts_medium <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "media", na.rm = TRUE) else 0L
 ```
 
-::: {.callout-warning}
-## Nota sobre la capa AEMET
-
-Las imágenes PNG descargadas de AEMET se conservan y se muestran en la página **AEMET**, pero no se usan como capa geográfica sobre Leaflet. En las pruebas de alineación no coinciden con el mapa base/NUTS al usarlas con `L.imageOverlay()`, por lo que superponerlas sería visualmente engañoso. El mapa principal mantiene como capas geográficas alineadas NASA FIRMS, alertas, límites NUTS y EFFIS WMS.
-:::
-
 ::: {.callout-note collapse="true"}
 ## Fuente y actualización
 
@@ -229,150 +223,64 @@ if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
 :::
 
 
+## Resumen operativo
 
-## Mapa
-
-```{r fire-map}
-base_groups <- c("Base clara", "Satélite")
-overlay_groups <- character()
-
-map <- leaflet(width = "100%", height = "84vh", options = leafletOptions(preferCanvas = TRUE, zoomControl = TRUE)) |>
-  addProviderTiles(providers$CartoDB.Positron, group = "Base clara") |>
-  addProviderTiles(providers$Esri.WorldImagery, group = "Satélite") |>
-  setView(lng = -3.7, lat = 40.2, zoom = 6)
-
-if (n_firms > 0) {
-  firms_data <- firms_data |>
-    mutate(
-      age_hours = suppressWarnings(as.numeric(age_hours)),
-      frp = suppressWarnings(as.numeric(frp))
-    )
-
-  if (!"popup_label" %in% names(firms_data)) {
-    firms_data <- firms_data |>
-      mutate(
-        popup_label = paste0(
-          "<strong>NASA FIRMS</strong><br>",
-          "Sensor: ", source_dataset, "<br>",
-          "Fecha UTC: ", acq_datetime_utc, "<br>",
-          "FRP: ", ifelse(is.na(frp), "s/d", paste0(frp, " MW"))
-        )
-      )
-  }
-
-  firms_data <- firms_data |>
-    mutate(
-      firms_colour = case_when(
-        is.na(age_hours) ~ "#666666",
-        age_hours <= 6 ~ "#d7191c",
-        age_hours <= 24 ~ "#fdae61",
-        age_hours <= 48 ~ "#ffffbf",
-        TRUE ~ "#999999"
-      ),
-      firms_radius = pmax(4, pmin(10, ifelse(is.na(frp), 5, sqrt(frp) + 3))),
-      popup = popup_label
-    )
-
-  map <- map |>
-    addCircleMarkers(
-      data = firms_data,
-      lng = ~longitude,
-      lat = ~latitude,
-      group = "NASA FIRMS - focos activos",
-      radius = ~firms_radius,
-      color = ~firms_colour,
-      fillColor = ~firms_colour,
-      fillOpacity = 0.82,
-      weight = 1,
-      popup = ~popup,
-      label = ~paste0("FIRMS · ", acq_datetime_utc)
-    )
-  overlay_groups <- c(overlay_groups, "NASA FIRMS - focos activos")
-}
-
-
-if (n_alerts > 0) {
-  if (!"popup_label" %in% names(alerts_data)) {
-    alerts_data <- alerts_data |>
-      mutate(popup_label = paste0("<strong>", cluster_id, "</strong><br>Nivel: ", alerta_operativa))
-  }
-
-  alerts_data <- alerts_data |>
-    mutate(
-      longitude = suppressWarnings(as.numeric(longitude)),
-      latitude = suppressWarnings(as.numeric(latitude)),
-      score = suppressWarnings(as.numeric(score)),
-      alert_colour = case_when(
-        alerta_operativa == "alta" ~ "#7b3294",
-        alerta_operativa == "media" ~ "#d7191c",
-        alerta_operativa == "seguimiento" ~ "#fdae61",
-        TRUE ~ "#666666"
-      ),
-      alert_radius = pmax(7, pmin(16, sqrt(pmax(1, score)) + 5)),
-      popup = as.character(popup_label)
-    ) |>
-    filter(!is.na(longitude), !is.na(latitude))
-
-  if (nrow(alerts_data) > 0) {
-    map <- map |>
-      addCircleMarkers(
-        data = alerts_data,
-        lng = ~longitude,
-        lat = ~latitude,
-        group = "Alertas operativas FIRMS",
-        radius = ~alert_radius,
-        color = ~alert_colour,
-        fillColor = ~alert_colour,
-        fillOpacity = 0.42,
-        weight = 3,
-        popup = ~popup,
-        label = ~paste0(cluster_id, " · ", alerta_operativa)
-      )
-    overlay_groups <- c(overlay_groups, "Alertas operativas FIRMS")
-  }
-}
-
-map <- add_effis_wms_layers(map)
-overlay_groups <- c(overlay_groups, effis_groups)
-
-map <- map |>
-  add_admin_boundaries("data/processed/admin_nuts2_ccaa.geojson", "CCAA (NUTS2)", weight = 1.2) |>
-  add_admin_boundaries("data/processed/admin_nuts3_provincias.geojson", "Provincias (NUTS3)", weight = 0.7)
-overlay_groups <- c(overlay_groups, "CCAA (NUTS2)", "Provincias (NUTS3)")
-
-map <- map |>
-  addScaleBar(position = "bottomleft") |>
-  addLayersControl(
-    baseGroups = base_groups,
-    overlayGroups = unique(overlay_groups),
-    options = layersControlOptions(collapsed = TRUE)
-  ) |>
-  hideGroup(c("CCAA (NUTS2)", "Provincias (NUTS3)")) |>
-  addControl(
-    html = HTML("<strong>Fuentes:</strong> AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS · Eurostat/GISCO<br><small>Visor informativo; no sustituye a avisos oficiales ni a servicios de emergencia.</small>"),
-    position = "bottomleft"
-  )
-
-if (n_firms > 0) {
-  map <- map |>
-    addControl(
-      html = HTML("<strong>NASA FIRMS</strong><br><span class='dot dot-red'></span>&lt; 6 h<br><span class='dot dot-orange'></span>6–24 h<br><span class='dot dot-yellow'></span>24–48 h<br><span class='dot dot-grey'></span>&gt; 48 h<br><strong>Alertas</strong><br><span class='dot dot-purple'></span>alta<br><span class='dot dot-darkred'></span>media"),
-      position = "bottomright"
-    )
-}
-
-map <- map |>
-  addControl(
-    html = HTML("<strong>AEMET</strong><br><small>Las imágenes oficiales de riesgo se muestran en la página AEMET. No se superponen sobre Leaflet porque el PNG descargado no alinea correctamente como <code>imageOverlay</code> rectangular.</small>"),
-    position = "topright"
-  )
-
-map
+```{r operational-summary, results='asis'}
+htmltools::tags$div(
+  class = "summary-grid",
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Focos FIRMS"), htmltools::tags$strong(safe_value(overview$n_firms))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Últimas 6 h"), htmltools::tags$strong(safe_value(overview$n_firms_6h))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Últimas 24 h"), htmltools::tags$strong(safe_value(overview$n_firms_24h))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("FRP total"), htmltools::tags$strong(paste0(safe_value(overview$frp_total_mw, "0"), " MW"))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("CCAA con focos"), htmltools::tags$strong(safe_value(overview$n_ccaa_con_focos))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Provincias con focos"), htmltools::tags$strong(safe_value(overview$n_provincias_con_focos))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas/clústeres"), htmltools::tags$strong(safe_value(n_alerts, "0"))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas altas"), htmltools::tags$strong(safe_value(n_alerts_high, "0")))
+)
 ```
 
-## Enlaces útiles
+```{r top-alertas}
+if (nrow(alerts_data) > 0) {
+  alerts_data |>
+    select(
+      ID = cluster_id,
+      Nivel = alerta_operativa,
+      Score = score,
+      Focos = n_focos,
+      `≤6 h` = n_ultimas_6h,
+      `≤24 h` = n_ultimas_24h,
+      `FRP total MW` = frp_total_mw,
+      `Última detección UTC` = ultima_deteccion_utc
+    ) |>
+    head(10) |>
+    knitr::kable(caption = "Alertas operativas generadas a partir de clústeres NASA FIRMS")
+} else {
+  cat("No hay alertas operativas. Ejecuta `Rscript scripts/08_build_operational_alerts.R` tras descargar FIRMS.")
+}
+```
 
-- [Visor oficial de incendios de AEMET](https://www.aemet.es/es/eltiempo/prediccion/incendios)
-- [AEMET OpenData](https://opendata.aemet.es/)
-- [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/)
-- [EFFIS / Copernicus EMS](https://forest-fire.emergency.copernicus.eu/)
+```{r top-provincias}
+if (nrow(summary_provincias) > 0) {
+  summary_provincias |>
+    select(
+      Provincia = admin_name,
+      Focos = n_focos,
+      `≤6 h` = n_ultimas_6h,
+      `≤24 h` = n_ultimas_24h,
+      `FRP total MW` = frp_total_mw,
+      Alerta = alerta_operativa,
+      `Última detección UTC` = ultima_deteccion_utc
+    ) |>
+    head(10) |>
+    knitr::kable(caption = "Provincias con más detecciones recientes según NASA FIRMS")
+} else {
+  cat("No hay resumen provincial disponible. Ejecuta `Rscript scripts/99_run_all.R` con límites GISCO y datos FIRMS.")
+}
+```
+
+
+## Enlaces
+
+- [Volver al mapa](index.html)
+- [Informe operativo](report.html)
+- [Evolución temporal](history.html)

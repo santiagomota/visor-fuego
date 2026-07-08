@@ -89,3 +89,33 @@ if (file.exists("data/processed/operational_alerts.csv")) {
     print(head(alerts[, cols], 10))
   }
 }
+
+if (file.exists("data/processed/dashboard_history.csv")) {
+  suppressPackageStartupMessages(library(readr))
+  hist <- readr::read_csv("data/processed/dashboard_history.csv", show_col_types = FALSE)
+  cat("\nHistórico del dashboard:", nrow(hist), "registros\n")
+  if (nrow(hist) > 0) {
+    cols <- intersect(c("snapshot_date", "n_firms", "n_firms_24h", "frp_total_mw", "n_alertas", "n_alertas_altas", "top_provincia"), names(hist))
+    print(tail(hist[, cols], 10))
+  }
+} else {
+  cat("\nHistórico del dashboard: no existe data/processed/dashboard_history.csv\n")
+}
+
+if (requireNamespace("sf", quietly = TRUE)) {
+  for (admin_path in c("data/processed/admin_nuts2_ccaa.geojson", "data/processed/admin_nuts3_provincias.geojson")) {
+    if (file.exists(admin_path)) {
+      x <- tryCatch(sf::st_read(admin_path, quiet = TRUE), error = function(e) NULL)
+      if (!is.null(x) && nrow(x) > 0) {
+        if (is.na(sf::st_crs(x))) sf::st_crs(x) <- 4326
+        x4326 <- sf::st_transform(x, 4326)
+        bb <- sf::st_bbox(x4326)
+        cat("\nBBOX", admin_path, "EPSG:4326:", paste(round(as.numeric(bb), 4), collapse = ", "), "\n")
+        plausible <- bb[["xmin"]] > -20.5 && bb[["xmax"]] < 6.5 && bb[["ymin"]] > 26 && bb[["ymax"]] < 45.5
+        cat("  Plausible España+Canarias:", plausible, "\n")
+      }
+    }
+  }
+}
+
+cat("\nPáginas Quarto esperadas: index.qmd, summary.qmd, report.qmd, history.qmd\n")

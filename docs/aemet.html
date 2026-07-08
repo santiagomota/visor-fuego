@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>changelog – Visor Fuego</title>
+<title>AEMET – Visor Fuego</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -101,7 +101,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Resumen</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./aemet.html"> 
+    <a class="nav-link active" href="./aemet.html" aria-current="page"> 
 <span class="menu-text">AEMET</span></a>
   </li>  
   <li class="nav-item">
@@ -132,165 +132,176 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">AEMET</h1>
+<p class="subtitle lead">Imágenes oficiales de riesgo de incendios</p>
+</div>
 
 
 
+<div class="quarto-title-meta column-page">
 
-<section id="changelog" class="level1">
-<h1>Changelog</h1>
-<section id="v0.5.4---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.4---2026-07-08">v0.5.4 - 2026-07-08</h2>
-<section id="cambiado" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado">Cambiado</h3>
-<ul>
-<li>Se retira la superposición geográfica directa de los PNG de AEMET sobre Leaflet, porque no alinean de forma fiable como <code>L.imageOverlay()</code> rectangular.</li>
-<li>Se añade la página <code>AEMET</code> para consultar las imágenes oficiales descargadas sin inducir error de alineación.</li>
-<li>El mapa principal queda reservado a capas geográficas alineadas: NASA FIRMS, alertas, EFFIS WMS y límites GISCO/NUTS.</li>
-<li>Se añade <code>scripts/12_diagnose_aemet_alignment.R</code> para documentar el diagnóstico.</li>
-</ul>
-</section>
-</section>
-<section id="v0.5.3---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.3---2026-07-08">v0.5.3 - 2026-07-08</h2>
-<section id="corregido" class="level3">
-<h3 class="anchored" data-anchor-id="corregido">Corregido</h3>
-<ul>
-<li>Reescribe la descarga de límites administrativos NUTS para usar directamente GeoJSON GISCO en EPSG:4326.</li>
-<li>Evita el flujo anterior EPSG:3035 → EPSG:4326, que podía producir desajustes visuales en Leaflet según la combinación de GISCO/giscoR/sf.</li>
-<li>Añade validación de bbox para España, Canarias, Ceuta y Melilla antes de publicar los límites.</li>
-<li>Añade <code>scripts/10_diagnose_admin_boundaries.R</code> para revisar CRS, bbox y ejemplos de entidades.</li>
-</ul>
-</section>
-</section>
-<section id="v0.5.2---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.2---2026-07-08">v0.5.2 - 2026-07-08</h2>
-<p>Ajustes de presentación y corrección de CRS para límites administrativos.</p>
-<section id="cambiado-1" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado-1">Cambiado</h3>
-<ul>
-<li>El mapa principal pasa a ocupar más altura de pantalla (<code>84vh</code>) y deja de compartir página con el resumen operativo.</li>
-<li>El resumen operativo se mueve a una página independiente <code>summary.qmd</code> / <code>summary.html</code>.</li>
-<li>La navegación añade una pestaña <strong>Resumen</strong>.</li>
-</ul>
-</section>
-<section id="corregido-1" class="level3">
-<h3 class="anchored" data-anchor-id="corregido-1">Corregido</h3>
-<ul>
-<li>Las geometrías NUTS se descargan en EPSG:3035 y se transforman explícitamente a EPSG:4326 antes de publicarse como GeoJSON.</li>
-<li>La lectura de límites administrativos fuerza EPSG:4326 antes de dibujar en Leaflet y antes de hacer cruces espaciales con FIRMS.</li>
-<li>Se añade una comprobación de bbox para detectar geometrías administrativas fuera de rango lon/lat.</li>
-</ul>
-</section>
-</section>
-<section id="v0.5.1---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.1---2026-07-08">v0.5.1 - 2026-07-08</h2>
-<p>Corrección de robustez del histórico temporal.</p>
-<section id="corregido-2" class="level3">
-<h3 class="anchored" data-anchor-id="corregido-2">Corregido</h3>
-<ul>
-<li>Normalización estricta de tipos en <code>dashboard_history.csv</code>.</li>
-<li>Evita errores de <code>bind_rows()</code> cuando el histórico está vacío o contiene columnas <code>NA</code> interpretadas como <code>logical</code>.</li>
-<li>Normalización básica de tipos en históricos administrativos por CCAA y provincia.</li>
-</ul>
-</section>
-</section>
-<section id="v0.5.0---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.0---2026-07-08">v0.5.0 - 2026-07-08</h2>
-<p>Añade histórico temporal del dashboard y página de evolución operativa.</p>
-<section id="incluye" class="level3">
-<h3 class="anchored" data-anchor-id="incluye">Incluye</h3>
-<ul>
-<li>Nuevo módulo <code>R/history.R</code>.</li>
-<li>Script <code>scripts/09_update_dashboard_history.R</code>.</li>
-<li>Nueva página <code>history.qmd</code> / <code>history.html</code>.</li>
-<li>Histórico agregado en <code>data/processed/dashboard_history.csv</code> y <code>assets/history/dashboard_history.csv</code>.</li>
-<li>Histórico territorial de CCAA y provincias.</li>
-<li>Gráficos de evolución de focos FIRMS, focos recientes, FRP total y alertas.</li>
-<li>Variables <code>HISTORY_MODE</code> y <code>HISTORY_KEEP_DAYS</code>.</li>
-<li>Workflow actualizado para publicar assets históricos.</li>
-</ul>
-</section>
-</section>
-<section id="v0.4.0---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.4.0---2026-07-08">v0.4.0 - 2026-07-08</h2>
-<p>Añade una capa operativa de alertas automáticas basada en clústeres de detecciones NASA FIRMS recientes.</p>
-<section id="incluye-1" class="level3">
-<h3 class="anchored" data-anchor-id="incluye-1">Incluye</h3>
-<ul>
-<li>Nuevo módulo <code>R/alerts.R</code>.</li>
-<li>Script <code>scripts/08_build_operational_alerts.R</code>.</li>
-<li>Agrupación espacial configurable con <code>ALERT_CLUSTER_KM</code>.</li>
-<li>Filtro de antigüedad configurable con <code>ALERT_MAX_AGE_HOURS</code>.</li>
-<li>CSV y GeoJSON de alertas operativas.</li>
-<li>Capa Leaflet <code>Alertas operativas FIRMS</code>.</li>
-<li>Tabla de alertas en el dashboard principal.</li>
-<li>Página <code>report.qmd</code> / <code>report.html</code> con informe operativo estático.</li>
-</ul>
-</section>
-</section>
-<section id="v0.3.0---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.3.0---2026-07-08">v0.3.0 - 2026-07-08</h2>
-<section id="añadido" class="level3">
-<h3 class="anchored" data-anchor-id="añadido">Añadido</h3>
-<ul>
-<li>Descarga de límites administrativos Eurostat/GISCO NUTS2 y NUTS3 para España.</li>
-<li>Nuevos scripts:
-<ul>
-<li><code>scripts/06_download_admin_boundaries.R</code>.</li>
-<li><code>scripts/07_build_operational_summary.R</code>.</li>
-</ul></li>
-<li>Nuevos módulos R:
-<ul>
-<li><code>R/admin.R</code>.</li>
-<li><code>R/summary.R</code>.</li>
-</ul></li>
-<li>Resumen operativo con focos FIRMS totales, últimas 6 h, últimas 24 h, FRP total y territorios afectados.</li>
-<li>Tablas resumen:
-<ul>
-<li><code>data/processed/firms_summary_ccaa.csv</code>.</li>
-<li><code>data/processed/firms_summary_provincias.csv</code>.</li>
-<li><code>data/processed/dashboard_summary.csv</code>.</li>
-</ul></li>
-<li>Capas Leaflet opcionales de CCAA y provincias.</li>
-<li>Recursos publicados en <code>assets/admin/</code> y <code>assets/summary/</code>.</li>
-</ul>
-</section>
-<section id="cambiado-2" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado-2">Cambiado</h3>
-<ul>
-<li><code>scripts/99_run_all.R</code> pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.</li>
-<li>El dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.</li>
-<li>Workflow de GitHub Actions actualizado con <code>sf</code>, <code>giscoR</code>, <code>knitr</code> y nuevos assets.</li>
-</ul>
-</section>
-</section>
-<section id="v0.2.0---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.2.0---2026-07-08">v0.2.0 - 2026-07-08</h2>
-<section id="añadido-1" class="level3">
-<h3 class="anchored" data-anchor-id="añadido-1">Añadido</h3>
-<ul>
-<li>Capa NASA FIRMS de focos activos recientes mediante la API Area CSV.</li>
-<li>Exportación FIRMS a <code>data/processed/firms_active_fires.csv</code> y GeoJSON.</li>
-<li>Capa WMS EFFIS/Copernicus EMS para Fire Weather Index (<code>ecmwf007.fwi</code>).</li>
-<li>Variables de entorno <code>FIRMS_MAP_KEY</code>, <code>FIRMS_SOURCES</code>, <code>FIRMS_DAYS</code>, <code>FIRMS_BBOX</code>, <code>EFFIS_ENABLE</code>, <code>EFFIS_WMS_LAYERS</code> y <code>EFFIS_DATE</code>.</li>
-<li>Workflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.</li>
-</ul>
-</section>
-<section id="cambiado-3" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado-3">Cambiado</h3>
-<ul>
-<li>El dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.</li>
-<li><code>scripts/99_run_all.R</code> ejecuta ahora tres fases: AEMET, FIRMS y preparación web.</li>
-</ul>
-</section>
-</section>
-<section id="v0.1.0" class="level2">
-<h2 class="anchored" data-anchor-id="v0.1.0">v0.1.0</h2>
-<p>Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales.</p>
+    
+  
+    
+  </div>
+  
 
 
-</section>
+</header>
+
+
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Importante
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Estas imágenes son el producto oficial descargado desde AEMET OpenData. Se muestran como <strong>imagen oficial</strong>, no como capa superpuesta en el mapa Leaflet, porque el PNG descargado no queda alineado de forma fiable al usarlo como <code>imageOverlay</code> rectangular. Para el mapa geográfico alineado se usan NASA FIRMS, EFFIS WMS y límites GISCO/NUTS.</p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p>Imágenes disponibles: 24. Catálogo: data/processed/layers.json</p>
+<div class="aemet-grid">
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Canarias · Previsto · D+1</h3>
+<img src="assets/aemet/aemet_2026_07_07_c_previsto_d1_aemet_incendios_20260707_c_previsto_d1.png" class="aemet-img" alt="2026-07-07 · Canarias · Previsto · D+1">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Canarias · Previsto · D+1</h3>
+<img src="assets/aemet/aemet_2026_07_08_c_previsto_d1_aemet_incendios_20260708_c_previsto_d1.png" class="aemet-img" alt="2026-07-08 · Canarias · Previsto · D+1">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Canarias · Previsto · D+2</h3>
+<img src="assets/aemet/aemet_2026_07_07_c_previsto_d2_aemet_incendios_20260707_c_previsto_d2.png" class="aemet-img" alt="2026-07-07 · Canarias · Previsto · D+2">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Canarias · Previsto · D+2</h3>
+<img src="assets/aemet/aemet_2026_07_08_c_previsto_d2_aemet_incendios_20260708_c_previsto_d2.png" class="aemet-img" alt="2026-07-08 · Canarias · Previsto · D+2">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Canarias · Previsto · D+3</h3>
+<img src="assets/aemet/aemet_2026_07_07_c_previsto_d3_aemet_incendios_20260707_c_previsto_d3.png" class="aemet-img" alt="2026-07-07 · Canarias · Previsto · D+3">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Canarias · Previsto · D+3</h3>
+<img src="assets/aemet/aemet_2026_07_08_c_previsto_d3_aemet_incendios_20260708_c_previsto_d3.png" class="aemet-img" alt="2026-07-08 · Canarias · Previsto · D+3">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Canarias · Previsto · D+4</h3>
+<img src="assets/aemet/aemet_2026_07_07_c_previsto_d4_aemet_incendios_20260707_c_previsto_d4.png" class="aemet-img" alt="2026-07-07 · Canarias · Previsto · D+4">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Canarias · Previsto · D+4</h3>
+<img src="assets/aemet/aemet_2026_07_08_c_previsto_d4_aemet_incendios_20260708_c_previsto_d4.png" class="aemet-img" alt="2026-07-08 · Canarias · Previsto · D+4">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Canarias · Previsto · D+5</h3>
+<img src="assets/aemet/aemet_2026_07_07_c_previsto_d5_aemet_incendios_20260707_c_previsto_d5.png" class="aemet-img" alt="2026-07-07 · Canarias · Previsto · D+5">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Canarias · Previsto · D+5</h3>
+<img src="assets/aemet/aemet_2026_07_08_c_previsto_d5_aemet_incendios_20260708_c_previsto_d5.png" class="aemet-img" alt="2026-07-08 · Canarias · Previsto · D+5">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Canarias · Previsto · D+6</h3>
+<img src="assets/aemet/aemet_2026_07_07_c_previsto_d6_aemet_incendios_20260707_c_previsto_d6.png" class="aemet-img" alt="2026-07-07 · Canarias · Previsto · D+6">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Canarias · Previsto · D+6</h3>
+<img src="assets/aemet/aemet_2026_07_08_c_previsto_d6_aemet_incendios_20260708_c_previsto_d6.png" class="aemet-img" alt="2026-07-08 · Canarias · Previsto · D+6">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Península · Previsto · D+1</h3>
+<img src="assets/aemet/aemet_2026_07_07_p_previsto_d1_aemet_incendios_20260707_p_previsto_d1.png" class="aemet-img" alt="2026-07-07 · Península · Previsto · D+1">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Península · Previsto · D+1</h3>
+<img src="assets/aemet/aemet_2026_07_08_p_previsto_d1_aemet_incendios_20260708_p_previsto_d1.png" class="aemet-img" alt="2026-07-08 · Península · Previsto · D+1">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Península · Previsto · D+2</h3>
+<img src="assets/aemet/aemet_2026_07_07_p_previsto_d2_aemet_incendios_20260707_p_previsto_d2.png" class="aemet-img" alt="2026-07-07 · Península · Previsto · D+2">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Península · Previsto · D+2</h3>
+<img src="assets/aemet/aemet_2026_07_08_p_previsto_d2_aemet_incendios_20260708_p_previsto_d2.png" class="aemet-img" alt="2026-07-08 · Península · Previsto · D+2">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Península · Previsto · D+3</h3>
+<img src="assets/aemet/aemet_2026_07_07_p_previsto_d3_aemet_incendios_20260707_p_previsto_d3.png" class="aemet-img" alt="2026-07-07 · Península · Previsto · D+3">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Península · Previsto · D+3</h3>
+<img src="assets/aemet/aemet_2026_07_08_p_previsto_d3_aemet_incendios_20260708_p_previsto_d3.png" class="aemet-img" alt="2026-07-08 · Península · Previsto · D+3">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Península · Previsto · D+4</h3>
+<img src="assets/aemet/aemet_2026_07_07_p_previsto_d4_aemet_incendios_20260707_p_previsto_d4.png" class="aemet-img" alt="2026-07-07 · Península · Previsto · D+4">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Península · Previsto · D+4</h3>
+<img src="assets/aemet/aemet_2026_07_08_p_previsto_d4_aemet_incendios_20260708_p_previsto_d4.png" class="aemet-img" alt="2026-07-08 · Península · Previsto · D+4">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Península · Previsto · D+5</h3>
+<img src="assets/aemet/aemet_2026_07_07_p_previsto_d5_aemet_incendios_20260707_p_previsto_d5.png" class="aemet-img" alt="2026-07-07 · Península · Previsto · D+5">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Península · Previsto · D+5</h3>
+<img src="assets/aemet/aemet_2026_07_08_p_previsto_d5_aemet_incendios_20260708_p_previsto_d5.png" class="aemet-img" alt="2026-07-08 · Península · Previsto · D+5">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-07 · Península · Previsto · D+6</h3>
+<img src="assets/aemet/aemet_2026_07_07_p_previsto_d6_aemet_incendios_20260707_p_previsto_d6.png" class="aemet-img" alt="2026-07-07 · Península · Previsto · D+6">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+<div class="aemet-card">
+<h3 class="anchored">2026-07-08 · Península · Previsto · D+6</h3>
+<img src="assets/aemet/aemet_2026_07_08_p_previsto_d6_aemet_incendios_20260708_p_previsto_d6.png" class="aemet-img" alt="2026-07-08 · Península · Previsto · D+6">
+<p class="aemet-caption">Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.</p>
+</div>
+</div>
+</div>
+</div>
+<section id="enlaces" class="level2">
+<h2 class="anchored" data-anchor-id="enlaces">Enlaces</h2>
+<ul>
+<li><a href="https://www.aemet.es/es/eltiempo/prediccion/incendios">Visor oficial de incendios de AEMET</a></li>
+<li><a href="https://opendata.aemet.es/">AEMET OpenData</a></li>
+</ul>
+
+
 </section>
 
 </main> <!-- /main -->

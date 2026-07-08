@@ -109,3 +109,63 @@
 
 .dot-purple { background: #7b3294; }
 .dot-darkred { background: #8b0000; }
+
+.summary-card small {
+  display: block;
+  margin-top: 0.15rem;
+  color: #666;
+  font-size: 0.78rem;
+}
+
+/* Mapa principal más grande: el widget usa height="84vh" desde index.qmd;
+   esta regla asegura una altura mínima cómoda en pantallas grandes. */
+.leaflet.html-widget {
+  min-height: 720px;
+}
+
+@media (max-height: 850px) {
+  .leaflet.html-widget {
+    min-height: 560px;
+  }
+}
+
+.aemet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.aemet-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  padding: 0.85rem;
+}
+
+.aemet-card h3 {
+  font-size: 1rem;
+  margin: 0 0 0.6rem 0;
+}
+
+.aemet-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid #eee;
+  background: #f8f8f8;
+}
+
+.aemet-caption {
+  margin: 0.6rem 0 0 0;
+  font-size: 0.82rem;
+  color: #666;
+}
+
+.aemet-empty {
+  border: 1px dashed #bbb;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #fafafa;
+}

@@ -2,7 +2,7 @@
 
 Visor Quarto + Leaflet para publicar online un mapa estático de riesgo y situación de incendios.
 
-La capa base del proyecto es **AEMET OpenData** para riesgo meteorológico previsto. Desde `v0.2.0` incorpora **NASA FIRMS** y **EFFIS/Copernicus EMS**. Desde `v0.3.0` añade una capa analítica con límites administrativos **Eurostat/GISCO NUTS** para resumir detecciones FIRMS por CCAA y provincia. Desde `v0.4.0` incorpora **alertas operativas automáticas** mediante clústeres de detecciones FIRMS recientes.
+La capa base del proyecto es **AEMET OpenData** para riesgo meteorológico previsto. Desde `v0.2.0` incorpora **NASA FIRMS** y **EFFIS/Copernicus EMS**. Desde `v0.3.0` añade una capa analítica con límites administrativos **Eurostat/GISCO NUTS** para resumir detecciones FIRMS por CCAA y provincia. Desde `v0.4.0` incorpora **alertas operativas automáticas** mediante clústeres de detecciones FIRMS recientes. Desde `v0.5.0` añade **histórico temporal** y una página de evolución de focos, FRP y alertas. Desde `v0.5.2` separa el mapa del resumen operativo y refuerza la transformación CRS de NUTS a EPSG:4326.
 
 El proyecto renderiza un sitio estático en `docs/`, compatible con GitHub Pages.
 
@@ -19,7 +19,9 @@ El proyecto renderiza un sitio estático en `docs/`, compatible con GitHub Pages
   - CCAA y provincias con detecciones;
   - tabla de provincias con más focos;
   - clústeres/alertas operativas a partir de detecciones FIRMS;
-  - informe operativo estático en `report.html`.
+  - resumen operativo separado en `summary.html`;
+  - informe operativo estático en `report.html`;
+  - histórico temporal y gráficos de evolución en `history.html`.
 
 ## Estructura
 
@@ -27,13 +29,16 @@ El proyecto renderiza un sitio estático en `docs/`, compatible con GitHub Pages
 visor-fuego/
 ├── _quarto.yml
 ├── index.qmd
+├── summary.qmd
 ├── report.qmd
+├── history.qmd
 ├── R/
 │   ├── admin.R
 │   ├── alerts.R
 │   ├── aemet.R
 │   ├── effis.R
 │   ├── firms.R
+│   ├── history.R
 │   ├── prepare_layers.R
 │   ├── summary.R
 │   └── utils.R
@@ -46,12 +51,14 @@ visor-fuego/
 │   ├── 06_download_admin_boundaries.R
 │   ├── 07_build_operational_summary.R
 │   ├── 08_build_operational_alerts.R
+│   ├── 09_update_dashboard_history.R
 │   └── 99_run_all.R
 ├── assets/
 │   ├── admin/
 │   ├── alerts/
 │   ├── aemet/
 │   ├── firms/
+│   ├── history/
 │   └── summary/
 ├── data/
 │   ├── raw/aemet/
@@ -77,7 +84,7 @@ En R:
 install.packages(c(
   "curl", "httr2", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
   "fs", "glue", "leaflet", "htmltools", "htmlwidgets", "terra", "png", "tidyr",
-  "sf", "giscoR", "knitr"
+  "sf", "giscoR", "knitr", "ggplot2"
 ))
 ```
 
@@ -122,9 +129,20 @@ ADMIN_RESOLUTION=10
 
 ALERT_CLUSTER_KM=12
 ALERT_MAX_AGE_HOURS=48
+HISTORY_MODE=daily_latest
+HISTORY_KEEP_DAYS=90
 ```
 
 Si `EFFIS_DATE` no se define, se usa `Sys.Date()` durante el render.
+
+Si cambias esta versión sobre un repositorio ya renderizado, regenera los límites NUTS para forzar la salida correcta en EPSG:4326:
+
+```bash
+Rscript scripts/06_download_admin_boundaries.R
+Rscript scripts/07_build_operational_summary.R
+quarto render --execute
+```
+
 
 ## Ejecutar localmente
 
@@ -137,6 +155,7 @@ Después abre:
 
 ```bash
 xdg-open docs/index.html
+xdg-open docs/summary.html
 ```
 
 ## Ejecutar por partes
@@ -216,3 +235,21 @@ EFFIS/Copernicus indica que sus datos son accesibles mediante WMS y que sus cont
 ## Versión
 
 `v0.4.0` añade alertas operativas automáticas, clústeres FIRMS y un informe estático `report.html` sobre la versión `v0.3.0`.
+
+
+## Diagnóstico NUTS / límites administrativos
+
+Si las líneas administrativas no coinciden con el mapa base, regenera los NUTS y ejecuta el diagnóstico:
+
+```bash
+rm -f data/raw/admin/NUTS_RG_* data/processed/admin_nuts*.geojson assets/admin/admin_nuts*.geojson
+Rscript scripts/06_download_admin_boundaries.R
+Rscript scripts/10_diagnose_admin_boundaries.R
+quarto render --execute
+```
+
+Los GeoJSON administrativos se descargan directamente de GISCO en EPSG:4326 para evitar desajustes de CRS en Leaflet.
+
+## Nota sobre las imágenes AEMET
+
+Las descargas de AEMET OpenData para incendios se conservan y se publican en la página `AEMET` del sitio. Tras comprobar su alineación con Leaflet/NUTS, no se usan como `imageOverlay` en el mapa principal porque el PNG oficial no queda alineado de forma fiable con el mapa base. El mapa geográfico principal mantiene las capas alineadas NASA FIRMS, EFFIS WMS y límites GISCO/NUTS.

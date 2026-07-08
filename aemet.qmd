@@ -1,0 +1,99 @@
+---
+title: "AEMET"
+subtitle: "Imágenes oficiales de riesgo de incendios"
+format:
+  html:
+    page-layout: full
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(readr)
+library(dplyr)
+library(purrr)
+library(jsonlite)
+library(htmltools)
+
+read_aemet_layers <- function() {
+  candidates <- c(
+    "data/processed/layers.json",
+    "assets/aemet/layers.json",
+    "docs/assets/aemet/layers.json"
+  )
+
+  for (path in candidates) {
+    if (file.exists(path) && file.info(path)$size > 2) {
+      layers <- tryCatch(jsonlite::fromJSON(path, simplifyVector = FALSE), error = function(e) list())
+      if (length(layers) > 0) {
+        attr(layers, "source_path") <- path
+        return(layers)
+      }
+    }
+  }
+
+  list()
+}
+
+layers <- read_aemet_layers()
+source_path <- attr(layers, "source_path")
+
+layers_tbl <- if (length(layers) > 0) {
+  purrr::map_dfr(layers, function(x) {
+    tibble::tibble(
+      date = as.character(x$date %||% NA_character_),
+      area_label = as.character(x$area_label %||% NA_character_),
+      tipo = as.character(x$tipo %||% NA_character_),
+      dia = as.character(x$dia %||% NA_character_),
+      url = as.character(x$url %||% NA_character_),
+      layer_kind = as.character(x$layer_kind %||% NA_character_)
+    )
+  }) |>
+    mutate(
+      dia_label = if_else(is.na(dia) | dia == "" | dia == "NULL", "hoy", paste0("D+", dia)),
+      tipo_label = if_else(tipo == "estimado", "Estimado", "Previsto"),
+      title = paste(date, area_label, tipo_label, dia_label, sep = " · ")
+    ) |>
+    arrange(area_label, suppressWarnings(as.integer(gsub("^D\\+", "", dia_label))))
+} else {
+  tibble::tibble()
+}
+
+`%||%` <- function(x, y) if (is.null(x) || length(x) == 0) y else x
+```
+
+::: {.callout-warning}
+## Importante
+
+Estas imágenes son el producto oficial descargado desde AEMET OpenData. Se muestran como **imagen oficial**, no como capa superpuesta en el mapa Leaflet, porque el PNG descargado no queda alineado de forma fiable al usarlo como `imageOverlay` rectangular. Para el mapa geográfico alineado se usan NASA FIRMS, EFFIS WMS y límites GISCO/NUTS.
+:::
+
+```{r}
+if (nrow(layers_tbl) == 0) {
+  div(class = "aemet-empty",
+      h3("No hay imágenes AEMET preparadas"),
+      p("Ejecuta Rscript scripts/99_run_all.R y vuelve a renderizar Quarto."))
+} else {
+  tagList(
+    p(sprintf("Imágenes disponibles: %s. Catálogo: %s", nrow(layers_tbl), source_path %||% "sin dato")),
+    div(
+      class = "aemet-grid",
+      purrr::pmap(layers_tbl, function(date, area_label, tipo, dia, url, layer_kind, dia_label, tipo_label, title, ...) {
+        div(
+          class = "aemet-card",
+          h3(title),
+          tags$img(src = url, class = "aemet-img", alt = title),
+          p(class = "aemet-caption", "Fuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.")
+        )
+      })
+    )
+  )
+}
+```
+
+## Enlaces
+
+- [Visor oficial de incendios de AEMET](https://www.aemet.es/es/eltiempo/prediccion/incendios)
+- [AEMET OpenData](https://opendata.aemet.es/)

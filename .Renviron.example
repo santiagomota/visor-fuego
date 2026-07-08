@@ -25,7 +25,14 @@ EFFIS_DATE=
 ADMIN_ENABLE=true
 ADMIN_NUTS_YEAR=2021
 ADMIN_RESOLUTION=10
+# gisco_4326 descarga GeoJSON GISCO en lon/lat. Es la opción recomendada para Leaflet.
+ADMIN_DOWNLOAD_MODE=gisco_4326
 
 # Alertas operativas FIRMS
 ALERT_CLUSTER_KM=12
 ALERT_MAX_AGE_HOURS=48
+
+# Histórico temporal
+# daily_latest conserva solo la última ejecución de cada día; append_runs conserva todas.
+HISTORY_MODE=daily_latest
+HISTORY_KEEP_DAYS=90

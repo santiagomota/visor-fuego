@@ -34,6 +34,8 @@ report_path <- if (file.exists("data/processed/operational_report.md")) {
 
 ::: {.callout-important}
 Este informe es **informativo**. No sustituye a AEMET, EFFIS/Copernicus, NASA FIRMS, Protección Civil ni servicios de emergencia.
+
+Consulta también la página de [evolución temporal](history.html).
 :::
 
 ```{r summary-cards, results='asis'}

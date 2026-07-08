@@ -8,6 +8,7 @@ resources:
   - assets/admin/**
   - assets/summary/**
   - assets/alerts/**
+  - assets/history/**
 
 website:
   title: "Visor Fuego"
@@ -15,8 +16,14 @@ website:
     left:
       - text: "Mapa"
         href: index.html
+      - text: "Resumen"
+        href: summary.html
+      - text: "AEMET"
+        href: aemet.html
       - text: "Informe"
         href: report.html
+      - text: "Evolución"
+        href: history.html
     right:
       - icon: github
         href: https://github.com/TU_USUARIO/visor-fuego
