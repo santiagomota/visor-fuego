@@ -43,6 +43,19 @@ read_numeric_env <- function(name, default = 0) {
   if (length(value) == 0 || is.na(value)) default else value
 }
 
+
+# Orden de presentación en el selector Leaflet: primero Península y Baleares,
+# luego Baleares si existe como producto independiente, y finalmente Canarias.
+aemet_area_display_rank <- function(area) {
+  rank <- dplyr::case_when(
+    area == "p" ~ 1L,
+    area == "b" ~ 2L,
+    area == "c" ~ 3L,
+    TRUE ~ 99L
+  )
+  as.integer(rank)
+}
+
 apply_bounds_nudge <- function(bounds) {
   lon <- read_numeric_env("AEMET_BOUNDS_NUDGE_LON", 0)
   lat <- read_numeric_env("AEMET_BOUNDS_NUDGE_LAT", 0)
@@ -445,6 +458,24 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
   fs::dir_create("data/processed")
   fs::dir_create("assets/aemet")
   fs::dir_create("docs/assets/aemet")
+
+  layers <- layers |>
+    dplyr::mutate(
+      area_display_rank = aemet_area_display_rank(area),
+      tipo_display_rank = dplyr::case_when(
+        tipo == "previsto" ~ 1L,
+        tipo == "estimado" ~ 2L,
+        TRUE ~ 99L
+      )
+    ) |>
+    dplyr::arrange(
+      dplyr::desc(date),
+      area_display_rank,
+      tipo_display_rank,
+      dplyr::coalesce(as.integer(dia), 0L),
+      layer_id
+    ) |>
+    dplyr::select(-area_display_rank, -tipo_display_rank)
 
   readr::write_csv(layers, "data/processed/layers.csv")
 

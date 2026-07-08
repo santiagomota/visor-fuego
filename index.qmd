@@ -159,6 +159,34 @@ add_admin_boundaries <- function(map, path, group, weight = 1) {
 
 layers_data <- read_layers_json()
 layers_source <- attr(layers_data, "source_path")
+
+# Orden del selector AEMET en Leaflet. Queremos que Península y Baleares
+# aparezca antes que Canarias, aunque el paquete SIG de AEMET venga ordenado
+# alfabéticamente o se haya generado con un catálogo anterior.
+aemet_layer_rank <- function(layer) {
+  area <- layer$area %||% ""
+  area_rank <- dplyr::case_when(
+    area == "p" ~ 1L,
+    area == "b" ~ 2L,
+    area == "c" ~ 3L,
+    TRUE ~ 99L
+  )
+  tipo <- layer$tipo %||% ""
+  tipo_rank <- dplyr::case_when(
+    tipo == "previsto" ~ 1L,
+    tipo == "estimado" ~ 2L,
+    TRUE ~ 99L
+  )
+  dia <- suppressWarnings(as.integer(layer$dia %||% 0L))
+  if (is.na(dia)) dia <- 0L
+  date_chr <- layer$date %||% ""
+  paste0(sprintf("%02d", area_rank), "_", sprintf("%02d", tipo_rank), "_", sprintf("%02d", dia), "_", date_chr)
+}
+
+if (length(layers_data) > 0) {
+  layers_data <- layers_data[order(vapply(layers_data, aemet_layer_rank, character(1)))]
+}
+
 n_layers <- length(layers_data)
 layers_json <- jsonlite::toJSON(layers_data, auto_unbox = TRUE, null = "null")
 last_update <- if (n_layers > 0) {

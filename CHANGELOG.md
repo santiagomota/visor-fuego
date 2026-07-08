@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.16
+
+- Ordena las capas AEMET del selector Leaflet para mostrar primero Península y Baleares, después Baleares si existe como producto independiente, y finalmente Canarias.
+- Refuerza el mismo orden tanto al preparar `layers.csv`/`layers.json` como al leer catálogos existentes desde `index.qmd`.
+
 ## v0.5.15 - 2026-07-08
 
 ### Fixed

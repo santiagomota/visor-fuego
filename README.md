@@ -1,5 +1,7 @@
 # visor-fuego
 
+> v0.5.16: el selector de capas AEMET muestra primero Península y Baleares y después Canarias.
+
 ## Ajuste fino AEMET/Leaflet desde v0.5.15
 
 Desde `v0.5.15`, los GeoTIFFs de AEMET se convierten por defecto a PNG en **EPSG:3857/Web Mercator** antes de publicarse como `L.imageOverlay()`. Esto reduce la discrepancia visual frente al mapa base de Leaflet, porque Leaflet renderiza internamente en Web Mercator.
