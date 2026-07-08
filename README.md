@@ -452,3 +452,8 @@ La conversión TIFF→PNG de EFFIS conserva explícitamente las dimensiones del 
 ### Nota EFFIS v0.5.28
 
 Para el modo estático de EFFIS se recomienda `EFFIS_STATIC_FORMATS=image/png,image/tiff`. Si el servidor solo devuelve TIFF útil, el conversor reconstruye el canal alfa desde la máscara de datos válidos cuando la banda alfa del WMS llega vacía. Esto evita que `ecmwf.fwi.danger_index` genere PNGs completamente transparentes aunque el raster tenga píxeles.
+
+
+### Nota EFFIS v0.5.29
+
+La capa `ecmwf.fwi.danger_index` puede responder con TIFFs válidos desde el punto de vista WMS, pero sin contenido visual útil para Leaflet. Para el overlay estático se recomienda `ecmwf.fwi.fwi` en el endpoint `https://ies-ows.jrc.ec.europa.eu/effis`. La validación de EFFIS ahora comprueba variación visual real antes de publicar un PNG en `assets/effis`.

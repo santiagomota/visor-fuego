@@ -1,3 +1,12 @@
+# Changelog
+
+## v0.5.29
+
+- EFFIS: deja de recomendar `ecmwf.fwi.danger_index` para el overlay estático porque puede generar rasters opacos pero visualmente vacíos.
+- EFFIS: prioriza capas FWI renderizables como `ecmwf.fwi.fwi`, `ecmwf007.fwi` y `mf010.fwi`.
+- EFFIS: la validación de descargas y PNGs ahora comprueba variación visual RGB/valor, no solo píxeles no transparentes.
+- EFFIS: rechaza imágenes uniformes/vacías antes de publicarlas en `assets/effis`.
+
 # Cambios
 
 ## v0.5.28

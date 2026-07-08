@@ -171,7 +171,7 @@ effis_fetch_capabilities <- function(base_url, version = "1.1.1", out_dir = "dat
   resp <- tryCatch(
     httr2::request(base_url) |>
       httr2::req_url_query(SERVICE = "wms", REQUEST = "GetCapabilities", VERSION = version) |>
-      httr2::req_user_agent("visor-fuego/0.5.28") |>
+      httr2::req_user_agent("visor-fuego/0.5.29") |>
       httr2::req_timeout(120) |>
       httr2::req_perform(),
     error = function(e) e
@@ -361,33 +361,72 @@ first_hex_effis <- function(path, n = 32) {
   paste(sprintf("%02x", as.integer(raw)), collapse = " ")
 }
 
+effis_array_visual_summary <- function(img, min_range = 1e-4, min_visible = 10) {
+  dims <- dim(img)
+  if (is.null(dims)) {
+    vals <- suppressWarnings(as.numeric(img))
+    vals <- vals[is.finite(vals)]
+    if (length(vals) == 0) return(list(ok = FALSE, n = 0, visual_range = NA_real_, message = "sin valores finitos"))
+    vr <- diff(range(vals, na.rm = TRUE))
+    return(list(ok = length(vals) >= min_visible && is.finite(vr) && vr > min_range, n = as.numeric(length(vals)), visual_range = as.numeric(vr), message = NA_character_))
+  }
+
+  if (length(dims) == 2) {
+    vals <- suppressWarnings(as.numeric(img))
+    vals <- vals[is.finite(vals)]
+    if (length(vals) == 0) return(list(ok = FALSE, n = 0, visual_range = NA_real_, message = "matriz sin valores finitos"))
+    vr <- diff(range(vals, na.rm = TRUE))
+    return(list(ok = length(vals) >= min_visible && is.finite(vr) && vr > min_range, n = as.numeric(length(vals)), visual_range = as.numeric(vr), message = NA_character_))
+  }
+
+  if (length(dims) != 3) {
+    return(list(ok = FALSE, n = 0, visual_range = NA_real_, message = paste("dimensiones no esperadas:", paste(dims, collapse = "x"))))
+  }
+
+  rgb_n <- min(3L, dims[3])
+  rgb <- img[, , seq_len(rgb_n), drop = FALSE]
+  alpha <- if (dims[3] >= 4) img[, , 4] else matrix(1, nrow = dims[1], ncol = dims[2])
+  mask <- is.finite(alpha) & alpha > 0.01
+  n <- sum(mask, na.rm = TRUE)
+  if (!is.finite(n) || n < min_visible) {
+    return(list(ok = FALSE, n = as.numeric(n), visual_range = NA_real_, message = "sin píxeles visibles por alfa"))
+  }
+
+  # Extraemos los canales RGB solo en la máscara visible, conservando la lógica
+  # aunque haya 1, 2, 3 o 4 bandas. Una imagen completamente negra/blanca/opaca
+  # ya no se considera un overlay válido.
+  vals <- unlist(lapply(seq_len(rgb_n), function(k) as.numeric(rgb[, , k][mask])), use.names = FALSE)
+  vals <- vals[is.finite(vals)]
+  if (length(vals) == 0) return(list(ok = FALSE, n = as.numeric(n), visual_range = NA_real_, message = "sin RGB finito en píxeles visibles"))
+  vr <- diff(range(vals, na.rm = TRUE))
+  ok <- is.finite(vr) && vr > min_range
+  msg <- if (ok) NA_character_ else paste0("imagen visible pero sin variación RGB real; rango=", signif(vr, 4))
+  list(ok = ok, n = as.numeric(n), visual_range = as.numeric(vr), message = msg)
+}
+
 probe_png_pixels <- function(file) {
   img <- tryCatch(png::readPNG(file), error = function(e) e)
   if (inherits(img, "error")) return(list(ok = FALSE, n = NA_real_, message = conditionMessage(img)))
-  dims <- dim(img)
-  if (length(dims) == 3 && dims[3] >= 4) {
-    n <- sum(img[, , 4] > 0.01, na.rm = TRUE)
-  } else {
-    vals <- as.vector(img)
-    n <- sum(!is.na(vals) & abs(vals - stats::median(vals, na.rm = TRUE)) > 1e-6)
-  }
-  list(ok = is.finite(n) && n > 0, n = as.numeric(n), message = NA_character_)
+  info <- effis_array_visual_summary(img)
+  list(ok = isTRUE(info$ok), n = as.numeric(info$n), message = info$message)
 }
 
 probe_raster_pixels <- function(file) {
   r <- tryCatch(terra::rast(file), error = function(e) e)
   if (inherits(r, "error")) return(list(ok = FALSE, n = NA_real_, message = conditionMessage(r)))
   nlyr <- terra::nlyr(r)
-  n <- NA_real_
-  msg <- NA_character_
-  if (nlyr >= 4) {
-    # Si es RGBA, el alfa indica si hay imagen útil.
-    n <- tryCatch(as.numeric(terra::global(r[[4]] > 0, "sum", na.rm = TRUE)[1, 1]), error = function(e) NA_real_)
+  max_layers <- min(3L, nlyr)
+  n <- tryCatch(as.numeric(terra::global(!is.na(r[[1]]), "sum", na.rm = TRUE)[1, 1]), error = function(e) NA_real_)
+  mm <- tryCatch(terra::minmax(r[[seq_len(max_layers)]]), error = function(e) NULL)
+  if (is.null(mm)) {
+    return(list(ok = is.finite(n) && n > 0, n = as.numeric(n), message = NA_character_))
   }
-  if (is.na(n) || n <= 0) {
-    n <- tryCatch(as.numeric(terra::global(!is.na(r[[1]]), "sum", na.rm = TRUE)[1, 1]), error = function(e) NA_real_)
-  }
-  list(ok = is.finite(n) && n > 0, n = as.numeric(n), message = msg)
+  ranges <- suppressWarnings(as.numeric(mm[2, ] - mm[1, ]))
+  visual_range <- max(ranges, na.rm = TRUE)
+  if (!is.finite(visual_range)) visual_range <- NA_real_
+  ok <- is.finite(n) && n > 0 && is.finite(visual_range) && visual_range > 1e-4
+  msg <- if (ok) NA_character_ else paste0("raster sin variación visual; rango=", signif(visual_range, 4), "; pixeles_validos=", signif(n, 6))
+  list(ok = ok, n = as.numeric(n), message = msg)
 }
 
 classify_effis_body <- function(body, content_type = NA_character_, preferred_ext = "bin") {
@@ -424,7 +463,7 @@ probe_effis_getmap_row <- function(row, out_dir = "data/raw/effis") {
   # Usamos la URL ya construida para evitar que httr2 re-codifique las comas de BBOX.
   resp <- tryCatch(
     httr2::request(url) |>
-      httr2::req_user_agent("visor-fuego/0.5.28") |>
+      httr2::req_user_agent("visor-fuego/0.5.29") |>
       httr2::req_timeout(120) |>
       httr2::req_perform(),
     error = function(e) e
@@ -640,25 +679,20 @@ effis_png_info <- function(png_file, bbox) {
   }
   dims <- dim(img)
   if (length(dims) == 2) {
-    non_empty <- sum(!is.na(img) & img > 0.01, na.rm = TRUE)
     nc <- ncol(img); nr <- nrow(img)
   } else if (length(dims) == 3) {
     nr <- dims[1]; nc <- dims[2]
-    if (dims[3] >= 4) {
-      non_empty <- sum(img[, , 4] > 0.01, na.rm = TRUE)
-    } else {
-      non_empty <- sum(apply(img[, , seq_len(min(3, dims[3])), drop = FALSE], c(1, 2), sum, na.rm = TRUE) > 0.01, na.rm = TRUE)
-    }
   } else {
     return(list(ok = FALSE, message = paste("PNG con dimensiones no esperadas:", paste(dims, collapse = "x"))))
   }
+  vis <- effis_array_visual_summary(img)
   list(
-    ok = is.finite(non_empty) && non_empty > 0,
+    ok = isTRUE(vis$ok),
     ncol = as.integer(nc),
     nrow = as.integer(nr),
-    non_empty_pixels = as.numeric(non_empty),
+    non_empty_pixels = as.numeric(vis$n),
     bounds = effis_bbox_to_leaflet_bounds(bbox),
-    message = NA_character_
+    message = vis$message
   )
 }
 
@@ -764,9 +798,12 @@ write_effis_png_from_file <- function(src_file, png_file, bbox = parse_effis_bbo
     }
 
     img[is.na(img)] <- 0
+    vis <- effis_array_visual_summary(img)
+    if (!isTRUE(vis$ok)) {
+      stop("PNG EFFIS recibido sin contenido visual real: ", vis$message %||% "sin detalle", call. = FALSE)
+    }
     write_effis_png_array(img, png_file)
-    non_empty <- sum(img[, , 4] > 0.01, na.rm = TRUE)
-    return(list(ncol = dim(img)[2], nrow = dim(img)[1], non_empty_pixels = as.numeric(non_empty), bounds = effis_bbox_to_leaflet_bounds(bbox)))
+    return(list(ncol = dim(img)[2], nrow = dim(img)[1], non_empty_pixels = as.numeric(vis$n), bounds = effis_bbox_to_leaflet_bounds(bbox)))
   }
 
   # Para TIFFs WMS coloreados/paletizados, gdal_translate suele ser más fiable
@@ -850,10 +887,13 @@ write_effis_png_from_file <- function(src_file, png_file, bbox = parse_effis_bbo
     }
   }
   arr[is.na(arr)] <- 0
+  vis <- effis_array_visual_summary(arr)
+  if (!isTRUE(vis$ok)) {
+    stop("PNG EFFIS sin contenido visual real: ", vis$message %||% "sin detalle", call. = FALSE)
+  }
   fs::dir_create(dirname(png_file))
   write_effis_png_array(arr, png_file)
-  non_empty <- sum(arr[, , 4] > 0.01, na.rm = TRUE)
-  list(ncol = dim(arr)[2], nrow = dim(arr)[1], non_empty_pixels = as.numeric(non_empty), bounds = effis_bbox_to_leaflet_bounds(bbox))
+  list(ncol = dim(arr)[2], nrow = dim(arr)[1], non_empty_pixels = as.numeric(vis$n), bounds = effis_bbox_to_leaflet_bounds(bbox))
 }
 
 prepare_effis_static_assets <- function() {
@@ -992,7 +1032,7 @@ effis_layer_name_patterns <- function() {
 }
 
 effis_max_layers <- function() {
-  x <- suppressWarnings(as.integer(Sys.getenv("EFFIS_MAX_LAYERS", unset = "12")))
+  x <- suppressWarnings(as.integer(Sys.getenv("EFFIS_MAX_LAYERS", unset = "6")))
   if (is.na(x) || x < 1) x <- 12L
   x
 }
@@ -1036,7 +1076,12 @@ effis_layer_candidate_score <- function(layer, title = NA_character_) {
     score <<- score + ifelse(grepl(pattern, txt, ignore.case = TRUE, perl = TRUE), value, 0L)
   }
   add("\\bfwi\\b|fire.?weather.?index", 100L)
-  add("fire.*danger|danger", 80L)
+  # Las capas *.danger_index aparecen en GetCapabilities, pero en GetMap pueden
+  # devolver rasters sin contenido visual. Para el overlay del visor preferimos
+  # el FWI renderizado directamente (*.fwi).
+  add("(^|\\.)fwi\\.fwi$|ecmwf007\\.fwi$|mf010\\.fwi$", 160L)
+  add("fire.*danger|danger", 40L)
+  add("danger_index", -140L)
   add("ecmwf", 40L)
   add("forecast|forecasts|prediction", 20L)
   add("meteo.?france|meteofrance", 10L)
