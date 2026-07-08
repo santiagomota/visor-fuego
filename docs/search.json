@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Mapa de riesgo de incendios",
     "section": "",
-    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-08 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 692\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 118 · Altas: 8 · Medias: 53\n\n\n\nEFFIS WMS: EFFIS - Fire danger index · 2026-07-08\n\n\n · TIME: 2026-07-08"
+    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-08 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 692\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 118 · Altas: 8 · Medias: 53\n\n\n\nEFFIS WMS: desactivado"
   },
   {
     "objectID": "index.html#enlaces-útiles",
@@ -16,9 +16,9 @@
   {
     "objectID": "CHANGELOG.html",
     "href": "CHANGELOG.html",
-    "title": "Cambios",
+    "title": "Visor Fuego",
     "section": "",
-    "text": "Prioriza image/png para EFFIS estático y usa el PNG WMS directamente cuando ya contiene píxeles visibles.\nMantiene image/tiff como alternativa, pero evita que un fallo de conversión TIFF bloquee la publicación.\nRegistra errores de conversión en data/raw/effis/effis_conversion_errors.csv.\nAñade wms_bbox y file_type al catálogo final EFFIS para depuración.\nRecomienda https://ies-ows.jrc.ec.europa.eu/effis y ecmwf.fwi.danger_index como capa operativa.\n\n\n\n\n\nCorrige la construcción de URLs WMS de EFFIS para mantener BBOX con comas sin re-codificación.\nAlinea la petición GetMap con el ejemplo oficial de EFFIS (SERVICE=wms, BBOX decimal y URL manual).\nDetecta respuestas XML OGC como xml y extrae el mensaje de ServiceException.\nAñade wms_bbox en el diagnóstico para distinguir el BBOX configurado del BBOX realmente enviado."
+    "text": "Corrige parseo de TIME EFFIS cuando GetCapabilities incluye CURRENT, rangos o valores no ISO."
   },
   {
     "objectID": "CHANGELOG.html#v0.2.0---2026-07-08",
@@ -383,5 +383,12 @@
     "title": "Cambios",
     "section": "",
     "text": "Prioriza image/png para EFFIS estático y usa el PNG WMS directamente cuando ya contiene píxeles visibles.\nMantiene image/tiff como alternativa, pero evita que un fallo de conversión TIFF bloquee la publicación.\nRegistra errores de conversión en data/raw/effis/effis_conversion_errors.csv.\nAñade wms_bbox y file_type al catálogo final EFFIS para depuración.\nRecomienda https://ies-ows.jrc.ec.europa.eu/effis y ecmwf.fwi.danger_index como capa operativa."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.34",
+    "href": "CHANGELOG.html#v0.5.34",
+    "title": "Visor Fuego",
+    "section": "",
+    "text": "Corrige parseo de TIME EFFIS cuando GetCapabilities incluye CURRENT, rangos o valores no ISO."
   }
 ]
