@@ -1,22 +1,13 @@
 # Changelog
 
-## v0.5.4 - 2026-07-08
+## v0.5.14 - 2026-07-08
 
-### Cambiado
+### Fixed
 
-- Se retira la superposición geográfica directa de los PNG de AEMET sobre Leaflet, porque no alinean de forma fiable como `L.imageOverlay()` rectangular.
-- Se añade la página `AEMET` para consultar las imágenes oficiales descargadas sin inducir error de alineación.
-- El mapa principal queda reservado a capas geográficas alineadas: NASA FIRMS, alertas, EFFIS WMS y límites GISCO/NUTS.
-- Se añade `scripts/12_diagnose_aemet_alignment.R` para documentar el diagnóstico.
-
-## v0.5.3 - 2026-07-08
-
-### Corregido
-
-- Reescribe la descarga de límites administrativos NUTS para usar directamente GeoJSON GISCO en EPSG:4326.
-- Evita el flujo anterior EPSG:3035 → EPSG:4326, que podía producir desajustes visuales en Leaflet según la combinación de GISCO/giscoR/sf.
-- Añade validación de bbox para España, Canarias, Ceuta y Melilla antes de publicar los límites.
-- Añade `scripts/10_diagnose_admin_boundaries.R` para revisar CRS, bbox y ejemplos de entidades.
+- Integra la descarga SIG clásica de AEMET (`/es/api-eltiempo/incendios/download`) como proveedor principal.
+- Extrae el paquete `.tar.gz` de AEMET y publica los GeoTIFFs `down_YYYYMMDD_peligro_[p|c]_D00..D07.tif`.
+- Evita usar PNG de AEMET como `imageOverlay` salvo que `AEMET_ALLOW_PNG_OVERLAY=true`.
+- Añade `scripts/22_install_classic_probe_geotiffs.R` para instalar GeoTIFFs desde el diagnóstico clásico ya ejecutado.
 
 ## v0.5.2 - 2026-07-08
 

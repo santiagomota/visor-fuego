@@ -1,5 +1,23 @@
 [
   {
+    "layer_id": "aemet_2026_07_07_c_previsto_d0_aemet_incendios_20260707_c_previsto_d0",
+    "layer_kind": "image",
+    "date": "2026-07-07",
+    "tipo": "previsto",
+    "dia": 0,
+    "area": "c",
+    "area_label": "Canarias",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d0.tif",
+    "url": "assets/aemet/aemet_2026_07_07_c_previsto_d0_aemet_incendios_20260707_c_previsto_d0.png",
+    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
+    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
+    "bounds": [
+      [27.495, -18.205],
+      [29.515, -13.395]
+    ]
+  },
+  {
     "layer_id": "aemet_2026_07_07_c_previsto_d1_aemet_incendios_20260707_c_previsto_d1",
     "layer_kind": "image",
     "date": "2026-07-07",
@@ -7,14 +25,14 @@
     "dia": 1,
     "area": "c",
     "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d1.png",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d1.tif",
     "url": "assets/aemet/aemet_2026_07_07_c_previsto_d1_aemet_incendios_20260707_c_previsto_d1.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
+      [27.495, -18.205],
+      [29.515, -13.395]
     ]
   },
   {
@@ -25,14 +43,14 @@
     "dia": 2,
     "area": "c",
     "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d2.png",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d2.tif",
     "url": "assets/aemet/aemet_2026_07_07_c_previsto_d2_aemet_incendios_20260707_c_previsto_d2.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
+    "legend_labels": ["Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
+    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c"],
     "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
+      [27.495, -18.205],
+      [29.515, -13.395]
     ]
   },
   {
@@ -43,14 +61,14 @@
     "dia": 3,
     "area": "c",
     "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d3.png",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d3.tif",
     "url": "assets/aemet/aemet_2026_07_07_c_previsto_d3_aemet_incendios_20260707_c_previsto_d3.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
+      [27.495, -18.205],
+      [29.515, -13.395]
     ]
   },
   {
@@ -61,14 +79,14 @@
     "dia": 4,
     "area": "c",
     "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d4.png",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d4.tif",
     "url": "assets/aemet/aemet_2026_07_07_c_previsto_d4_aemet_incendios_20260707_c_previsto_d4.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
+    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto"],
+    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61"],
     "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
+      [27.495, -18.205],
+      [29.515, -13.395]
     ]
   },
   {
@@ -79,14 +97,14 @@
     "dia": 5,
     "area": "c",
     "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d5.png",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d5.tif",
     "url": "assets/aemet/aemet_2026_07_07_c_previsto_d5_aemet_incendios_20260707_c_previsto_d5.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
+    "legend_labels": ["Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
+    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c"],
     "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
+      [27.495, -18.205],
+      [29.515, -13.395]
     ]
   },
   {
@@ -97,14 +115,50 @@
     "dia": 6,
     "area": "c",
     "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d6.png",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d6.tif",
     "url": "assets/aemet/aemet_2026_07_07_c_previsto_d6_aemet_incendios_20260707_c_previsto_d6.png",
+    "legend_labels": ["Muy bajo", "Bajo", "Moderado"],
+    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf"],
+    "bounds": [
+      [27.495, -18.205],
+      [29.515, -13.395]
+    ]
+  },
+  {
+    "layer_id": "aemet_2026_07_07_c_previsto_d7_aemet_incendios_20260707_c_previsto_d7",
+    "layer_kind": "image",
+    "date": "2026-07-07",
+    "tipo": "previsto",
+    "dia": 7,
+    "area": "c",
+    "area_label": "Canarias",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_c_previsto_d7.tif",
+    "url": "assets/aemet/aemet_2026_07_07_c_previsto_d7_aemet_incendios_20260707_c_previsto_d7.png",
+    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto"],
+    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61"],
+    "bounds": [
+      [27.495, -18.205],
+      [29.515, -13.395]
+    ]
+  },
+  {
+    "layer_id": "aemet_2026_07_07_p_previsto_d0_aemet_incendios_20260707_p_previsto_d0",
+    "layer_kind": "image",
+    "date": "2026-07-07",
+    "tipo": "previsto",
+    "dia": 0,
+    "area": "p",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d0.tif",
+    "url": "assets/aemet/aemet_2026_07_07_p_previsto_d0_aemet_incendios_20260707_p_previsto_d0.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   },
   {
@@ -114,15 +168,15 @@
     "tipo": "previsto",
     "dia": 1,
     "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d1.png",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d1.tif",
     "url": "assets/aemet/aemet_2026_07_07_p_previsto_d1_aemet_incendios_20260707_p_previsto_d1.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   },
   {
@@ -132,15 +186,15 @@
     "tipo": "previsto",
     "dia": 2,
     "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d2.png",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d2.tif",
     "url": "assets/aemet/aemet_2026_07_07_p_previsto_d2_aemet_incendios_20260707_p_previsto_d2.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   },
   {
@@ -150,15 +204,15 @@
     "tipo": "previsto",
     "dia": 3,
     "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d3.png",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d3.tif",
     "url": "assets/aemet/aemet_2026_07_07_p_previsto_d3_aemet_incendios_20260707_p_previsto_d3.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   },
   {
@@ -168,15 +222,15 @@
     "tipo": "previsto",
     "dia": 4,
     "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d4.png",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d4.tif",
     "url": "assets/aemet/aemet_2026_07_07_p_previsto_d4_aemet_incendios_20260707_p_previsto_d4.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   },
   {
@@ -186,15 +240,15 @@
     "tipo": "previsto",
     "dia": 5,
     "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d5.png",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d5.tif",
     "url": "assets/aemet/aemet_2026_07_07_p_previsto_d5_aemet_incendios_20260707_p_previsto_d5.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   },
   {
@@ -204,231 +258,33 @@
     "tipo": "previsto",
     "dia": 6,
     "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d6.png",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d6.tif",
     "url": "assets/aemet/aemet_2026_07_07_p_previsto_d6_aemet_incendios_20260707_p_previsto_d6.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   },
   {
-    "layer_id": "aemet_2026_07_08_c_previsto_d1_aemet_incendios_20260708_c_previsto_d1",
+    "layer_id": "aemet_2026_07_07_p_previsto_d7_aemet_incendios_20260707_p_previsto_d7",
     "layer_kind": "image",
-    "date": "2026-07-08",
+    "date": "2026-07-07",
     "tipo": "previsto",
-    "dia": 1,
-    "area": "c",
-    "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_c_previsto_d1.png",
-    "url": "assets/aemet/aemet_2026_07_08_c_previsto_d1_aemet_incendios_20260708_c_previsto_d1.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_c_previsto_d2_aemet_incendios_20260708_c_previsto_d2",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 2,
-    "area": "c",
-    "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_c_previsto_d2.png",
-    "url": "assets/aemet/aemet_2026_07_08_c_previsto_d2_aemet_incendios_20260708_c_previsto_d2.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_c_previsto_d3_aemet_incendios_20260708_c_previsto_d3",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 3,
-    "area": "c",
-    "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_c_previsto_d3.png",
-    "url": "assets/aemet/aemet_2026_07_08_c_previsto_d3_aemet_incendios_20260708_c_previsto_d3.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_c_previsto_d4_aemet_incendios_20260708_c_previsto_d4",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 4,
-    "area": "c",
-    "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_c_previsto_d4.png",
-    "url": "assets/aemet/aemet_2026_07_08_c_previsto_d4_aemet_incendios_20260708_c_previsto_d4.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_c_previsto_d5_aemet_incendios_20260708_c_previsto_d5",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 5,
-    "area": "c",
-    "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_c_previsto_d5.png",
-    "url": "assets/aemet/aemet_2026_07_08_c_previsto_d5_aemet_incendios_20260708_c_previsto_d5.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_c_previsto_d6_aemet_incendios_20260708_c_previsto_d6",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 6,
-    "area": "c",
-    "area_label": "Canarias",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_c_previsto_d6.png",
-    "url": "assets/aemet/aemet_2026_07_08_c_previsto_d6_aemet_incendios_20260708_c_previsto_d6.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [27.35, -18.5],
-      [29.7, -13.1]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_p_previsto_d1_aemet_incendios_20260708_p_previsto_d1",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 1,
+    "dia": 7,
     "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_p_previsto_d1.png",
-    "url": "assets/aemet/aemet_2026_07_08_p_previsto_d1_aemet_incendios_20260708_p_previsto_d1.png",
+    "area_label": "Península y Baleares",
+    "file_type": "raster",
+    "source_file": "data/raw/aemet/aemet_incendios_20260707_p_previsto_d7.tif",
+    "url": "assets/aemet/aemet_2026_07_07_p_previsto_d7_aemet_incendios_20260707_p_previsto_d7.png",
     "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
     "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
     "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_p_previsto_d2_aemet_incendios_20260708_p_previsto_d2",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 2,
-    "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_p_previsto_d2.png",
-    "url": "assets/aemet/aemet_2026_07_08_p_previsto_d2_aemet_incendios_20260708_p_previsto_d2.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_p_previsto_d3_aemet_incendios_20260708_p_previsto_d3",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 3,
-    "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_p_previsto_d3.png",
-    "url": "assets/aemet/aemet_2026_07_08_p_previsto_d3_aemet_incendios_20260708_p_previsto_d3.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_p_previsto_d4_aemet_incendios_20260708_p_previsto_d4",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 4,
-    "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_p_previsto_d4.png",
-    "url": "assets/aemet/aemet_2026_07_08_p_previsto_d4_aemet_incendios_20260708_p_previsto_d4.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_p_previsto_d5_aemet_incendios_20260708_p_previsto_d5",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 5,
-    "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_p_previsto_d5.png",
-    "url": "assets/aemet/aemet_2026_07_08_p_previsto_d5_aemet_incendios_20260708_p_previsto_d5.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
-    ]
-  },
-  {
-    "layer_id": "aemet_2026_07_08_p_previsto_d6_aemet_incendios_20260708_p_previsto_d6",
-    "layer_kind": "image",
-    "date": "2026-07-08",
-    "tipo": "previsto",
-    "dia": 6,
-    "area": "p",
-    "area_label": "Península",
-    "file_type": "image",
-    "source_file": "data/raw/aemet/aemet_incendios_20260708_p_previsto_d6.png",
-    "url": "assets/aemet/aemet_2026_07_08_p_previsto_d6_aemet_incendios_20260708_p_previsto_d6.png",
-    "legend_labels": ["Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo"],
-    "legend_colours": ["#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c", "#7f0000"],
-    "bounds": [
-      [35.7, -10.2],
-      [44.55, 4.8]
+      [34.995, -10.205],
+      [44.215, 5.205]
     ]
   }
 ]

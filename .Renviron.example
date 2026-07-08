@@ -1,4 +1,11 @@
-# AEMET OpenData
+# AEMET
+# classic usa la descarga SIG clásica /es/api-eltiempo/incendios/download.
+# Devuelve GeoTIFFs georreferenciados y NO requiere AEMET_API_KEY.
+# opendata mantiene el método anterior, útil solo para diagnóstico/fallback.
+AEMET_PROVIDER=classic
+AEMET_ALLOW_PNG_OVERLAY=false
+
+# AEMET OpenData, solo necesario si AEMET_PROVIDER=opendata
 AEMET_API_KEY=pon_aqui_tu_api_key_de_aemet
 AEMET_AREAS=p,b,c
 AEMET_FORECAST_DAYS=1,2,3,4,5,6,7
@@ -25,8 +32,6 @@ EFFIS_DATE=
 ADMIN_ENABLE=true
 ADMIN_NUTS_YEAR=2021
 ADMIN_RESOLUTION=10
-# gisco_4326 descarga GeoJSON GISCO en lon/lat. Es la opción recomendada para Leaflet.
-ADMIN_DOWNLOAD_MODE=gisco_4326
 
 # Alertas operativas FIRMS
 ALERT_CLUSTER_KM=12

@@ -201,12 +201,6 @@ n_alerts_high <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data))
 n_alerts_medium <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "media", na.rm = TRUE) else 0L
 ```
 
-::: {.callout-warning}
-## Nota sobre la capa AEMET
-
-Las imágenes PNG descargadas de AEMET se conservan y se muestran en la página **AEMET**, pero no se usan como capa geográfica sobre Leaflet. En las pruebas de alineación no coinciden con el mapa base/NUTS al usarlas con `L.imageOverlay()`, por lo que superponerlas sería visualmente engañoso. El mapa principal mantiene como capas geográficas alineadas NASA FIRMS, alertas, límites NUTS y EFFIS WMS.
-:::
-
 ::: {.callout-note collapse="true"}
 ## Fuente y actualización
 
@@ -361,13 +355,164 @@ if (n_firms > 0) {
     )
 }
 
-map <- map |>
-  addControl(
-    html = HTML("<strong>AEMET</strong><br><small>Las imágenes oficiales de riesgo se muestran en la página AEMET. No se superponen sobre Leaflet porque el PNG descargado no alinea correctamente como <code>imageOverlay</code> rectangular.</small>"),
-    position = "topright"
-  )
+js_template <- r"(
+function(el, x) {
+  const layers = __LAYERS_JSON__;
+  const map = this;
+  let currentOverlay = null;
+  let currentOpacity = 0.68;
 
-map
+  function labelForLayer(layer) {
+    const dia = (layer.dia === null || layer.dia === undefined || layer.dia === '') ? 'hoy' : ('D+' + layer.dia);
+    const tipo = layer.tipo === 'estimado' ? 'Estimado' : 'Previsto';
+    return layer.date + ' · ' + layer.area_label + ' · ' + tipo + ' · ' + dia;
+  }
+
+  function updateLegend(layer) {
+    const legend = document.getElementById('fire-risk-legend');
+    if (!legend) return;
+    if (!layer || !layer.legend_labels || !layer.legend_colours) {
+      legend.innerHTML = '<strong>Nivel de peligro AEMET</strong><br>No disponible';
+      return;
+    }
+    let html = '<strong>Nivel de peligro AEMET</strong>';
+    for (let i = 0; i < layer.legend_labels.length; i++) {
+      html += '<br><span class="swatch" style="background:' + layer.legend_colours[i] + '"></span>' + layer.legend_labels[i];
+    }
+    legend.innerHTML = html;
+  }
+
+  function colourForRisk(v, layer) {
+    if (v === null || v === undefined || v === '') return '#888888';
+    const n = parseInt(v);
+    if (!isNaN(n) && layer.legend_colours && layer.legend_colours.length > 0) {
+      const idx0 = Math.max(0, Math.min(layer.legend_colours.length - 1, n));
+      const idx1 = Math.max(0, Math.min(layer.legend_colours.length - 1, n - 1));
+      return layer.legend_colours[idx1] || layer.legend_colours[idx0] || '#888888';
+    }
+    return '#888888';
+  }
+
+  function riskValue(props) {
+    if (!props) return null;
+    const candidates = [
+      'nivel', 'NIVEL', 'riesgo', 'RIESGO', 'peligro', 'PELIGRO',
+      'level', 'LEVEL', 'value', 'VALUE', 'dn', 'DN', 'gridcode', 'GRIDCODE',
+      'band1', 'Band1', 'BAND1'
+    ];
+    for (const k of candidates) {
+      if (props[k] !== undefined && props[k] !== null) return props[k];
+    }
+    return null;
+  }
+
+  function setOverlayOpacity(value) {
+    if (!currentOverlay) return;
+    if (typeof currentOverlay.setOpacity === 'function') {
+      currentOverlay.setOpacity(value);
+    } else if (typeof currentOverlay.setStyle === 'function') {
+      currentOverlay.setStyle({fillOpacity: value});
+    }
+  }
+
+  function setLayer(index) {
+    if (currentOverlay) {
+      map.removeLayer(currentOverlay);
+      currentOverlay = null;
+    }
+    const layer = layers[index];
+    if (!layer) {
+      updateLegend(null);
+      return;
+    }
+
+    if (layer.layer_kind === 'geojson') {
+      fetch(layer.url)
+        .then(response => response.json())
+        .then(data => {
+          currentOverlay = L.geoJSON(data, {
+            style: function(feature) {
+              const v = riskValue(feature.properties || {});
+              return {
+                color: colourForRisk(v, layer),
+                weight: 0.2,
+                fillColor: colourForRisk(v, layer),
+                fillOpacity: currentOpacity
+              };
+            },
+            onEachFeature: function(feature, lyr) {
+              const p = feature.properties || {};
+              const v = riskValue(p);
+              lyr.bindTooltip('Nivel: ' + (v === null ? 'sin dato' : v));
+            }
+          }).addTo(map);
+          try { map.fitBounds(currentOverlay.getBounds()); } catch(e) {
+            try { map.fitBounds(layer.bounds); } catch(e2) {}
+          }
+          updateLegend(layer);
+        });
+    } else {
+      currentOverlay = L.imageOverlay(layer.url, layer.bounds, {
+        opacity: currentOpacity,
+        interactive: false
+      }).addTo(map);
+      try { map.fitBounds(layer.bounds); } catch(e) {}
+      updateLegend(layer);
+    }
+  }
+
+  const panel = L.control({position: 'topright'});
+  panel.onAdd = function(map) {
+    const div = L.DomUtil.create('div', 'fire-panel');
+    if (!layers || layers.length === 0) {
+      div.innerHTML = '<strong>Visor Fuego</strong><br>No hay capas AEMET descargadas.<br><code>Rscript scripts/99_run_all.R</code>';
+      return div;
+    }
+    let options = '';
+    for (let i = 0; i < layers.length; i++) {
+      options += '<option value="' + i + '">' + labelForLayer(layers[i]) + '</option>';
+    }
+    div.innerHTML = '<strong>Visor Fuego</strong>' +
+      '<label for="fire-layer-select">Capa AEMET</label>' +
+      '<select id="fire-layer-select">' + options + '</select>' +
+      '<label for="fire-opacity">Opacidad AEMET</label>' +
+      '<input id="fire-opacity" type="range" min="0" max="1" step="0.05" value="0.68" style="width:220px;">' +
+      '<small>EFFIS y FIRMS se activan desde el control de capas de Leaflet.</small>';
+    L.DomEvent.disableClickPropagation(div);
+    return div;
+  };
+  panel.addTo(map);
+
+  const legend = L.control({position: 'bottomright'});
+  legend.onAdd = function(map) {
+    const div = L.DomUtil.create('div', 'fire-legend');
+    div.id = 'fire-risk-legend';
+    div.innerHTML = '<strong>Nivel de peligro AEMET</strong><br>No disponible';
+    return div;
+  };
+  legend.addTo(map);
+
+  if (layers && layers.length > 0) {
+    setLayer(0);
+    const select = document.getElementById('fire-layer-select');
+    const opacity = document.getElementById('fire-opacity');
+    if (select) {
+      select.addEventListener('change', function(e) { setLayer(parseInt(e.target.value)); });
+    }
+    if (opacity) {
+      opacity.addEventListener('input', function(e) {
+        currentOpacity = parseFloat(e.target.value);
+        setOverlayOpacity(currentOpacity);
+      });
+    }
+  }
+}
+)"
+
+parts <- strsplit(js_template, "__LAYERS_JSON__", fixed = TRUE)[[1]]
+js <- paste0(parts[1], layers_json, parts[2])
+
+htmlwidgets::onRender(map, js)
 ```
 
 ## Enlaces útiles

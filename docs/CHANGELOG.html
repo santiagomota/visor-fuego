@@ -139,43 +139,31 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="changelog" class="level1">
 <h1>Changelog</h1>
-<section id="v0.5.4---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.4---2026-07-08">v0.5.4 - 2026-07-08</h2>
-<section id="cambiado" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado">Cambiado</h3>
+<section id="v0.5.14---2026-07-08" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.14---2026-07-08">v0.5.14 - 2026-07-08</h2>
+<section id="fixed" class="level3">
+<h3 class="anchored" data-anchor-id="fixed">Fixed</h3>
 <ul>
-<li>Se retira la superposición geográfica directa de los PNG de AEMET sobre Leaflet, porque no alinean de forma fiable como <code>L.imageOverlay()</code> rectangular.</li>
-<li>Se añade la página <code>AEMET</code> para consultar las imágenes oficiales descargadas sin inducir error de alineación.</li>
-<li>El mapa principal queda reservado a capas geográficas alineadas: NASA FIRMS, alertas, EFFIS WMS y límites GISCO/NUTS.</li>
-<li>Se añade <code>scripts/12_diagnose_aemet_alignment.R</code> para documentar el diagnóstico.</li>
-</ul>
-</section>
-</section>
-<section id="v0.5.3---2026-07-08" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.3---2026-07-08">v0.5.3 - 2026-07-08</h2>
-<section id="corregido" class="level3">
-<h3 class="anchored" data-anchor-id="corregido">Corregido</h3>
-<ul>
-<li>Reescribe la descarga de límites administrativos NUTS para usar directamente GeoJSON GISCO en EPSG:4326.</li>
-<li>Evita el flujo anterior EPSG:3035 → EPSG:4326, que podía producir desajustes visuales en Leaflet según la combinación de GISCO/giscoR/sf.</li>
-<li>Añade validación de bbox para España, Canarias, Ceuta y Melilla antes de publicar los límites.</li>
-<li>Añade <code>scripts/10_diagnose_admin_boundaries.R</code> para revisar CRS, bbox y ejemplos de entidades.</li>
+<li>Integra la descarga SIG clásica de AEMET (<code>/es/api-eltiempo/incendios/download</code>) como proveedor principal.</li>
+<li>Extrae el paquete <code>.tar.gz</code> de AEMET y publica los GeoTIFFs <code>down_YYYYMMDD_peligro_[p|c]_D00..D07.tif</code>.</li>
+<li>Evita usar PNG de AEMET como <code>imageOverlay</code> salvo que <code>AEMET_ALLOW_PNG_OVERLAY=true</code>.</li>
+<li>Añade <code>scripts/22_install_classic_probe_geotiffs.R</code> para instalar GeoTIFFs desde el diagnóstico clásico ya ejecutado.</li>
 </ul>
 </section>
 </section>
 <section id="v0.5.2---2026-07-08" class="level2">
 <h2 class="anchored" data-anchor-id="v0.5.2---2026-07-08">v0.5.2 - 2026-07-08</h2>
 <p>Ajustes de presentación y corrección de CRS para límites administrativos.</p>
-<section id="cambiado-1" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado-1">Cambiado</h3>
+<section id="cambiado" class="level3">
+<h3 class="anchored" data-anchor-id="cambiado">Cambiado</h3>
 <ul>
 <li>El mapa principal pasa a ocupar más altura de pantalla (<code>84vh</code>) y deja de compartir página con el resumen operativo.</li>
 <li>El resumen operativo se mueve a una página independiente <code>summary.qmd</code> / <code>summary.html</code>.</li>
 <li>La navegación añade una pestaña <strong>Resumen</strong>.</li>
 </ul>
 </section>
-<section id="corregido-1" class="level3">
-<h3 class="anchored" data-anchor-id="corregido-1">Corregido</h3>
+<section id="corregido" class="level3">
+<h3 class="anchored" data-anchor-id="corregido">Corregido</h3>
 <ul>
 <li>Las geometrías NUTS se descargan en EPSG:3035 y se transforman explícitamente a EPSG:4326 antes de publicarse como GeoJSON.</li>
 <li>La lectura de límites administrativos fuerza EPSG:4326 antes de dibujar en Leaflet y antes de hacer cruces espaciales con FIRMS.</li>
@@ -186,8 +174,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="v0.5.1---2026-07-08" class="level2">
 <h2 class="anchored" data-anchor-id="v0.5.1---2026-07-08">v0.5.1 - 2026-07-08</h2>
 <p>Corrección de robustez del histórico temporal.</p>
-<section id="corregido-2" class="level3">
-<h3 class="anchored" data-anchor-id="corregido-2">Corregido</h3>
+<section id="corregido-1" class="level3">
+<h3 class="anchored" data-anchor-id="corregido-1">Corregido</h3>
 <ul>
 <li>Normalización estricta de tipos en <code>dashboard_history.csv</code>.</li>
 <li>Evita errores de <code>bind_rows()</code> cuando el histórico está vacío o contiene columnas <code>NA</code> interpretadas como <code>logical</code>.</li>
@@ -256,8 +244,8 @@ ul.task-list li input[type="checkbox"] {
 <li>Recursos publicados en <code>assets/admin/</code> y <code>assets/summary/</code>.</li>
 </ul>
 </section>
-<section id="cambiado-2" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado-2">Cambiado</h3>
+<section id="cambiado-1" class="level3">
+<h3 class="anchored" data-anchor-id="cambiado-1">Cambiado</h3>
 <ul>
 <li><code>scripts/99_run_all.R</code> pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.</li>
 <li>El dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.</li>
@@ -277,8 +265,8 @@ ul.task-list li input[type="checkbox"] {
 <li>Workflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.</li>
 </ul>
 </section>
-<section id="cambiado-3" class="level3">
-<h3 class="anchored" data-anchor-id="cambiado-3">Cambiado</h3>
+<section id="cambiado-2" class="level3">
+<h3 class="anchored" data-anchor-id="cambiado-2">Cambiado</h3>
 <ul>
 <li>El dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.</li>
 <li><code>scripts/99_run_all.R</code> ejecuta ahora tres fases: AEMET, FIRMS y preparación web.</li>

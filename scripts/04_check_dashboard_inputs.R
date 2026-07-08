@@ -102,19 +102,11 @@ if (file.exists("data/processed/dashboard_history.csv")) {
   cat("\nHistórico del dashboard: no existe data/processed/dashboard_history.csv\n")
 }
 
-if (requireNamespace("sf", quietly = TRUE)) {
-  for (admin_path in c("data/processed/admin_nuts2_ccaa.geojson", "data/processed/admin_nuts3_provincias.geojson")) {
-    if (file.exists(admin_path)) {
-      x <- tryCatch(sf::st_read(admin_path, quiet = TRUE), error = function(e) NULL)
-      if (!is.null(x) && nrow(x) > 0) {
-        if (is.na(sf::st_crs(x))) sf::st_crs(x) <- 4326
-        x4326 <- sf::st_transform(x, 4326)
-        bb <- sf::st_bbox(x4326)
-        cat("\nBBOX", admin_path, "EPSG:4326:", paste(round(as.numeric(bb), 4), collapse = ", "), "\n")
-        plausible <- bb[["xmin"]] > -20.5 && bb[["xmax"]] < 6.5 && bb[["ymin"]] > 26 && bb[["ymax"]] < 45.5
-        cat("  Plausible España+Canarias:", plausible, "\n")
-      }
-    }
+if (file.exists("data/processed/admin_nuts2_ccaa.geojson") && requireNamespace("sf", quietly = TRUE)) {
+  x <- tryCatch(sf::st_read("data/processed/admin_nuts2_ccaa.geojson", quiet = TRUE), error = function(e) NULL)
+  if (!is.null(x) && nrow(x) > 0) {
+    bb <- sf::st_bbox(sf::st_transform(x, 4326))
+    cat("\nBBOX NUTS2 EPSG:4326:", paste(round(as.numeric(bb), 4), collapse = ", "), "\n")
   }
 }
 

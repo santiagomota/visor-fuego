@@ -1,5 +1,45 @@
 # visor-fuego
 
+## AEMET: proveedor recomendado
+
+Desde `v0.5.14`, el proveedor recomendado para AEMET es:
+
+```text
+AEMET_PROVIDER=classic
+AEMET_ALLOW_PNG_OVERLAY=false
+```
+
+Este método usa el endpoint clásico de descarga SIG:
+
+```text
+https://www.aemet.es/es/api-eltiempo/incendios/download
+```
+
+El endpoint devuelve un paquete comprimido con GeoTIFFs georreferenciados:
+
+```text
+down_YYYYMMDD_peligro_c_D00.tif ... down_YYYYMMDD_peligro_c_D07.tif
+down_YYYYMMDD_peligro_p_D00.tif ... down_YYYYMMDD_peligro_p_D07.tif
+```
+
+El visor ya no usa los PNG de AEMET como `imageOverlay`, porque no se alineaban con Leaflet.
+
+Para instalar los GeoTIFFs desde el diagnóstico que ya hayas ejecutado:
+
+```bash
+Rscript scripts/22_install_classic_probe_geotiffs.R
+Rscript scripts/02_prepare_web_assets.R
+quarto render --execute
+```
+
+Para ejecutar el pipeline completo con descarga directa clásica:
+
+```bash
+Rscript scripts/99_run_all.R
+quarto render --execute
+```
+
+
 Visor Quarto + Leaflet para publicar online un mapa estático de riesgo y situación de incendios.
 
 La capa base del proyecto es **AEMET OpenData** para riesgo meteorológico previsto. Desde `v0.2.0` incorpora **NASA FIRMS** y **EFFIS/Copernicus EMS**. Desde `v0.3.0` añade una capa analítica con límites administrativos **Eurostat/GISCO NUTS** para resumir detecciones FIRMS por CCAA y provincia. Desde `v0.4.0` incorpora **alertas operativas automáticas** mediante clústeres de detecciones FIRMS recientes. Desde `v0.5.0` añade **histórico temporal** y una página de evolución de focos, FRP y alertas. Desde `v0.5.2` separa el mapa del resumen operativo y refuerza la transformación CRS de NUTS a EPSG:4326.
@@ -235,21 +275,3 @@ EFFIS/Copernicus indica que sus datos son accesibles mediante WMS y que sus cont
 ## Versión
 
 `v0.4.0` añade alertas operativas automáticas, clústeres FIRMS y un informe estático `report.html` sobre la versión `v0.3.0`.
-
-
-## Diagnóstico NUTS / límites administrativos
-
-Si las líneas administrativas no coinciden con el mapa base, regenera los NUTS y ejecuta el diagnóstico:
-
-```bash
-rm -f data/raw/admin/NUTS_RG_* data/processed/admin_nuts*.geojson assets/admin/admin_nuts*.geojson
-Rscript scripts/06_download_admin_boundaries.R
-Rscript scripts/10_diagnose_admin_boundaries.R
-quarto render --execute
-```
-
-Los GeoJSON administrativos se descargan directamente de GISCO en EPSG:4326 para evitar desajustes de CRS en Leaflet.
-
-## Nota sobre las imágenes AEMET
-
-Las descargas de AEMET OpenData para incendios se conservan y se publican en la página `AEMET` del sitio. Tras comprobar su alineación con Leaflet/NUTS, no se usan como `imageOverlay` en el mapa principal porque el PNG oficial no queda alineado de forma fiable con el mapa base. El mapa geográfico principal mantiene las capas alineadas NASA FIRMS, EFFIS WMS y límites GISCO/NUTS.

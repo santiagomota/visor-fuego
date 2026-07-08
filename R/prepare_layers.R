@@ -18,6 +18,10 @@ risk_labels <- c(
   "Extremo"
 )
 
+allow_aemet_png_overlay <- function() {
+  tolower(Sys.getenv("AEMET_ALLOW_PNG_OVERLAY", unset = "false")) %in% c("1", "true", "yes", "si", "sí")
+}
+
 hex_to_rgba <- function(hex, alpha = 1) {
   rgb <- grDevices::col2rgb(hex) / 255
   c(rgb[, 1], alpha)
@@ -114,6 +118,10 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
   fs::dir_create(out_dir)
 
   if (file_type == "image") {
+    if (!allow_aemet_png_overlay()) {
+      stop("Imagen AEMET no georreferenciada descartada: ", file, call. = FALSE)
+    }
+
     out_file <- file.path(out_dir, paste0(layer_id, ".", ext))
     fs::file_copy(file, out_file, overwrite = TRUE)
 
@@ -171,7 +179,8 @@ extract_zip_candidates <- function(zip_file) {
     candidate_file = as.character(files),
     candidate_type = vapply(files, infer_file_type, character(1))
   ) |>
-    dplyr::filter(candidate_type %in% c("image", "raster", "json"))
+    dplyr::filter(candidate_type %in% c("image", "raster", "json")) |>
+    dplyr::filter(allow_aemet_png_overlay() | candidate_type != "image")
 }
 
 discover_supported_files <- function(manifest) {
@@ -197,7 +206,8 @@ discover_supported_files <- function(manifest) {
         candidate_file = file,
         candidate_type = ft
       ) |>
-        dplyr::filter(candidate_type %in% c("image", "raster", "json"))
+        dplyr::filter(candidate_type %in% c("image", "raster", "json")) |>
+        dplyr::filter(allow_aemet_png_overlay() | candidate_type != "image")
     }
   }) |>
     dplyr::left_join(
@@ -265,7 +275,8 @@ discover_orphan_raw_downloads <- function(manifest) {
   existing_files <- unique(stats::na.omit(manifest$file))
   rows |>
     dplyr::filter(!file %in% existing_files) |>
-    dplyr::filter(file_type %in% c("image", "raster", "zip", "json"))
+    dplyr::filter(file_type %in% c("image", "raster", "zip", "json")) |>
+    dplyr::filter(allow_aemet_png_overlay() | file_type != "image")
 }
 
 prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv") {
@@ -298,7 +309,7 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
   supported <- discover_supported_files(manifest)
 
   if (nrow(supported) == 0) {
-    message("No hay capas image/raster/geojson válidas que preparar")
+    message("No hay capas raster/geojson válidas que preparar")
     message("Tipos descargados en manifest: ", paste(unique(manifest$file_type), collapse = ", "))
     return(tibble::tibble())
   }

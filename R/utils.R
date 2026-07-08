@@ -91,8 +91,18 @@ sniff_file_extension <- function(raw, fallback = "bin") {
       rawToChar(raw[9:12], multiple = FALSE) == "WEBP") {
     return("webp")
   }
+  if (raw_starts_with(raw, c(0x1F, 0x8B))) {
+    return("gz")
+  }
   if (raw_starts_with(raw, c(0x50, 0x4B, 0x03, 0x04)) || raw_starts_with(raw, c(0x50, 0x4B, 0x05, 0x06)) || raw_starts_with(raw, c(0x50, 0x4B, 0x07, 0x08))) {
     return("zip")
+  }
+  # Los .tar no tienen firma al principio. El marcador POSIX "ustar" aparece
+  # en los bytes 258:262. Esto es relevante porque AEMET parece devolver
+  # paquetes .tar.gz desde el endpoint clásico de descarga SIG.
+  if (length(raw) >= 262) {
+    tar_magic <- tryCatch(rawToChar(raw[258:262], multiple = FALSE), error = function(e) "")
+    if (identical(tar_magic, "ustar")) return("tar")
   }
   if (raw_starts_with(raw, c(0x49, 0x49, 0x2A, 0x00)) || raw_starts_with(raw, c(0x4D, 0x4D, 0x00, 0x2A)) ||
       raw_starts_with(raw, c(0x49, 0x49, 0x2B, 0x00)) || raw_starts_with(raw, c(0x4D, 0x4D, 0x00, 0x2B))) {
@@ -147,13 +157,56 @@ file_extension_from_response <- function(resp, body_raw = NULL, fallback = "bin"
   fallback
 }
 
+decompress_gzip_file <- function(path, keep_gz = TRUE) {
+  if (is.na(path) || !file.exists(path)) return(path)
+
+  size <- file.info(path)$size
+  if (is.na(size) || size <= 0) return(path)
+
+  con <- file(path, "rb")
+  on.exit(close(con), add = TRUE)
+  raw <- readBin(con, what = "raw", n = size)
+
+  if (!raw_starts_with(raw, c(0x1F, 0x8B))) return(path)
+
+  payload <- tryCatch(
+    memDecompress(raw, type = "gzip"),
+    error = function(e) NULL
+  )
+
+  if (is.null(payload) || length(payload) == 0) return(path)
+
+  inner_ext <- sniff_file_extension(payload[seq_len(min(length(payload), 4096))], fallback = "bin")
+  if (!nzchar(inner_ext) || inner_ext %in% c("gz", "unknown")) {
+    inner_ext <- "bin"
+  }
+
+  base <- tools::file_path_sans_ext(path)
+  out <- paste0(base, ".", inner_ext)
+  writeBin(payload, out)
+
+  if (!keep_gz) {
+    try(unlink(path), silent = TRUE)
+  }
+
+  out
+}
+
 infer_file_type <- function(path) {
   if (is.na(path) || !file.exists(path)) return(NA_character_)
 
   ext <- tolower(tools::file_ext(path))
+  if (ext == "gz") {
+    normalised <- decompress_gzip_file(path, keep_gz = TRUE)
+    if (!identical(normalised, path) && file.exists(normalised)) {
+      return(infer_file_type(normalised))
+    }
+    return("gzip")
+  }
   if (ext %in% c("png", "jpg", "jpeg", "gif", "webp", "svg")) return("image")
   if (ext %in% c("tif", "tiff", "asc", "grd", "nc")) return("raster")
   if (ext %in% c("zip")) return("zip")
+  if (ext %in% c("tar")) return("archive")
   if (ext %in% c("json", "geojson")) return("json")
   if (ext %in% c("kml", "gml", "xml")) return("xml")
 
@@ -163,10 +216,19 @@ infer_file_type <- function(path) {
   raw <- readBin(con, what = "raw", n = min(file.info(path)$size, 4096))
   sniffed <- sniff_file_extension(raw, fallback = "unknown")
 
+  if (identical(sniffed, "gz")) {
+    normalised <- decompress_gzip_file(path, keep_gz = TRUE)
+    if (!identical(normalised, path) && file.exists(normalised)) {
+      return(infer_file_type(normalised))
+    }
+    return("gzip")
+  }
+
   dplyr::case_when(
     sniffed %in% c("png", "jpg", "jpeg", "gif", "webp", "svg") ~ "image",
     sniffed %in% c("tif", "tiff", "asc", "grd", "nc") ~ "raster",
     sniffed == "zip" ~ "zip",
+    sniffed == "tar" ~ "archive",
     sniffed %in% c("json", "geojson") ~ "json",
     sniffed == "xml" ~ "xml",
     sniffed == "html" ~ "html",
@@ -178,18 +240,79 @@ normalise_downloaded_extension <- function(path) {
   if (is.na(path) || !file.exists(path)) return(path)
 
   ext <- tolower(tools::file_ext(path))
-  if (nzchar(ext) && !ext %in% c("bin", "unknown", "txt", "text")) return(path)
+
+  if (identical(ext, "gz")) {
+    return(decompress_gzip_file(path, keep_gz = TRUE))
+  }
 
   con <- file(path, "rb")
   on.exit(close(con), add = TRUE)
   raw <- readBin(con, what = "raw", n = min(file.info(path)$size, 4096))
   sniffed <- sniff_file_extension(raw, fallback = ext %||% "bin")
 
+  if (identical(sniffed, "gz")) {
+    return(decompress_gzip_file(path, keep_gz = TRUE))
+  }
+
+  if (nzchar(ext) && !ext %in% c("bin", "unknown", "txt", "text")) return(path)
+
   if (!nzchar(sniffed) || sniffed %in% c("bin", "unknown")) return(path)
 
   new_path <- paste0(tools::file_path_sans_ext(path), ".", sniffed)
   if (!identical(path, new_path)) fs::file_move(path, new_path)
   new_path
+}
+
+
+extract_aemet_archive <- function(path, out_dir = NULL) {
+  if (is.na(path) || !file.exists(path)) return(character())
+  ext <- tolower(tools::file_ext(path))
+  type <- infer_file_type(path)
+
+  if (is.null(out_dir)) {
+    out_dir <- file.path(dirname(path), paste0(tools::file_path_sans_ext(basename(path)), "_extracted"))
+  }
+  fs::dir_create(out_dir)
+
+  extracted <- character()
+
+  if (identical(ext, "gz") || identical(type, "gzip")) {
+    norm <- decompress_gzip_file(path, keep_gz = TRUE)
+    if (!identical(norm, path) && file.exists(norm)) {
+      return(extract_aemet_archive(norm, out_dir = out_dir))
+    }
+  }
+
+  if (identical(type, "zip") || identical(ext, "zip")) {
+    extracted <- tryCatch({
+      utils::unzip(path, exdir = out_dir)
+      fs::dir_ls(out_dir, recurse = TRUE, type = "file")
+    }, error = function(e) character())
+  } else if (identical(type, "archive") || identical(ext, "tar")) {
+    extracted <- tryCatch({
+      utils::untar(path, exdir = out_dir)
+      fs::dir_ls(out_dir, recurse = TRUE, type = "file")
+    }, error = function(e) character())
+  }
+
+  as.character(extracted)
+}
+
+find_geospatial_files <- function(paths) {
+  if (length(paths) == 0) return(tibble::tibble())
+  paths <- as.character(paths)
+  paths <- paths[file.exists(paths)]
+  if (length(paths) == 0) return(tibble::tibble())
+
+  tibble::tibble(file = paths) |>
+    dplyr::mutate(
+      ext = tolower(tools::file_ext(file)),
+      file_type = vapply(file, infer_file_type, character(1)),
+      size_bytes = as.numeric(file.info(file)$size),
+      is_geospatial = file_type %in% c("raster", "zip", "json", "xml") |
+        ext %in% c("tif", "tiff", "asc", "grd", "nc", "geojson", "json", "kml", "gml", "gpkg", "shp")
+    ) |>
+    dplyr::filter(is_geospatial)
 }
 
 area_bounds <- function(area) {
@@ -206,7 +329,7 @@ area_bounds <- function(area) {
 
 area_label <- function(area) {
   labels <- c(
-    p = "Península",
+    p = "Península y Baleares",
     b = "Baleares",
     c = "Canarias"
   )
