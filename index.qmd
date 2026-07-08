@@ -1,6 +1,6 @@
 ---
 title: "Visor de riesgo de incendios"
-subtitle: "AEMET OpenData · NASA FIRMS · EFFIS/Copernicus"
+subtitle: "AEMET OpenData · NASA FIRMS · EFFIS/Copernicus · GISCO/NUTS"
 format:
   html:
     page-layout: full
@@ -83,6 +83,64 @@ read_firms_csv <- function() {
   out
 }
 
+
+read_csv_optional <- function(paths) {
+  for (path in paths) {
+    if (file.exists(path) && file.info(path)$size > 0) {
+      out <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
+      attr(out, "source_path") <- path
+      return(out)
+    }
+  }
+  out <- tibble::tibble()
+  attr(out, "source_path") <- NA_character_
+  out
+}
+
+read_dashboard_overview <- function() {
+  read_csv_optional(c(
+    "data/processed/dashboard_summary.csv",
+    "assets/summary/dashboard_summary.csv"
+  ))
+}
+
+read_summary_ccaa <- function() {
+  read_csv_optional(c(
+    "data/processed/firms_summary_ccaa.csv",
+    "assets/summary/firms_summary_ccaa.csv"
+  ))
+}
+
+read_summary_provincias <- function() {
+  read_csv_optional(c(
+    "data/processed/firms_summary_provincias.csv",
+    "assets/summary/firms_summary_provincias.csv"
+  ))
+}
+
+safe_value <- function(x, default = "—") {
+  if (length(x) == 0 || is.na(x) || identical(x, "")) default else as.character(x)
+}
+
+add_admin_boundaries <- function(map, path, group, weight = 1) {
+  if (!requireNamespace("sf", quietly = TRUE)) return(map)
+  if (!file.exists(path) || file.info(path)$size == 0) return(map)
+  x <- tryCatch(sf::st_read(path, quiet = TRUE), error = function(e) NULL)
+  if (is.null(x) || nrow(x) == 0) return(map)
+  if (!"admin_name" %in% names(x)) x$admin_name <- if ("NUTS_NAME" %in% names(x)) x$NUTS_NAME else x$admin_id
+  leaflet::addPolygons(
+    map,
+    data = x,
+    group = group,
+    color = "#333333",
+    weight = weight,
+    opacity = 0.85,
+    fillOpacity = 0,
+    label = ~admin_name,
+    highlightOptions = highlightOptions(weight = weight + 1, bringToFront = TRUE)
+  )
+}
+
 layers_data <- read_layers_json()
 layers_source <- attr(layers_data, "source_path")
 n_layers <- length(layers_data)
@@ -99,6 +157,25 @@ last_update <- if (n_layers > 0) {
 firms_data <- read_firms_csv()
 firms_source <- attr(firms_data, "source_path")
 n_firms <- nrow(firms_data)
+
+overview_data <- read_dashboard_overview()
+summary_ccaa <- read_summary_ccaa()
+summary_provincias <- read_summary_provincias()
+
+if (nrow(overview_data) > 0) {
+  overview <- overview_data[1, ]
+} else {
+  overview <- tibble::tibble(
+    n_firms = n_firms,
+    n_firms_6h = if (n_firms > 0 && "age_hours" %in% names(firms_data)) sum(!is.na(firms_data$age_hours) & firms_data$age_hours <= 6) else 0L,
+    n_firms_24h = if (n_firms > 0 && "age_hours" %in% names(firms_data)) sum(!is.na(firms_data$age_hours) & firms_data$age_hours <= 24) else 0L,
+    frp_total_mw = if (n_firms > 0 && "frp" %in% names(firms_data)) round(sum(as.numeric(firms_data$frp), na.rm = TRUE), 1) else 0,
+    ultima_deteccion_utc = NA_character_,
+    n_ccaa_con_focos = nrow(summary_ccaa),
+    n_provincias_con_focos = nrow(summary_provincias)
+  )
+}
+
 effis_groups <- effis_overlay_groups()
 effis_cfg <- effis_layer_config()
 ```
@@ -111,6 +188,7 @@ Este visor combina:
 - **AEMET OpenData**: riesgo meteorológico de incendios previsto.
 - **NASA FIRMS**: detecciones satelitales recientes de focos activos/thermal anomalies.
 - **EFFIS/Copernicus EMS**: capa WMS europea de Fire Weather Index.
+- **Eurostat/GISCO NUTS**: límites de CCAA y provincias para resumen territorial.
 
 ```{r}
 cat("Capas AEMET:", n_layers)
@@ -121,6 +199,40 @@ cat("\nEFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") el
 if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
 ```
 :::
+
+
+## Resumen operativo
+
+```{r operational-summary, results='asis'}
+htmltools::tags$div(
+  class = "summary-grid",
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Focos FIRMS"), htmltools::tags$strong(safe_value(overview$n_firms))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Últimas 6 h"), htmltools::tags$strong(safe_value(overview$n_firms_6h))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Últimas 24 h"), htmltools::tags$strong(safe_value(overview$n_firms_24h))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("FRP total"), htmltools::tags$strong(paste0(safe_value(overview$frp_total_mw, "0"), " MW"))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("CCAA con focos"), htmltools::tags$strong(safe_value(overview$n_ccaa_con_focos))),
+  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Provincias con focos"), htmltools::tags$strong(safe_value(overview$n_provincias_con_focos)))
+)
+```
+
+```{r top-provincias}
+if (nrow(summary_provincias) > 0) {
+  summary_provincias |>
+    select(
+      Provincia = admin_name,
+      Focos = n_focos,
+      `≤6 h` = n_ultimas_6h,
+      `≤24 h` = n_ultimas_24h,
+      `FRP total MW` = frp_total_mw,
+      Alerta = alerta_operativa,
+      `Última detección UTC` = ultima_deteccion_utc
+    ) |>
+    head(10) |>
+    knitr::kable(caption = "Provincias con más detecciones recientes según NASA FIRMS")
+} else {
+  cat("No hay resumen provincial disponible. Ejecuta `Rscript scripts/99_run_all.R` con límites GISCO y datos FIRMS.")
+}
+```
 
 ```{r fire-map}
 base_groups <- c("Base clara", "Satélite")
@@ -184,14 +296,20 @@ map <- add_effis_wms_layers(map)
 overlay_groups <- c(overlay_groups, effis_groups)
 
 map <- map |>
+  add_admin_boundaries("data/processed/admin_nuts2_ccaa.geojson", "CCAA (NUTS2)", weight = 1.2) |>
+  add_admin_boundaries("data/processed/admin_nuts3_provincias.geojson", "Provincias (NUTS3)", weight = 0.7)
+overlay_groups <- c(overlay_groups, "CCAA (NUTS2)", "Provincias (NUTS3)")
+
+map <- map |>
   addScaleBar(position = "bottomleft") |>
   addLayersControl(
     baseGroups = base_groups,
     overlayGroups = unique(overlay_groups),
     options = layersControlOptions(collapsed = TRUE)
   ) |>
+  hideGroup(c("CCAA (NUTS2)", "Provincias (NUTS3)")) |>
   addControl(
-    html = HTML("<strong>Fuentes:</strong> AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS<br><small>Visor informativo; no sustituye a avisos oficiales ni a servicios de emergencia.</small>"),
+    html = HTML("<strong>Fuentes:</strong> AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS · Eurostat/GISCO<br><small>Visor informativo; no sustituye a avisos oficiales ni a servicios de emergencia.</small>"),
     position = "bottomleft"
   )
 

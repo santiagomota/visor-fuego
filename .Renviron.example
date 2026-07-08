@@ -20,3 +20,8 @@ EFFIS_WMS_LAYERS=ecmwf007.fwi
 EFFIS_WMS_LABELS=EFFIS - FWI
 # Opcional: YYYY-MM-DD. Si está vacío, se usa Sys.Date() al renderizar.
 EFFIS_DATE=
+
+# Límites administrativos Eurostat/GISCO NUTS
+ADMIN_ENABLE=true
+ADMIN_NUTS_YEAR=2021
+ADMIN_RESOLUTION=10

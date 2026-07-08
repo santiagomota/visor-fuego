@@ -7,7 +7,15 @@ paths <- c(
   "assets/aemet/layers.json",
   "data/processed/firms_active_fires.csv",
   "data/processed/firms_active_fires.geojson",
-  "assets/firms/firms_active_fires.geojson"
+  "assets/firms/firms_active_fires.geojson",
+  "data/processed/admin_nuts2_ccaa.geojson",
+  "data/processed/admin_nuts3_provincias.geojson",
+  "assets/admin/admin_nuts2_ccaa.geojson",
+  "assets/admin/admin_nuts3_provincias.geojson",
+  "data/processed/firms_summary_ccaa.csv",
+  "data/processed/firms_summary_provincias.csv",
+  "data/processed/dashboard_summary.csv",
+  "assets/summary/dashboard_summary.json"
 )
 
 cat("\nComprobación de entradas del dashboard\n")
@@ -47,4 +55,21 @@ if (file.exists("data/processed/firms_active_fires.csv")) {
 
 if (dir.exists("_freeze")) {
   cat("\nAviso: existe _freeze/. Si ves HTML antiguo, ejecuta: quarto render --execute\n")
+}
+
+
+if (file.exists("data/processed/dashboard_summary.csv")) {
+  suppressPackageStartupMessages(library(readr))
+  overview <- readr::read_csv("data/processed/dashboard_summary.csv", show_col_types = FALSE)
+  cat("\nResumen operativo:\n")
+  print(overview)
+}
+
+if (file.exists("data/processed/firms_summary_provincias.csv")) {
+  suppressPackageStartupMessages(library(readr))
+  prov <- readr::read_csv("data/processed/firms_summary_provincias.csv", show_col_types = FALSE)
+  cat("\nProvincias con focos FIRMS:", nrow(prov), "\n")
+  if (nrow(prov) > 0) {
+    print(head(prov[, intersect(c("admin_name", "n_focos", "n_ultimas_6h", "n_ultimas_24h", "frp_total_mw", "alerta_operativa"), names(prov))], 10))
+  }
 }

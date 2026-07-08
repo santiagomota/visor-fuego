@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Visor de riesgo de incendios",
     "section": "",
-    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\n\n\n\nCapas AEMET: 24\n\n\n · Fecha: 2026-07-08 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 680\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nEFFIS WMS: EFFIS - FWI\n\n\n · TIME: 2026-07-08"
+    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 24\n\n\n · Fecha: 2026-07-08 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 680\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nEFFIS WMS: EFFIS - FWI\n\n\n · TIME: 2026-07-08"
   },
   {
     "objectID": "index.html#enlaces-útiles",
@@ -18,7 +18,7 @@
     "href": "CHANGELOG.html",
     "title": "Changelog",
     "section": "",
-    "text": "Capa NASA FIRMS de focos activos recientes mediante la API Area CSV.\nExportación FIRMS a data/processed/firms_active_fires.csv y GeoJSON.\nCapa WMS EFFIS/Copernicus EMS para Fire Weather Index (ecmwf007.fwi).\nVariables de entorno FIRMS_MAP_KEY, FIRMS_SOURCES, FIRMS_DAYS, FIRMS_BBOX, EFFIS_ENABLE, EFFIS_WMS_LAYERS y EFFIS_DATE.\nWorkflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.\n\n\n\n\n\nEl dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.\nscripts/99_run_all.R ejecuta ahora tres fases: AEMET, FIRMS y preparación web.\n\n\n\n\n\nPrimera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
+    "text": "Descarga de límites administrativos Eurostat/GISCO NUTS2 y NUTS3 para España.\nNuevos scripts:\n\nscripts/06_download_admin_boundaries.R.\nscripts/07_build_operational_summary.R.\n\nNuevos módulos R:\n\nR/admin.R.\nR/summary.R.\n\nResumen operativo con focos FIRMS totales, últimas 6 h, últimas 24 h, FRP total y territorios afectados.\nTablas resumen:\n\ndata/processed/firms_summary_ccaa.csv.\ndata/processed/firms_summary_provincias.csv.\ndata/processed/dashboard_summary.csv.\n\nCapas Leaflet opcionales de CCAA y provincias.\nRecursos publicados en assets/admin/ y assets/summary/.\n\n\n\n\n\nscripts/99_run_all.R pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.\nEl dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.\nWorkflow de GitHub Actions actualizado con sf, giscoR, knitr y nuevos assets.\n\n\n\n\n\n\n\n\nCapa NASA FIRMS de focos activos recientes mediante la API Area CSV.\nExportación FIRMS a data/processed/firms_active_fires.csv y GeoJSON.\nCapa WMS EFFIS/Copernicus EMS para Fire Weather Index (ecmwf007.fwi).\nVariables de entorno FIRMS_MAP_KEY, FIRMS_SOURCES, FIRMS_DAYS, FIRMS_BBOX, EFFIS_ENABLE, EFFIS_WMS_LAYERS y EFFIS_DATE.\nWorkflow de GitHub Actions actualizado para descargar AEMET + FIRMS y renderizar con EFFIS.\n\n\n\n\n\nEl dashboard pasa de “AEMET only” a visor combinado: AEMET + NASA FIRMS + EFFIS.\nscripts/99_run_all.R ejecuta ahora tres fases: AEMET, FIRMS y preparación web.\n\n\n\n\n\nPrimera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
   },
   {
     "objectID": "CHANGELOG.html#v0.2.0---2026-07-08",
@@ -33,5 +33,19 @@
     "title": "Changelog",
     "section": "",
     "text": "Primera versión funcional del visor AEMET de riesgo meteorológico de incendios forestales."
+  },
+  {
+    "objectID": "index.html#resumen-operativo",
+    "href": "index.html#resumen-operativo",
+    "title": "Visor de riesgo de incendios",
+    "section": "Resumen operativo",
+    "text": "Resumen operativo\n\n\nFocos FIRMS\n680\n\n\nÚltimas 6 h\n225\n\n\nÚltimas 24 h\n382\n\n\nFRP total\n3976.9 MW\n\n\nCCAA con focos\n12\n\n\nProvincias con focos\n26\n\n\n\n\n\nProvincias con más detecciones recientes según NASA FIRMS\n\n\n\n\n\n\n\n\n\n\n\nProvincia\nFocos\n≤6 h\n≤24 h\nFRP total MW\nAlerta\nÚltima detección UTC\n\n\n\n\nLeón\n33\n22\n23\n255.4\nalta\n2026-07-08 02:28:00\n\n\nAsturias\n33\n20\n20\n105.9\nalta\n2026-07-08 02:28:00\n\n\nBarcelona\n91\n8\n28\n792.9\nalta\n2026-07-08 02:28:00\n\n\nLleida\n14\n6\n14\n157.9\nalta\n2026-07-08 02:28:00\n\n\nZamora\n4\n4\n4\n4.1\nmedia\n2026-07-08 02:28:00\n\n\nMadrid\n7\n3\n7\n73.2\nmedia\n2026-07-08 02:30:00\n\n\nAlicante/Alacant\n7\n2\n6\n29.6\nmedia\n2026-07-08 02:30:00\n\n\nTarragona\n6\n2\n6\n38.9\nmedia\n2026-07-08 02:28:00\n\n\nHuesca\n2\n2\n2\n2.8\nmedia\n2026-07-08 02:28:00\n\n\nSevilla\n5\n1\n4\n19.1\nmedia\n2026-07-08 02:30:00"
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.3.0---2026-07-08",
+    "href": "CHANGELOG.html#v0.3.0---2026-07-08",
+    "title": "Changelog",
+    "section": "",
+    "text": "Descarga de límites administrativos Eurostat/GISCO NUTS2 y NUTS3 para España.\nNuevos scripts:\n\nscripts/06_download_admin_boundaries.R.\nscripts/07_build_operational_summary.R.\n\nNuevos módulos R:\n\nR/admin.R.\nR/summary.R.\n\nResumen operativo con focos FIRMS totales, últimas 6 h, últimas 24 h, FRP total y territorios afectados.\nTablas resumen:\n\ndata/processed/firms_summary_ccaa.csv.\ndata/processed/firms_summary_provincias.csv.\ndata/processed/dashboard_summary.csv.\n\nCapas Leaflet opcionales de CCAA y provincias.\nRecursos publicados en assets/admin/ y assets/summary/.\n\n\n\n\n\nscripts/99_run_all.R pasa a cinco fases: AEMET, FIRMS, límites administrativos, assets AEMET y resumen operativo.\nEl dashboard añade tarjetas de resumen y tabla de provincias con detecciones recientes.\nWorkflow de GitHub Actions actualizado con sf, giscoR, knitr y nuevos assets."
   }
 ]
