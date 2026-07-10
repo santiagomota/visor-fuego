@@ -1,89 +1,92 @@
-name: Update dashboard
+name: Actualizar visor fuego
 
 on:
   workflow_dispatch:
   schedule:
-    # 08:30 UTC. En verano peninsular equivale aproximadamente a 10:30 CEST.
-    - cron: "30 8 * * *"
+    # 07:30 y 12:30 hora peninsular de verano aprox.
+    # GitHub Actions usa UTC.
+    - cron: "30 5,10 * * *"
 
 permissions:
   contents: write
 
 jobs:
-  render:
+  update-dashboard:
     runs-on: ubuntu-latest
-
-    env:
-      AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
-      FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
-      AEMET_AREAS: "p,b,c"
-      AEMET_FORECAST_DAYS: "1,2,3,4,5,6,7"
-      AEMET_PRODUCTS: "previsto,estimado"
-      FIRMS_SOURCES: "VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT"
-      FIRMS_DAYS: "2"
-      FIRMS_BBOX: "-19,27,5,44.6"
-      EFFIS_ENABLE: "true"
-      EFFIS_WMS_LAYERS: "ecmwf007.fwi"
-      EFFIS_WMS_LABELS: "EFFIS - FWI"
-      ADMIN_ENABLE: "true"
-      ADMIN_NUTS_YEAR: "2021"
-      ADMIN_RESOLUTION: "10"
-      ALERT_CLUSTER_KM: "12"
-      ALERT_MAX_AGE_HOURS: "48"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libcurl4-openssl-dev libssl-dev libxml2-dev \
-            libgdal-dev libproj-dev libgeos-dev libudunits2-dev
-
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
-          use-public-rspm: true
+          r-version: "release"
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Install R dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          packages: |
-            any::curl
-            any::dplyr
-            any::fs
-            any::sf
-            any::knitr
-            any::giscoR
-            any::glue
-            any::htmltools
-            any::htmlwidgets
-            any::httr2
-            any::jsonlite
-            any::leaflet
-            any::png
-            any::purrr
-            any::readr
-            any::stringr
-            any::terra
-            any::tibble
-            any::tidyr
+      - name: Instalar dependencias del sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libxml2-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libproj-dev \
+            libudunits2-dev \
+            gdal-bin \
+            pandoc
 
-      - name: Download and prepare dashboard layers
-        run: Rscript scripts/99_run_all.R
+      - name: Instalar dependencias R
+        run: |
+          Rscript -e 'install.packages("pak", repos = "https://cloud.r-project.org")'
+          Rscript -e 'pak::local_install_deps(dependencies = TRUE)'
 
-      - name: Render Quarto site
-        run: quarto render --execute
+      - name: Configurar variables
+        run: |
+          cat > .Renviron <<'EOF'
+          AEMET_PROVIDER=classic
+          AEMET_CLASSIC_VALID_START_OFFSET_DAYS=0
+          AEMET_CLASSIC_KEEP_LATEST_ISSUE_ONLY=true
+          AEMET_CLASSIC_CLEAN_RAW_BEFORE_INSTALL=true
+          AEMET_INCLUDE_ORPHAN_RAW=false
+          AEMET_CLEAN_WEB_ASSETS=true
 
-      - name: Commit rendered site
+          EFFIS_ENABLE=false
+          EFFIS_RENDER_MODE=disabled
+
+          FIRMS_MAP_KEY=${{ secrets.FIRMS_MAP_KEY }}
+          FIRMS_SOURCES=VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT
+          FIRMS_DAYS=2
+          FIRMS_BBOX=-19,27,5,44.6
+          EOF
+
+      - name: Actualizar datos
+        run: |
+          Rscript scripts/01_download_aemet_incendios.R
+          Rscript scripts/02_prepare_web_assets.R
+          Rscript scripts/05_download_firms_active_fires.R || true
+          Rscript scripts/08_build_operational_alerts.R || true
+          Rscript scripts/09_update_dashboard_history.R || true
+          Rscript scripts/24_check_aemet_valid_dates.R
+
+      - name: Renderizar sitio
+        run: |
+          quarto render --execute
+
+      - name: Commit si hay cambios
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs data/processed assets/aemet assets/firms assets/admin assets/summary assets/alerts
-          git commit -m "Update fire risk dashboard" || echo "No changes to commit"
-          git push
+
+          git add data/raw/aemet data/processed assets/aemet assets/firms assets/alerts assets/history docs || true
+
+          if git diff --cached --quiet; then
+            echo "No hay cambios que publicar."
+          else
+            git commit -m "Actualiza visor automáticamente"
+            git push
+          fi
