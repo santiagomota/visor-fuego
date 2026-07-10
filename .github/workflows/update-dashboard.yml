@@ -3,8 +3,7 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
-    # GitHub Actions usa UTC.
-    # 07:30 y 12:30 hora peninsular de verano aprox.
+    # GitHub Actions usa UTC. En verano: 07:30 y 12:30 hora peninsular aprox.
     - cron: "30 5,10 * * *"
 
 permissions:
@@ -12,8 +11,8 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  RSPM: "https://packagemanager.posit.co/cran/__linux__/jammy/latest"
-  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+  RSPM: https://packagemanager.posit.co/cran/__linux__/jammy/latest
+  R_KEEP_PKG_SOURCE: no
 
 jobs:
   update-dashboard:
@@ -51,36 +50,75 @@ jobs:
             libpng-dev \
             libtiff5-dev \
             libjpeg-dev \
-            make
+            pandoc
 
-      - name: Instalar paquetes R del visor
-        shell: Rscript {0}
+      - name: Instalar paquetes R desde Posit Package Manager
+        shell: bash
         run: |
+          cat > /tmp/install-r-packages.R <<'RSCRIPT'
           options(
-            repos = c(CRAN = Sys.getenv("RSPM", unset = "https://cloud.r-project.org")),
-            Ncpus = max(1L, parallel::detectCores() - 1L)
+            repos = c(CRAN = Sys.getenv("RSPM", unset = "https://packagemanager.posit.co/cran/__linux__/jammy/latest")),
+            pkgType = "binary",
+            Ncpus = max(1L, parallel::detectCores(logical = TRUE) - 1L)
           )
 
-          pkgs <- c(
-            "curl", "jsonlite", "readr", "dplyr", "purrr", "stringr",
-            "tibble", "fs", "glue", "tidyr", "httr2", "xml2",
-            "sf", "terra", "leaflet", "htmltools", "htmlwidgets",
-            "lubridate", "ggplot2", "plotly", "DT", "knitr", "rmarkdown",
-            "png", "scales", "rlang", "vctrs", "cli"
-          )
+          pkgs <- unique(c(
+            "curl", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
+            "fs", "glue", "tidyr", "httr2", "xml2", "lubridate",
+            "sf", "terra", "stars", "units", "lwgeom",
+            "leaflet", "leaflet.providers", "htmltools", "htmlwidgets",
+            "rmarkdown", "knitr", "yaml", "DT", "plotly", "ggplot2",
+            "png", "scales", "digest", "base64enc", "here", "cli"
+          ))
 
-          installed <- rownames(installed.packages())
-          missing <- setdiff(pkgs, installed)
+          install_one <- function(pkg) {
+            if (requireNamespace(pkg, quietly = TRUE)) return(invisible(TRUE))
+            message("Instalando paquete R: ", pkg)
+            tryCatch(
+              install.packages(pkg, dependencies = c("Depends", "Imports", "LinkingTo"), type = "binary"),
+              error = function(e) {
+                message("Fallo instalando ", pkg, " como binario: ", conditionMessage(e))
+              }
+            )
+            invisible(requireNamespace(pkg, quietly = TRUE))
+          }
+
+          ok <- vapply(pkgs, install_one, logical(1))
+          missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
 
           if (length(missing)) {
-            message("Instalando paquetes R: ", paste(missing, collapse = ", "))
-            install.packages(missing, dependencies = TRUE)
+            message("Paquetes aún ausentes tras binarios RSPM: ", paste(missing, collapse = ", "))
+            message("Reintentando instalación conjunta desde RSPM...")
+            tryCatch(
+              install.packages(missing, dependencies = c("Depends", "Imports", "LinkingTo"), type = "binary"),
+              error = function(e) message("Reintento conjunto falló: ", conditionMessage(e))
+            )
           }
 
-          missing_after <- setdiff(pkgs, rownames(installed.packages()))
-          if (length(missing_after)) {
-            stop("Faltan paquetes R tras install.packages(): ", paste(missing_after, collapse = ", "))
+          missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+          if (length(missing)) {
+            stop("Faltan paquetes R tras instalación RSPM: ", paste(missing, collapse = ", "), call. = FALSE)
           }
+
+          message("Paquetes R instalados correctamente.")
+          RSCRIPT
+
+          Rscript /tmp/install-r-packages.R
+
+      - name: Verificar paquetes R mínimos
+        run: |
+          Rscript - <<'RSCRIPT'
+          required <- c(
+            "curl", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
+            "fs", "glue", "tidyr", "httr2", "xml2", "sf", "terra", "leaflet",
+            "htmlwidgets", "lubridate", "ggplot2", "plotly", "DT", "png"
+          )
+          missing <- required[!vapply(required, requireNamespace, logical(1), quietly = TRUE)]
+          if (length(missing)) {
+            stop("Faltan paquetes R tras install.packages(): ", paste(missing, collapse = ", "), call. = FALSE)
+          }
+          cat("OK paquetes R mínimos\n")
+          RSCRIPT
 
       - name: Configurar variables
         run: |
@@ -101,17 +139,14 @@ jobs:
           FIRMS_BBOX=-19,27,5,44.6
           EOF
 
-      - name: Actualizar datos AEMET
+      - name: Actualizar datos
         run: |
           Rscript scripts/01_download_aemet_incendios.R
           Rscript scripts/02_prepare_web_assets.R
-          Rscript scripts/24_check_aemet_valid_dates.R
-
-      - name: Actualizar FIRMS y alertas
-        run: |
           Rscript scripts/05_download_firms_active_fires.R || true
           Rscript scripts/08_build_operational_alerts.R || true
           Rscript scripts/09_update_dashboard_history.R || true
+          Rscript scripts/24_check_aemet_valid_dates.R
 
       - name: Renderizar sitio
         run: |
