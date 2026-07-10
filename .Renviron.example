@@ -1,89 +1,73 @@
-# AEMET
-# classic usa la descarga SIG clásica /es/api-eltiempo/incendios/download.
-# Devuelve GeoTIFFs georreferenciados y NO requiere AEMET_API_KEY.
-# opendata mantiene el método anterior, útil solo para diagnóstico/fallback.
-AEMET_PROVIDER=classic
-AEMET_ALLOW_PNG_OVERLAY=false
+# visor-fuego v0.6.4
+# Copiar este fichero como .Renviron en la raíz del proyecto.
+# No incluir .Renviron en Git si contiene claves reales.
 
-# Conversión AEMET para Leaflet.
-# 3857 reproyecta el GeoTIFF a Web Mercator antes de generar el PNG,
-# que suele alinear mejor con Leaflet que estirar un PNG en EPSG:4326.
+# -----------------------------------------------------------------------------
+# AEMET
+# -----------------------------------------------------------------------------
+# El proveedor classic descarga los GeoTIFF SIG y no necesita AEMET_API_KEY.
+AEMET_PROVIDER=classic
+AEMET_API_KEY=
+
+# Estas variables se usan principalmente con AEMET_PROVIDER=opendata.
+# En classic, el paquete incluye Península/Baleares y Canarias, D00-D07.
+AEMET_AREAS=p,c
+AEMET_FORECAST_DAYS=1,2,3,4,5,6,7
+AEMET_PRODUCTS=previsto
+
+AEMET_REQUIRE_GEOTIFF=true
+AEMET_ALLOW_PNG_OVERLAY=false
 AEMET_LEAFLET_PROJECTION=3857
-# Ajuste manual residual en grados. Déjalo a 0 salvo que valides un desplazamiento sistemático.
 AEMET_BOUNDS_NUDGE_LON=0
 AEMET_BOUNDS_NUDGE_LAT=0
-AEMET_CLASSIC_VALID_START_OFFSET_DAYS=1
 
-# AEMET OpenData, solo necesario si AEMET_PROVIDER=opendata
-AEMET_API_KEY=pon_aqui_tu_api_key_de_aemet
-AEMET_AREAS=p,b,c
-AEMET_FORECAST_DAYS=1,2,3,4,5,6,7
-AEMET_PRODUCTS=previsto,estimado
+# D00 corresponde a Día 1 y a la fecha indicada en el nombre del fichero.
+AEMET_CLASSIC_VALID_START_OFFSET_DAYS=0
+AEMET_CLASSIC_KEEP_LATEST_ISSUE_ONLY=true
+AEMET_CLASSIC_CLEAN_RAW_BEFORE_INSTALL=true
+AEMET_INCLUDE_ORPHAN_RAW=false
+AEMET_CLEAN_WEB_ASSETS=true
 
-# NASA FIRMS. Solicita una MAP_KEY gratuita en FIRMS.
-# Si se deja vacío, el visor se renderiza sin focos FIRMS.
+# -----------------------------------------------------------------------------
+# NASA FIRMS
+# -----------------------------------------------------------------------------
+# Solicita una MAP_KEY gratuita en FIRMS. Si se deja vacía, la capa estará vacía.
 FIRMS_MAP_KEY=
 FIRMS_SOURCES=VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT
 FIRMS_DAYS=2
 FIRMS_BBOX=-19,27,5,44.6
-# Opcional: YYYY-MM-DD. Si está vacío, FIRMS devuelve los datos más recientes.
-FIRMS_DATE=
 
-# EFFIS / Copernicus EMS
-# static descarga GetMap como image/tiff, lo convierte a PNG y lo publica en assets/effis.
-# wms mantiene el modo dinámico anterior; para FWI suele no funcionar en navegador si el servidor devuelve TIFF.
-EFFIS_ENABLE=true
-EFFIS_RENDER_MODE=static
-EFFIS_WMS_BASE=https://maps.effis.emergency.copernicus.eu/effis
-EFFIS_WMS_LAYERS=auto
-EFFIS_WMS_LABELS=
-EFFIS_WMS_VERSION=1.1.1
-EFFIS_WMS_CRS=EPSG:4326
-EFFIS_WMS_FORMAT=image/tiff
-EFFIS_BBOX=-19,27,5,44.6
-EFFIS_WIDTH=1200
-EFFIS_HEIGHT=1200
-EFFIS_FALLBACK_DAYS=2
-EFFIS_OPACITY=0.55
-EFFIS_ZINDEX=430
-# Opcional: YYYY-MM-DD. Si está vacío, se usa Sys.Date() y fallback a días anteriores.
-EFFIS_DATE=
-
-# Límites administrativos Eurostat/GISCO NUTS
-ADMIN_ENABLE=true
-ADMIN_NUTS_YEAR=2021
-ADMIN_RESOLUTION=10
-
-# Alertas operativas FIRMS
+# -----------------------------------------------------------------------------
+# Alertas e histórico
+# -----------------------------------------------------------------------------
 ALERT_CLUSTER_KM=12
 ALERT_MAX_AGE_HOURS=48
 
-# Histórico temporal
-# daily_latest conserva solo la última ejecución de cada día; append_runs conserva todas.
 HISTORY_MODE=daily_latest
 HISTORY_KEEP_DAYS=90
 
+# -----------------------------------------------------------------------------
+# EFFIS FWI clásico
+# -----------------------------------------------------------------------------
+# Desactivado: el visor utiliza EFFIS Burnt Areas.
+EFFIS_ENABLE=false
+EFFIS_RENDER_MODE=disabled
 
-# EFFIS / Copernicus WMS robust mode
-EFFIS_ENABLE=true
-EFFIS_RENDER_MODE=static
-EFFIS_WMS_BASE=https://ies-ows.jrc.ec.europa.eu/effis
-EFFIS_WMS_BASES=https://ies-ows.jrc.ec.europa.eu/effis
-EFFIS_WMS_LAYERS=ecmwf.fwi.fwi
-EFFIS_WMS_LABELS=EFFIS - FWI
-EFFIS_WMS_VERSIONS=1.1.1
-EFFIS_PROBE_FORMATS=image/png,image/tiff
-EFFIS_STATIC_FORMATS=image/png,image/tiff
-EFFIS_BBOX=-18.0,27.0,42.0,72.0
-EFFIS_BBOXES=-18.0,27.0,42.0,72.0|-19.0,27.0,5.0,44.6
-EFFIS_WIDTH=1600
-EFFIS_HEIGHT=1200
-EFFIS_MAX_DATES=10
-EFFIS_MAX_REQUESTS=120
-EFFIS_PROBE_MAX_REQUESTS=120
-EFFIS_OPACITY=0.55
-EFFIS_ZINDEX=430
+# -----------------------------------------------------------------------------
+# EFFIS Burnt Areas
+# -----------------------------------------------------------------------------
+EFFIS_BA_ENABLE=true
+EFFIS_BA_URL=https://maps.effis.emergency.copernicus.eu/effis?outputformat=SHAPEZIP&request=getfeature&service=WFS&typename=ms:modis.ba.poly&version=1.1.0
+EFFIS_BA_BBOX=-19,27,5,44.6
+EFFIS_BA_MAX_DAYS=90
+EFFIS_BA_MIN_AREA_HA=5
+EFFIS_BA_SIMPLIFY_M=100
+EFFIS_BA_TIMEOUT_SECONDS=900
+EFFIS_BA_RETRIES=2
+EFFIS_BA_OPTIONAL=true
 
-# Descubrimiento de capas EFFIS desde GetCapabilities
-EFFIS_LAYER_PATTERNS=fwi|fire.*danger|danger|ecmwf|meteo|forecast|fwiforecast
-EFFIS_MAX_LAYERS=6
+# -----------------------------------------------------------------------------
+# Límites administrativos
+# -----------------------------------------------------------------------------
+# Solo fuerza una nueva descarga cuando se cambia a true.
+UPDATE_ADMIN_BOUNDARIES=false

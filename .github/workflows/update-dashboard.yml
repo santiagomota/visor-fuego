@@ -194,11 +194,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add -A -- data/raw/aemet data/processed assets docs
+          # data/raw contiene descargas temporales y está excluido en .gitignore.
+          # Las salidas reproducibles que alimentan el visor se publican desde
+          # data/processed, assets y docs.
+          git add -A -- data/processed assets docs
 
           if git diff --cached --quiet; then
             echo "No hay cambios que publicar."
           else
             git commit -m "Actualiza visor automáticamente"
-            git push
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi

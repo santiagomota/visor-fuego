@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.3: publicación AEMET y pipeline operativo consolidado
+## v0.6.4: publicación AEMET y workflow corregido
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,8 +9,10 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.3
+### Cambios principales de v0.6.4
 
+- Corrige el commit automático del workflow: `data/raw/` permanece ignorado y solo se publican `data/processed`, `assets` y `docs`.
+- Actualiza `.Renviron.example` para que la ejecución local use la misma configuración operativa que GitHub Actions.
 - Los PNG de AEMET se declaran como recursos Quarto y se copian a `docs/assets/aemet/` durante el render.
 - El workflow utiliza `scripts/99_run_all.R` como único pipeline canónico.
 - El resumen FIRMS se genera antes que las alertas y el histórico.

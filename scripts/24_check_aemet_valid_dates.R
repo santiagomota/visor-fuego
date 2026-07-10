@@ -14,13 +14,13 @@ manifest <- readr::read_csv(manifest_file, show_col_types = FALSE) |>
   normalise_manifest_types()
 
 if (!"valid_date" %in% names(manifest)) {
-  message("El manifest no tiene columna valid_date. Regenera con v0.6.3:")
+  message("El manifest no tiene columna valid_date. Regenera con v0.6.4:")
   message("  Rscript scripts/01_download_aemet_incendios.R")
   message("  Rscript scripts/02_prepare_web_assets.R")
 } else {
   message("Manifest AEMET: fechas de fichero, fecha válida y horizonte visible")
   message("
-Nota v0.6.3: en la fuente clásica, down_YYYYMMDD_..._D00 se interpreta como Día 1, válido para YYYYMMDD. D01 es Día 2 y válido para YYYYMMDD + 1.")
+Nota v0.6.4: en la fuente clásica, down_YYYYMMDD_..._D00 se interpreta como Día 1, válido para YYYYMMDD. D01 es Día 2 y válido para YYYYMMDD + 1.")
   message("El valor recomendado de AEMET_CLASSIC_VALID_START_OFFSET_DAYS es 0.")
   manifest |>
     dplyr::filter(status == "downloaded", file_type == "raster") |>

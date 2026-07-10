@@ -28,7 +28,7 @@ firms_day_range <- function() {
   max(1L, min(5L, days))
 }
 
-firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.3", timeout = 120, connecttimeout = 30, retries = 2) {
+firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.4", timeout = 120, connecttimeout = 30, retries = 2) {
   if (!requireNamespace("curl", quietly = TRUE)) {
     stop("Falta el paquete R 'curl'. Instala con install.packages('curl').", call. = FALSE)
   }

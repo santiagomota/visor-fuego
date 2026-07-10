@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.4 - corrección de publicación automática
+
+- Corregido el paso `Commit si hay cambios` del workflow de GitHub Actions.
+- Eliminado `data/raw/aemet` de `git add`: `data/raw/` contiene descargas temporales y está excluido por `.gitignore`.
+- El workflow publica únicamente las salidas reproducibles de `data/processed`, `assets` y `docs`.
+- El `push` se dirige explícitamente a la rama que ejecuta el workflow mediante `GITHUB_REF_NAME`.
+- Validado que los ficheros ignorados dentro de `data/processed` que ya están versionados se actualizan correctamente con `git add -A`.
+- Sustituido `.Renviron.example` por una configuración completa, sin duplicados y alineada con AEMET classic, FIRMS y EFFIS Burnt Areas.
+
 ## v0.6.3 - publicación AEMET y pipeline consolidado
 
 - Declara `assets/aemet/**` y `assets/effis_ba/**` como recursos del proyecto Quarto.

@@ -1,5 +1,5 @@
 # Copernicus / EFFIS Burnt Areas helpers
-# v0.6.3
+# v0.6.4
 
 `%||%` <- function(x, y) {
   if (is.null(x) || length(x) == 0 || all(is.na(x)) || !nzchar(paste(x, collapse = ""))) y else x
