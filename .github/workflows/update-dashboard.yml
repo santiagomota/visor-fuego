@@ -3,124 +3,139 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
-    # GitHub Actions usa UTC. En verano: 07:30 y 12:30 hora peninsular aprox.
+    # GitHub Actions usa UTC. En verano peninsular: 07:30 y 12:30 CEST aprox.
     - cron: "30 5,10 * * *"
 
 permissions:
   contents: write
 
 env:
+  TZ: Europe/Madrid
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  RSPM: https://packagemanager.posit.co/cran/__linux__/jammy/latest
-  R_KEEP_PKG_SOURCE: no
+  R_LIBS_USER: ${{ github.workspace }}/.r-lib
 
 jobs:
   update-dashboard:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup R
-        uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: "release"
-          use-public-rspm: true
+      - name: Instalar R, librerías del sistema y paquetes R vía apt
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            r-base r-base-dev \
+            ca-certificates curl git pandoc \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libgdal-dev libgeos-dev libproj-dev libudunits2-dev \
+            gdal-bin proj-bin libpng-dev libjq-dev libprotobuf-dev protobuf-compiler
+
+          # Instalamos por apt todos los paquetes CRAN disponibles en Ubuntu.
+          # Si alguno no existe en la distribución, lo instalaremos después desde CRAN.
+          apt_packages=(
+            r-cran-curl
+            r-cran-jsonlite
+            r-cran-readr
+            r-cran-dplyr
+            r-cran-purrr
+            r-cran-stringr
+            r-cran-tibble
+            r-cran-fs
+            r-cran-glue
+            r-cran-tidyr
+            r-cran-httr2
+            r-cran-xml2
+            r-cran-lubridate
+            r-cran-sf
+            r-cran-terra
+            r-cran-stars
+            r-cran-units
+            r-cran-lwgeom
+            r-cran-leaflet
+            r-cran-htmltools
+            r-cran-htmlwidgets
+            r-cran-rmarkdown
+            r-cran-knitr
+            r-cran-yaml
+            r-cran-dt
+            r-cran-plotly
+            r-cran-ggplot2
+            r-cran-png
+            r-cran-scales
+            r-cran-digest
+            r-cran-base64enc
+            r-cran-here
+            r-cran-cli
+          )
+
+          for pkg in "${apt_packages[@]}"; do
+            if apt-cache show "$pkg" >/dev/null 2>&1; then
+              sudo apt-get install -y --no-install-recommends "$pkg"
+            else
+              echo "::warning::Paquete apt no disponible: $pkg; se intentará desde CRAN si hace falta"
+            fi
+          done
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Instalar dependencias del sistema
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libcurl4-openssl-dev \
-            libssl-dev \
-            libxml2-dev \
-            libgdal-dev \
-            libgeos-dev \
-            libproj-dev \
-            libudunits2-dev \
-            gdal-bin \
-            libfontconfig1-dev \
-            libharfbuzz-dev \
-            libfribidi-dev \
-            libfreetype6-dev \
-            libpng-dev \
-            libtiff5-dev \
-            libjpeg-dev \
-            pandoc
-
-      - name: Instalar paquetes R desde Posit Package Manager
+      - name: Instalar paquetes R faltantes desde CRAN
         shell: bash
         run: |
-          cat > /tmp/install-r-packages.R <<'RSCRIPT'
+          set -euo pipefail
+          mkdir -p "$R_LIBS_USER"
+
+          Rscript - <<'RS'
+          user_lib <- Sys.getenv("R_LIBS_USER")
+          dir.create(user_lib, recursive = TRUE, showWarnings = FALSE)
+          .libPaths(c(user_lib, .libPaths()))
+
           options(
-            repos = c(CRAN = Sys.getenv("RSPM", unset = "https://packagemanager.posit.co/cran/__linux__/jammy/latest")),
-            pkgType = "binary",
-            Ncpus = max(1L, parallel::detectCores(logical = TRUE) - 1L)
+            repos = c(CRAN = "https://cloud.r-project.org"),
+            install.packages.compile.from.source = "never"
           )
 
-          pkgs <- unique(c(
+          needed <- c(
             "curl", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
-            "fs", "glue", "tidyr", "httr2", "xml2", "lubridate",
-            "sf", "terra", "stars", "units", "lwgeom",
-            "leaflet", "leaflet.providers", "htmltools", "htmlwidgets",
-            "rmarkdown", "knitr", "yaml", "DT", "plotly", "ggplot2",
-            "png", "scales", "digest", "base64enc", "here", "cli"
-          ))
+            "fs", "glue", "tidyr", "httr2", "xml2", "lubridate", "sf", "terra",
+            "stars", "units", "lwgeom", "leaflet", "htmltools", "htmlwidgets",
+            "rmarkdown", "knitr", "yaml", "DT", "plotly", "ggplot2", "png",
+            "scales", "digest", "base64enc", "here", "cli"
+          )
 
-          install_one <- function(pkg) {
-            if (requireNamespace(pkg, quietly = TRUE)) return(invisible(TRUE))
-            message("Instalando paquete R: ", pkg)
-            tryCatch(
-              install.packages(pkg, dependencies = c("Depends", "Imports", "LinkingTo"), type = "binary"),
-              error = function(e) {
-                message("Fallo instalando ", pkg, " como binario: ", conditionMessage(e))
-              }
-            )
-            invisible(requireNamespace(pkg, quietly = TRUE))
-          }
-
-          ok <- vapply(pkgs, install_one, logical(1))
-          missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+          is_missing <- function(pkg) !requireNamespace(pkg, quietly = TRUE)
+          missing <- needed[vapply(needed, is_missing, logical(1))]
 
           if (length(missing)) {
-            message("Paquetes aún ausentes tras binarios RSPM: ", paste(missing, collapse = ", "))
-            message("Reintentando instalación conjunta desde RSPM...")
-            tryCatch(
-              install.packages(missing, dependencies = c("Depends", "Imports", "LinkingTo"), type = "binary"),
-              error = function(e) message("Reintento conjunto falló: ", conditionMessage(e))
-            )
+            message("Paquetes R faltantes antes de CRAN: ", paste(missing, collapse = ", "))
+            install.packages(missing, dependencies = TRUE, Ncpus = max(1, parallel::detectCores() - 1))
+          } else {
+            message("Todos los paquetes R estaban ya disponibles tras apt.")
           }
 
-          missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
-          if (length(missing)) {
-            stop("Faltan paquetes R tras instalación RSPM: ", paste(missing, collapse = ", "), call. = FALSE)
+          missing_after <- needed[vapply(needed, is_missing, logical(1))]
+          if (length(missing_after)) {
+            stop("Faltan paquetes R tras apt + CRAN: ", paste(missing_after, collapse = ", "), call. = FALSE)
           }
 
-          message("Paquetes R instalados correctamente.")
-          RSCRIPT
+          message("Paquetes R disponibles: ", paste(needed, collapse = ", "))
+          message(".libPaths():\n", paste(.libPaths(), collapse = "\n"))
+          RS
 
-          Rscript /tmp/install-r-packages.R
-
-      - name: Verificar paquetes R mínimos
+      - name: Versiones de diagnóstico
+        shell: bash
         run: |
-          Rscript - <<'RSCRIPT'
-          required <- c(
-            "curl", "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
-            "fs", "glue", "tidyr", "httr2", "xml2", "sf", "terra", "leaflet",
-            "htmlwidgets", "lubridate", "ggplot2", "plotly", "DT", "png"
-          )
-          missing <- required[!vapply(required, requireNamespace, logical(1), quietly = TRUE)]
-          if (length(missing)) {
-            stop("Faltan paquetes R tras install.packages(): ", paste(missing, collapse = ", "), call. = FALSE)
-          }
-          cat("OK paquetes R mínimos\n")
-          RSCRIPT
+          R --version
+          Rscript -e 'cat("R library paths:\n"); print(.libPaths()); cat("terra: ", as.character(packageVersion("terra")), "\n"); cat("leaflet: ", as.character(packageVersion("leaflet")), "\n")'
+          quarto --version
+          gdalinfo --version
 
-      - name: Configurar variables
+      - name: Configurar variables del visor
+        shell: bash
         run: |
           cat > .Renviron <<'EOF'
           AEMET_PROVIDER=classic
@@ -140,7 +155,9 @@ jobs:
           EOF
 
       - name: Actualizar datos
+        shell: bash
         run: |
+          set -euo pipefail
           Rscript scripts/01_download_aemet_incendios.R
           Rscript scripts/02_prepare_web_assets.R
           Rscript scripts/05_download_firms_active_fires.R || true
@@ -149,11 +166,15 @@ jobs:
           Rscript scripts/24_check_aemet_valid_dates.R
 
       - name: Renderizar sitio
+        shell: bash
         run: |
+          set -euo pipefail
           quarto render --execute
 
       - name: Commit si hay cambios
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
