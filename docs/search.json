@@ -1,283 +1,17 @@
 [
   {
-    "objectID": "summary.html",
-    "href": "summary.html",
-    "title": "Resumen operativo",
-    "section": "",
-    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n346\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n97\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n2\ndata/processed/dashboard_history.csv"
-  },
-  {
-    "objectID": "summary.html#resumen-operativo",
-    "href": "summary.html#resumen-operativo",
-    "title": "Resumen operativo",
-    "section": "Resumen operativo",
-    "text": "Resumen operativo\n\n\nFocos FIRMS\n692\n\n\nÚltimas 6 h\n12\n\n\nÚltimas 24 h\n394\n\n\nFRP total\n4047 MW\n\n\nCCAA con focos\n12\n\n\nProvincias con focos\n27\n\n\nAlertas/clústeres\n118\n\n\nAlertas altas\n8\n\n\n\n\n\nAlertas operativas generadas a partir de clústeres NASA FIRMS\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP total MW\nÚltima detección UTC\n\n\n\n\nALERT-20260708-001\nalta\n103.5\n59\n0\n16\n516.9\n2026-07-08 02:11:00\n\n\nALERT-20260708-002\nalta\n97.1\n19\n6\n19\n153.5\n2026-07-08 03:49:00\n\n\nALERT-20260708-003\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n\n\nALERT-20260708-004\nalta\n54.1\n27\n0\n8\n255.9\n2026-07-08 02:28:00\n\n\nALERT-20260708-005\nalta\n41.7\n10\n0\n10\n350.6\n2026-07-07 13:53:00\n\n\nALERT-20260708-006\nalta\n36.9\n7\n2\n7\n17.8\n2026-07-08 03:49:00\n\n\nALERT-20260708-007\nalta\n36.1\n8\n0\n8\n427.9\n2026-07-07 14:10:00\n\n\nALERT-20260708-008\nalta\n30.1\n7\n2\n4\n11.8\n2026-07-08 03:49:00\n\n\nALERT-20260708-009\nmedia\n149.9\n65\n0\n38\n86.0\n2026-07-08 02:32:00\n\n\nALERT-20260708-010\nmedia\n68.6\n27\n0\n17\n43.9\n2026-07-08 02:30:00\n\n\n\n\n\n\n\n\nProvincias con más detecciones recientes según NASA FIRMS\n\n\n\n\n\n\n\n\n\n\n\nProvincia\nFocos\n≤6 h\n≤24 h\nFRP total MW\nAlerta\nÚltima detección UTC\n\n\n\n\nLeón\n40\n7\n30\n316.8\nalta\n2026-07-08 03:49:00\n\n\nAsturias\n37\n4\n24\n113.2\nalta\n2026-07-08 03:49:00\n\n\nLugo\n1\n1\n1\n1.4\nmedia\n2026-07-08 03:49:00\n\n\nBarcelona\n91\n0\n28\n792.9\nseguimiento\n2026-07-08 02:28:00\n\n\nLleida\n14\n0\n14\n157.9\nseguimiento\n2026-07-08 02:28:00\n\n\nMadrid\n7\n0\n7\n73.2\nseguimiento\n2026-07-08 02:30:00\n\n\nAlicante/Alacant\n7\n0\n6\n29.6\nseguimiento\n2026-07-08 02:30:00\n\n\nTarragona\n6\n0\n6\n38.9\nseguimiento\n2026-07-08 02:28:00\n\n\nSevilla\n5\n0\n4\n19.1\nseguimiento\n2026-07-08 02:30:00\n\n\nAlmería\n5\n0\n2\n12.2\nseguimiento\n2026-07-08 02:13:00"
-  },
-  {
-    "objectID": "summary.html#enlaces",
-    "href": "summary.html#enlaces",
-    "title": "Resumen operativo",
-    "section": "Enlaces",
-    "text": "Enlaces\n\nVolver al mapa\nInforme operativo\nEvolución temporal"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Mapa de riesgo de incendios",
-    "section": "",
-    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-10 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 346\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 97 · Altas: 2 · Medias: 19\n\n\n\nEFFIS WMS: desactivado"
-  },
-  {
-    "objectID": "index.html#mapa",
-    "href": "index.html#mapa",
-    "title": "Mapa de riesgo de incendios",
-    "section": "Mapa",
-    "text": "Mapa"
-  },
-  {
-    "objectID": "index.html#enlaces-útiles",
-    "href": "index.html#enlaces-útiles",
-    "title": "Mapa de riesgo de incendios",
-    "section": "Enlaces útiles",
-    "text": "Enlaces útiles\n\nVisor oficial de incendios de AEMET\nAEMET OpenData\nNASA FIRMS\nEFFIS / Copernicus EMS"
-  },
-  {
-    "objectID": "data/processed/operational_report.html",
-    "href": "data/processed/operational_report.html",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "Generado UTC: 2026-07-10T02:45:38Z\n\n\n\nFocos FIRMS procesados: 346.\nClústeres/alertas generadas: 97.\nAlertas altas: 2.\nAlertas medias: 19.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260710-001\nalta\n83.1\n29\n0\n20\n1168.6\n2026-07-09 13:33:00\n43.02071\n-5.5294359\n\n\nALERT-20260710-002\nalta\n19.4\n3\n0\n3\n177.3\n2026-07-09 13:31:00\n37.75129\n-4.9451733\n\n\nALERT-20260710-003\nmedia\n67.0\n43\n0\n7\n149.7\n2026-07-09 03:32:00\n39.81244\n-3.7700028\n\n\nALERT-20260710-004\nmedia\n38.9\n14\n0\n8\n83.5\n2026-07-09 13:33:00\n43.10482\n-5.8928871\n\n\nALERT-20260710-005\nmedia\n30.8\n7\n0\n7\n134.1\n2026-07-09 13:33:00\n40.90752\n-7.8144643\n\n\nALERT-20260710-006\nmedia\n29.5\n13\n0\n5\n25.1\n2026-07-09 13:12:00\n33.13171\n3.3345754\n\n\nALERT-20260710-007\nmedia\n28.6\n17\n0\n2\n43.8\n2026-07-09 13:31:00\n35.80191\n-0.2671882\n\n\nALERT-20260710-008\nmedia\n20.5\n4\n0\n4\n69.5\n2026-07-09 13:14:00\n42.67534\n0.7464250\n\n\nALERT-20260710-009\nmedia\n19.9\n4\n0\n4\n52.1\n2026-07-09 13:12:00\n33.96361\n-6.4586800\n\n\nALERT-20260710-010\nmedia\n19.5\n4\n0\n4\n42.1\n2026-07-09 13:33:00\n41.81308\n-8.5188650"
-  },
-  {
-    "objectID": "data/processed/operational_report.html#resumen",
-    "href": "data/processed/operational_report.html#resumen",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "Focos FIRMS procesados: 346.\nClústeres/alertas generadas: 97.\nAlertas altas: 2.\nAlertas medias: 19."
-  },
-  {
-    "objectID": "data/processed/operational_report.html#criterio-de-clasificación",
-    "href": "data/processed/operational_report.html#criterio-de-clasificación",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "Alta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia."
-  },
-  {
-    "objectID": "data/processed/operational_report.html#principales-alertas",
-    "href": "data/processed/operational_report.html#principales-alertas",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "ID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260710-001\nalta\n83.1\n29\n0\n20\n1168.6\n2026-07-09 13:33:00\n43.02071\n-5.5294359\n\n\nALERT-20260710-002\nalta\n19.4\n3\n0\n3\n177.3\n2026-07-09 13:31:00\n37.75129\n-4.9451733\n\n\nALERT-20260710-003\nmedia\n67.0\n43\n0\n7\n149.7\n2026-07-09 03:32:00\n39.81244\n-3.7700028\n\n\nALERT-20260710-004\nmedia\n38.9\n14\n0\n8\n83.5\n2026-07-09 13:33:00\n43.10482\n-5.8928871\n\n\nALERT-20260710-005\nmedia\n30.8\n7\n0\n7\n134.1\n2026-07-09 13:33:00\n40.90752\n-7.8144643\n\n\nALERT-20260710-006\nmedia\n29.5\n13\n0\n5\n25.1\n2026-07-09 13:12:00\n33.13171\n3.3345754\n\n\nALERT-20260710-007\nmedia\n28.6\n17\n0\n2\n43.8\n2026-07-09 13:31:00\n35.80191\n-0.2671882\n\n\nALERT-20260710-008\nmedia\n20.5\n4\n0\n4\n69.5\n2026-07-09 13:14:00\n42.67534\n0.7464250\n\n\nALERT-20260710-009\nmedia\n19.9\n4\n0\n4\n52.1\n2026-07-09 13:12:00\n33.96361\n-6.4586800\n\n\nALERT-20260710-010\nmedia\n19.5\n4\n0\n4\n42.1\n2026-07-09 13:33:00\n41.81308\n-8.5188650"
-  },
-  {
-    "objectID": "assets/alerts/operational_report.html",
-    "href": "assets/alerts/operational_report.html",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "Generado UTC: 2026-07-10T02:45:38Z\n\n\n\nFocos FIRMS procesados: 346.\nClústeres/alertas generadas: 97.\nAlertas altas: 2.\nAlertas medias: 19.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260710-001\nalta\n83.1\n29\n0\n20\n1168.6\n2026-07-09 13:33:00\n43.02071\n-5.5294359\n\n\nALERT-20260710-002\nalta\n19.4\n3\n0\n3\n177.3\n2026-07-09 13:31:00\n37.75129\n-4.9451733\n\n\nALERT-20260710-003\nmedia\n67.0\n43\n0\n7\n149.7\n2026-07-09 03:32:00\n39.81244\n-3.7700028\n\n\nALERT-20260710-004\nmedia\n38.9\n14\n0\n8\n83.5\n2026-07-09 13:33:00\n43.10482\n-5.8928871\n\n\nALERT-20260710-005\nmedia\n30.8\n7\n0\n7\n134.1\n2026-07-09 13:33:00\n40.90752\n-7.8144643\n\n\nALERT-20260710-006\nmedia\n29.5\n13\n0\n5\n25.1\n2026-07-09 13:12:00\n33.13171\n3.3345754\n\n\nALERT-20260710-007\nmedia\n28.6\n17\n0\n2\n43.8\n2026-07-09 13:31:00\n35.80191\n-0.2671882\n\n\nALERT-20260710-008\nmedia\n20.5\n4\n0\n4\n69.5\n2026-07-09 13:14:00\n42.67534\n0.7464250\n\n\nALERT-20260710-009\nmedia\n19.9\n4\n0\n4\n52.1\n2026-07-09 13:12:00\n33.96361\n-6.4586800\n\n\nALERT-20260710-010\nmedia\n19.5\n4\n0\n4\n42.1\n2026-07-09 13:33:00\n41.81308\n-8.5188650"
-  },
-  {
-    "objectID": "assets/alerts/operational_report.html#resumen",
-    "href": "assets/alerts/operational_report.html#resumen",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "Focos FIRMS procesados: 346.\nClústeres/alertas generadas: 97.\nAlertas altas: 2.\nAlertas medias: 19."
-  },
-  {
-    "objectID": "assets/alerts/operational_report.html#criterio-de-clasificación",
-    "href": "assets/alerts/operational_report.html#criterio-de-clasificación",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "Alta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia."
-  },
-  {
-    "objectID": "assets/alerts/operational_report.html#principales-alertas",
-    "href": "assets/alerts/operational_report.html#principales-alertas",
-    "title": "Informe operativo automático",
-    "section": "",
-    "text": "ID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260710-001\nalta\n83.1\n29\n0\n20\n1168.6\n2026-07-09 13:33:00\n43.02071\n-5.5294359\n\n\nALERT-20260710-002\nalta\n19.4\n3\n0\n3\n177.3\n2026-07-09 13:31:00\n37.75129\n-4.9451733\n\n\nALERT-20260710-003\nmedia\n67.0\n43\n0\n7\n149.7\n2026-07-09 03:32:00\n39.81244\n-3.7700028\n\n\nALERT-20260710-004\nmedia\n38.9\n14\n0\n8\n83.5\n2026-07-09 13:33:00\n43.10482\n-5.8928871\n\n\nALERT-20260710-005\nmedia\n30.8\n7\n0\n7\n134.1\n2026-07-09 13:33:00\n40.90752\n-7.8144643\n\n\nALERT-20260710-006\nmedia\n29.5\n13\n0\n5\n25.1\n2026-07-09 13:12:00\n33.13171\n3.3345754\n\n\nALERT-20260710-007\nmedia\n28.6\n17\n0\n2\n43.8\n2026-07-09 13:31:00\n35.80191\n-0.2671882\n\n\nALERT-20260710-008\nmedia\n20.5\n4\n0\n4\n69.5\n2026-07-09 13:14:00\n42.67534\n0.7464250\n\n\nALERT-20260710-009\nmedia\n19.9\n4\n0\n4\n52.1\n2026-07-09 13:12:00\n33.96361\n-6.4586800\n\n\nALERT-20260710-010\nmedia\n19.5\n4\n0\n4\n42.1\n2026-07-09 13:33:00\n41.81308\n-8.5188650"
-  },
-  {
-    "objectID": "aemet.html",
-    "href": "aemet.html",
-    "title": "AEMET",
-    "section": "",
-    "text": "WarningImportante\n\n\n\nEstas imágenes son el producto oficial descargado desde AEMET OpenData. Se muestran como imagen oficial, no como capa superpuesta en el mapa Leaflet, porque el PNG descargado no queda alineado de forma fiable al usarlo como imageOverlay rectangular. Para el mapa geográfico alineado se usan NASA FIRMS, EFFIS WMS y límites GISCO/NUTS.\nImágenes disponibles: 16. Catálogo: data/processed/layers.json\n\n\n2026-07-07 · Canarias · Previsto · D+1\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-08 · Canarias · Previsto · D+2\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-09 · Canarias · Previsto · D+3\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-10 · Canarias · Previsto · D+4\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-11 · Canarias · Previsto · D+5\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-12 · Canarias · Previsto · D+6\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-13 · Canarias · Previsto · D+7\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-14 · Canarias · Previsto · D+8\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-07 · Península y Baleares · Previsto · D+1\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-08 · Península y Baleares · Previsto · D+2\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-09 · Península y Baleares · Previsto · D+3\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-10 · Península y Baleares · Previsto · D+4\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-11 · Península y Baleares · Previsto · D+5\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-12 · Península y Baleares · Previsto · D+6\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-13 · Península y Baleares · Previsto · D+7\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-14 · Península y Baleares · Previsto · D+8\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación."
-  },
-  {
-    "objectID": "aemet.html#enlaces",
-    "href": "aemet.html#enlaces",
-    "title": "AEMET",
-    "section": "Enlaces",
-    "text": "Enlaces\n\nVisor oficial de incendios de AEMET\nAEMET OpenData"
-  },
-  {
-    "objectID": "CHANGELOG.html",
-    "href": "CHANGELOG.html",
-    "title": "Changelog",
-    "section": "",
-    "text": "Actualiza las páginas summary.qmd, report.qmd y history.qmd para usar la lógica corregida de fechas AEMET.\nAñade R/page_helpers.R con utilidades compartidas para leer catálogos, normalizar fechas y filtrar la última emisión.\nEl resumen y el informe ya no muestran capas AEMET antiguas salvo que sigan presentes en el catálogo como diagnóstico.\nLa página de evolución tolera históricos incompletos y muestra tablas/gráficos solo cuando hay datos suficientes.\nEFFIS se informa como desactivado o sin capa actual si no hay effis_layers.csv publicable."
-  },
-  {
-    "objectID": "CHANGELOG.html#v0.5.34",
-    "href": "CHANGELOG.html#v0.5.34",
-    "title": "Visor Fuego",
-    "section": "",
-    "text": "Corrige parseo de TIME EFFIS cuando GetCapabilities incluye CURRENT, rangos o valores no ISO."
-  },
-  {
-    "objectID": "history.html",
-    "href": "history.html",
-    "title": "Evolución",
-    "section": "",
-    "text": "indicador\nvalor\n\n\n\n\nRegistros\n2\n\n\nPrimera fecha\n2026-07-08\n\n\nÚltima fecha\n2026-07-10\n\n\nArchivo\ndata/processed/dashboard_history.csv"
-  },
-  {
-    "objectID": "history.html#evolución-de-focos-firms",
-    "href": "history.html#evolución-de-focos-firms",
-    "title": "Evolución temporal",
-    "section": "Evolución de focos FIRMS",
-    "text": "Evolución de focos FIRMS"
-  },
-  {
-    "objectID": "history.html#focos-recientes",
-    "href": "history.html#focos-recientes",
-    "title": "Evolución temporal",
-    "section": "Focos recientes",
-    "text": "Focos recientes"
-  },
-  {
-    "objectID": "history.html#evolución-de-frp",
-    "href": "history.html#evolución-de-frp",
-    "title": "Evolución temporal",
-    "section": "Evolución de FRP",
-    "text": "Evolución de FRP"
-  },
-  {
-    "objectID": "history.html#alertas-operativas",
-    "href": "history.html#alertas-operativas",
-    "title": "Evolución temporal",
-    "section": "Alertas operativas",
-    "text": "Alertas operativas"
-  },
-  {
-    "objectID": "history.html#últimos-registros",
-    "href": "history.html#últimos-registros",
-    "title": "Evolución",
-    "section": "Últimos registros",
-    "text": "Últimos registros\n\n\n\nÚltimos registros del histórico\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsnapshot_date\ngenerated_at_utc\naemet_date\nn_aemet_layers\nn_firms\nn_firms_6h\nn_firms_24h\nfrp_total_mw\nultima_deteccion_utc\nn_ccaa_con_focos\nn_provincias_con_focos\nn_alertas\nn_alertas_altas\nn_alertas_medias\nn_alertas_seguimiento\nmax_alert_score\ntop_provincia\ntop_provincia_focos\ntop_ccaa\ntop_ccaa_focos\n\n\n\n\n2026-07-10\n2026-07-10 02:45:38\n2026-07-07,2026-07-08,2026-07-09,2026-07-10,2026-07-11,2026-07-12,2026-07-13,2026-07-14,2026-07-15,2026-07-16\n32\n346\n0\n117\n2693.3\n2026-07-09 13:33:00\n10\n19\n97\n2\n19\n25\n83.1\nToledo\n45\nCastilla-La Mancha\n46\n\n\n2026-07-08\n2026-07-08 08:42:51\n2026-07-08,2026-07-09,2026-07-10,2026-07-11,2026-07-12,2026-07-13,2026-07-14,2026-07-15\n16\n692\n12\n394\n4047.0\n2026-07-08 03:49:00\n12\n27\n118\n8\n53\n33\n149.9\nLeón\n40\nCastilla y León\n46"
-  },
-  {
     "objectID": "report.html",
     "href": "report.html",
     "title": "Informe",
     "section": "",
-    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\n\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n346\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n97\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n2\ndata/processed/dashboard_history.csv"
-  },
-  {
-    "objectID": "report.html#alertas-principales",
-    "href": "report.html#alertas-principales",
-    "title": "Informe operativo",
-    "section": "Alertas principales",
-    "text": "Alertas principales\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP total MW\nFRP máximo MW\nEdad mínima h\nÚltima detección UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n103.5\n59\n0\n16\n516.9\n93.6\n6.5\n2026-07-08 02:11:00\n41.63979\n2.1271242\n\n\nALERT-20260708-002\nalta\n97.1\n19\n6\n19\n153.5\n14.1\n4.9\n2026-07-08 03:49:00\n42.70373\n-6.1701358\n\n\nALERT-20260708-003\nalta\n88.2\n36\n0\n20\n447.9\n49.9\n18.5\n2026-07-07 14:12:00\n41.77384\n-8.0317747\n\n\nALERT-20260708-004\nalta\n54.1\n27\n0\n8\n255.9\n34.2\n6.2\n2026-07-08 02:28:00\n41.55956\n1.6640270\n\n\nALERT-20260708-005\nalta\n41.7\n10\n0\n10\n350.6\n121.0\n18.8\n2026-07-07 13:53:00\n43.62309\n3.2044400\n\n\nALERT-20260708-006\nalta\n36.9\n7\n2\n7\n17.8\n3.2\n4.9\n2026-07-08 03:49:00\n42.98116\n-6.4282157\n\n\nALERT-20260708-007\nalta\n36.1\n8\n0\n8\n427.9\n145.3\n18.5\n2026-07-07 14:10:00\n35.46572\n-1.1173975\n\n\nALERT-20260708-008\nalta\n30.1\n7\n2\n4\n11.8\n2.8\n4.9\n2026-07-08 03:49:00\n43.02468\n-5.5319671\n\n\nALERT-20260708-009\nmedia\n149.9\n65\n0\n38\n86.0\n4.7\n6.2\n2026-07-08 02:32:00\n32.89307\n3.2194212\n\n\nALERT-20260708-010\nmedia\n68.6\n27\n0\n17\n43.9\n6.1\n6.2\n2026-07-08 02:30:00\n33.12416\n3.3284841\n\n\nALERT-20260708-011\nmedia\n63.2\n26\n0\n15\n35.9\n3.3\n6.2\n2026-07-08 02:30:00\n36.67410\n3.1289723\n\n\nALERT-20260708-012\nmedia\n51.6\n14\n0\n14\n123.1\n42.9\n6.2\n2026-07-08 02:30:00\n40.40091\n-7.2594386\n\n\nALERT-20260708-013\nmedia\n46.2\n17\n0\n10\n98.4\n29.0\n6.2\n2026-07-08 02:30:00\n41.03158\n-8.0804476\n\n\nALERT-20260708-014\nmedia\n43.2\n14\n0\n11\n35.1\n4.8\n6.2\n2026-07-08 02:32:00\n28.19999\n-0.5173136\n\n\nALERT-20260708-015\nmedia\n40.0\n30\n0\n0\n146.5\n14.8\n30.0\n2026-07-07 02:45:00\n42.69746\n2.6006910\n\n\nALERT-20260708-016\nmedia\n39.8\n13\n0\n10\n28.6\n5.0\n6.2\n2026-07-08 02:32:00\n32.55524\n3.1682223\n\n\nALERT-20260708-017\nmedia\n39.5\n11\n0\n11\n24.7\n4.8\n6.2\n2026-07-08 02:30:00\n35.78814\n-0.2597455\n\n\nALERT-20260708-018\nmedia\n36.2\n26\n0\n1\n58.6\n3.5\n6.5\n2026-07-08 02:11:00\n43.43943\n4.8925581\n\n\nALERT-20260708-019\nmedia\n33.9\n8\n0\n8\n143.4\n31.8\n18.8\n2026-07-07 13:53:00\n44.44815\n1.5493112\n\n\nALERT-20260708-020\nmedia\n31.6\n8\n0\n8\n43.9\n7.1\n6.2\n2026-07-08 02:28:00\n43.35963\n-4.7465675\n\n\nALERT-20260708-021\nmedia\n31.6\n8\n0\n8\n43.0\n11.2\n6.2\n2026-07-08 02:28:00\n42.47283\n-6.5878775\n\n\nALERT-20260708-022\nmedia\n29.8\n12\n0\n6\n17.4\n1.8\n6.2\n2026-07-08 02:30:00\n35.87938\n4.4467533\n\n\nALERT-20260708-023\nmedia\n29.4\n11\n0\n6\n24.1\n4.5\n6.2\n2026-07-08 02:32:00\n32.27688\n3.9858955\n\n\nALERT-20260708-024\nmedia\n27.6\n6\n1\n6\n9.1\n2.6\n4.9\n2026-07-08 03:49:00\n43.11875\n-5.8941883\n\n\nALERT-20260708-025\nmedia\n27.1\n6\n0\n6\n93.7\n16.2\n18.8\n2026-07-07 13:53:00\n41.83642\n1.3017450\n\n\nALERT-20260708-026\nmedia\n25.8\n6\n0\n6\n49.4\n16.0\n6.2\n2026-07-08 02:28:00\n41.74063\n0.5892483\n\n\nALERT-20260708-027\nmedia\n22.8\n13\n0\n0\n130.9\n20.6\n29.9\n2026-07-07 02:47:00\n43.14102\n-5.0862777\n\n\nALERT-20260708-028\nmedia\n21.2\n5\n0\n5\n21.1\n4.7\n18.9\n2026-07-07 13:50:00\n31.73482\n3.7677000\n\n\nALERT-20260708-029\nmedia\n21.1\n9\n0\n4\n6.8\n1.1\n6.2\n2026-07-08 02:30:00\n36.14105\n2.9280067\n\n\nALERT-20260708-030\nmedia\n20.5\n4\n0\n4\n70.1\n24.4\n18.5\n2026-07-07 14:10:00\n40.19559\n-3.8623775\n\n\nALERT-20260708-031\nmedia\n20.3\n9\n0\n3\n13.4\n2.6\n6.2\n2026-07-08 02:30:00\n36.12973\n1.2404700\n\n\nALERT-20260708-032\nmedia\n19.5\n4\n0\n4\n42.5\n12.2\n18.5\n2026-07-07 14:10:00\n37.61546\n-1.5706600\n\n\nALERT-20260708-033\nmedia\n17.4\n4\n0\n4\n14.2\n7.2\n6.2\n2026-07-08 02:32:00\n33.80195\n-4.9289325\n\n\nALERT-20260708-034\nmedia\n17.4\n7\n0\n3\n8.2\n1.5\n6.2\n2026-07-08 02:32:00\n32.40283\n4.0049329\n\n\nALERT-20260708-035\nmedia\n16.0\n3\n0\n3\n32.9\n14.4\n20.2\n2026-07-07 12:29:00\n41.54743\n1.2659067\n\n\nALERT-20260708-036\nmedia\n15.3\n4\n0\n4\n4.1\n1.9\n6.2\n2026-07-08 02:28:00\n41.89991\n-5.4907175\n\n\nALERT-20260708-037\nmedia\n14.9\n3\n0\n3\n18.5\n9.4\n20.2\n2026-07-07 12:29:00\n40.75715\n-2.8790533\n\n\nALERT-20260708-038\nmedia\n14.5\n2\n0\n2\n69.2\n40.1\n20.3\n2026-07-07 12:27:00\n31.56303\n3.7811650\n\n\nALERT-20260708-039\nmedia\n14.4\n4\n0\n4\n2.4\n0.7\n6.2\n2026-07-08 02:30:00\n40.58435\n-8.2532450\n\n\nALERT-20260708-040\nmedia\n14.1\n3\n0\n3\n11.5\n5.0\n20.2\n2026-07-07 12:29:00\n37.16244\n-3.6987500\n\n\nALERT-20260708-041\nmedia\n13.0\n5\n0\n2\n6.3\n2.1\n6.5\n2026-07-08 02:13:00\n35.53032\n-0.2775820\n\n\nALERT-20260708-042\nmedia\n12.9\n3\n0\n3\n6.0\n3.8\n6.2\n2026-07-08 02:28:00\n41.15202\n1.2199533\n\n\nALERT-20260708-043\nmedia\n12.1\n2\n0\n2\n20.6\n10.3\n6.2\n2026-07-08 02:28:00\n44.06432\n2.4510850\n\n\nALERT-20260708-044\nmedia\n11.7\n2\n0\n2\n16.7\n9.1\n20.2\n2026-07-07 12:29:00\n41.46533\n1.9045850\n\n\nALERT-20260708-045\nmedia\n11.6\n2\n0\n2\n15.2\n7.8\n20.5\n2026-07-07 12:10:00\n38.55230\n-0.9634600\n\n\nALERT-20260708-046\nmedia\n11.5\n2\n0\n2\n14.8\n7.4\n18.8\n2026-07-07 13:53:00\n41.53119\n0.8602150\n\n\nALERT-20260708-047\nmedia\n11.5\n2\n0\n2\n14.3\n7.5\n18.5\n2026-07-07 14:10:00\n38.66921\n-4.0476050\n\n\nALERT-20260708-048\nmedia\n11.5\n4\n0\n2\n4.8\n1.5\n6.2\n2026-07-08 02:30:00\n35.31133\n-1.3444525\n\n\nALERT-20260708-049\nmedia\n11.1\n2\n0\n2\n11.6\n7.0\n20.2\n2026-07-07 12:29:00\n38.66678\n-0.8217900\n\n\nALERT-20260708-050\nmedia\n10.7\n2\n0\n2\n9.5\n4.8\n20.3\n2026-07-07 12:25:00\n27.45522\n0.3855200\n\n\nALERT-20260708-051\nmedia\n10.5\n3\n0\n2\n4.8\n1.8\n6.2\n2026-07-08 02:32:00\n34.28022\n-6.5738600\n\n\nALERT-20260708-052\nmedia\n10.1\n3\n0\n2\n3.6\n1.6\n6.2\n2026-07-08 02:30:00\n35.56739\n-0.9380533\n\n\nALERT-20260708-053\nmedia\n9.8\n3\n0\n2\n3.0\n1.2\n6.2\n2026-07-08 02:30:00\n38.50209\n-8.9351633\n\n\nALERT-20260708-054\nmedia\n9.8\n1\n1\n1\n1.4\n1.4\n4.9\n2026-07-08 03:49:00\n42.92209\n-7.7369400\n\n\nALERT-20260708-055\nmedia\n9.7\n3\n0\n2\n2.8\n1.1\n6.2\n2026-07-08 02:30:00\n38.37640\n-0.5447200\n\n\nALERT-20260708-056\nmedia\n9.6\n2\n0\n2\n5.1\n3.5\n18.9\n2026-07-07 13:50:00\n32.21254\n-6.8016550\n\n\nALERT-20260708-057\nmedia\n9.6\n3\n0\n2\n2.7\n1.0\n6.5\n2026-07-08 02:13:00\n35.70874\n4.4761133\n\n\nALERT-20260708-058\nmedia\n8.9\n3\n0\n2\n1.6\n0.7\n6.2\n2026-07-08 02:30:00\n36.59710\n2.8774500\n\n\nALERT-20260708-059\nmedia\n8.7\n2\n0\n2\n2.8\n2.0\n6.2\n2026-07-08 02:28:00\n41.92377\n0.1798500\n\n\nALERT-20260708-060\nmedia\n8.3\n2\n0\n2\n2.2\n1.2\n6.2\n2026-07-08 02:28:00\n41.31215\n1.6612600\n\n\nALERT-20260708-061\nmedia\n8.3\n2\n0\n2\n2.1\n1.5\n6.2\n2026-07-08 02:30:00\n39.93716\n-3.7420650\n\n\nALERT-20260708-062\nseguimiento\n10.1\n4\n0\n1\n6.8\n2.3\n6.5\n2026-07-08 02:13:00\n36.96840\n-1.9055200\n\n\nALERT-20260708-063\nseguimiento\n8.0\n1\n0\n1\n11.3\n11.3\n20.2\n2026-07-07 12:29:00\n41.24731\n-7.0361700\n\n\nALERT-20260708-064\nseguimiento\n7.3\n1\n0\n1\n7.5\n7.5\n20.2\n2026-07-07 12:29:00\n37.10908\n-5.3028400\n\n\nALERT-20260708-065\nseguimiento\n6.9\n1\n0\n1\n6.2\n6.2\n18.8\n2026-07-07 13:53:00\n42.62505\n-5.6252600\n\n\nALERT-20260708-066\nseguimiento\n6.9\n1\n0\n1\n6.0\n6.0\n18.5\n2026-07-07 14:12:00\n43.29944\n-8.6229700\n\n\nALERT-20260708-067\nseguimiento\n6.7\n1\n0\n1\n5.4\n5.4\n18.5\n2026-07-07 14:10:00\n37.38730\n-1.7449500\n\n\nALERT-20260708-068\nseguimiento\n6.6\n1\n0\n1\n5.0\n5.0\n18.5\n2026-07-07 14:10:00\n37.16344\n-8.4002400\n\n\nALERT-20260708-069\nseguimiento\n6.6\n2\n0\n1\n2.6\n1.4\n6.2\n2026-07-08 02:30:00\n36.71366\n-4.3300200\n\n\nALERT-20260708-070\nseguimiento\n6.5\n1\n0\n1\n4.9\n4.9\n20.2\n2026-07-07 12:29:00\n37.27521\n-5.7153400\n\n\nALERT-20260708-071\nseguimiento\n6.5\n1\n0\n1\n4.8\n4.8\n18.5\n2026-07-07 14:10:00\n36.58419\n-4.6037100\n\n\nALERT-20260708-072\nseguimiento\n6.3\n1\n0\n1\n4.3\n4.3\n20.2\n2026-07-07 12:29:00\n36.89395\n-5.9661700\n\n\nALERT-20260708-073\nseguimiento\n6.3\n1\n0\n1\n4.3\n4.3\n20.3\n2026-07-07 12:27:00\n34.70414\n-5.9505300\n\n\nALERT-20260708-074\nseguimiento\n6.3\n1\n0\n1\n4.2\n4.2\n20.5\n2026-07-07 12:12:00\n40.35192\n-2.9035400\n\n\nALERT-20260708-075\nseguimiento\n6.2\n1\n0\n1\n3.9\n3.9\n18.9\n2026-07-07 13:50:00\n36.79739\n3.7534800\n\n\nALERT-20260708-076\nseguimiento\n6.2\n1\n0\n1\n3.9\n3.9\n20.2\n2026-07-07 12:29:00\n38.84722\n-7.4188400\n\n\nALERT-20260708-077\nseguimiento\n6.0\n1\n0\n1\n3.5\n3.5\n18.9\n2026-07-07 13:48:00\n29.80073\n1.4178300\n\n\nALERT-20260708-078\nseguimiento\n6.0\n2\n0\n1\n1.7\n0.9\n6.2\n2026-07-08 02:28:00\n43.18600\n0.9912900\n\n\nALERT-20260708-079\nseguimiento\n5.9\n1\n0\n1\n3.3\n3.3\n20.3\n2026-07-07 12:27:00\n34.90831\n-4.4553800\n\n\nALERT-20260708-080\nseguimiento\n5.4\n1\n0\n1\n2.4\n2.4\n6.5\n2026-07-08 02:11:00\n41.17236\n-7.9478600\n\n\nALERT-20260708-081\nseguimiento\n5.3\n1\n0\n1\n2.2\n2.2\n20.3\n2026-07-07 12:27:00\n30.73348\n3.1973200\n\n\nALERT-20260708-082\nseguimiento\n5.3\n2\n0\n1\n0.9\n0.5\n6.2\n2026-07-08 02:30:00\n33.87331\n2.6587900\n\n\nALERT-20260708-083\nseguimiento\n5.1\n1\n0\n1\n1.9\n1.9\n6.2\n2026-07-08 02:30:00\n40.04347\n-6.0785000\n\n\nALERT-20260708-084\nseguimiento\n5.1\n1\n0\n1\n1.8\n1.8\n18.8\n2026-07-07 13:53:00\n39.39718\n-0.5152900\n\n\nALERT-20260708-085\nseguimiento\n4.8\n1\n0\n1\n1.4\n1.4\n6.2\n2026-07-08 02:30:00\n35.63131\n-5.2930600\n\n\nALERT-20260708-086\nseguimiento\n4.7\n1\n0\n1\n1.3\n1.3\n6.5\n2026-07-08 02:11:00\n34.03532\n-4.9247500\n\n\nALERT-20260708-087\nseguimiento\n4.7\n1\n0\n1\n1.3\n1.3\n20.5\n2026-07-07 12:10:00\n36.44746\n2.6482000\n\n\nALERT-20260708-088\nseguimiento\n4.7\n1\n0\n1\n1.3\n1.3\n6.2\n2026-07-08 02:30:00\n37.35884\n-5.8636200\n\n\nALERT-20260708-089\nseguimiento\n4.4\n1\n0\n1\n1.0\n1.0\n6.5\n2026-07-08 02:11:00\n40.24559\n-3.4745900\n\n\nALERT-20260708-090\nseguimiento\n3.8\n1\n0\n1\n0.5\n0.5\n6.2\n2026-07-08 02:30:00\n41.27257\n-8.4369400\n\n\nALERT-20260708-091\nseguimiento\n3.8\n1\n0\n1\n0.5\n0.5\n7.8\n2026-07-08 00:52:00\n29.98779\n2.9610200\n\n\nALERT-20260708-092\nseguimiento\n3.7\n1\n0\n1\n0.4\n0.4\n6.2\n2026-07-08 02:28:00\n42.58829\n-6.0825400\n\n\nALERT-20260708-093\nseguimiento\n3.4\n1\n0\n1\n0.2\n0.2\n6.2\n2026-07-08 02:32:00\n32.97395\n-7.6115100\n\n\nALERT-20260708-094\nseguimiento\n3.4\n1\n0\n1\n0.2\n0.2\n6.2\n2026-07-08 02:30:00\n36.11202\n1.4797600\n\n\nALERT-20260708-095\ninformativa\n11.3\n6\n0\n0\n12.9\n3.4\n29.9\n2026-07-07 02:47:00\n43.52704\n-5.7312250\n\n\nALERT-20260708-096\ninformativa\n9.2\n5\n0\n0\n7.2\n2.2\n29.9\n2026-07-07 02:47:00\n43.30981\n-3.0254980\n\n\nALERT-20260708-097\ninformativa\n5.8\n2\n0\n0\n5.6\n2.9\n29.9\n2026-07-07 02:47:00\n41.84994\n-5.2704050\n\n\nALERT-20260708-098\ninformativa\n5.8\n3\n0\n0\n3.0\n1.4\n30.0\n2026-07-07 02:45:00\n42.30541\n2.8877867\n\n\nALERT-20260708-099\ninformativa\n5.7\n3\n0\n0\n2.8\n1.0\n29.9\n2026-07-07 02:47:00\n38.29165\n-6.6719467\n\n\nALERT-20260708-100\ninformativa\n4.7\n2\n0\n0\n2.8\n1.5\n31.6\n2026-07-07 01:07:00\n34.43936\n2.0564400\n\n\nALERT-20260708-101\ninformativa\n4.3\n2\n0\n0\n2.2\n1.5\n31.6\n2026-07-07 01:07:00\n36.41093\n3.3174000\n\n\nALERT-20260708-102\ninformativa\n3.8\n1\n0\n0\n3.0\n3.0\n31.6\n2026-07-07 01:07:00\n37.38200\n-4.5048200\n\n\nALERT-20260708-103\ninformativa\n3.8\n2\n0\n0\n1.5\n0.9\n29.9\n2026-07-07 02:47:00\n39.96907\n-6.3174750\n\n\nALERT-20260708-104\ninformativa\n3.8\n2\n0\n0\n1.4\n0.7\n29.9\n2026-07-07 02:47:00\n39.66604\n-0.2475600\n\n\nALERT-20260708-105\ninformativa\n3.4\n2\n0\n0\n1.0\n0.6\n29.9\n2026-07-07 02:51:00\n30.33595\n-9.5393300\n\n\nALERT-20260708-106\ninformativa\n3.4\n2\n0\n0\n1.0\n0.6\n29.9\n2026-07-07 02:47:00\n41.29445\n-8.1681100\n\n\nALERT-20260708-107\ninformativa\n3.2\n2\n0\n0\n0.8\n0.4\n30.2\n2026-07-07 02:32:00\n32.17551\n4.7427000\n\n\nALERT-20260708-108\ninformativa\n2.8\n1\n0\n0\n1.4\n1.4\n30.2\n2026-07-07 02:28:00\n41.47466\n-1.4889000\n\n\nALERT-20260708-109\ninformativa\n2.6\n1\n0\n0\n1.2\n1.2\n30.2\n2026-07-07 02:28:00\n41.42315\n2.2007900\n\n\nALERT-20260708-110\ninformativa\n2.5\n1\n0\n0\n1.1\n1.1\n29.9\n2026-07-07 02:49:00\n32.56516\n-7.9819700\n\n\nALERT-20260708-111\ninformativa\n2.5\n1\n0\n0\n1.1\n1.1\n29.9\n2026-07-07 02:49:00\n37.31188\n-5.4560200\n\n\nALERT-20260708-112\ninformativa\n2.4\n1\n0\n0\n1.0\n1.0\n30.2\n2026-07-07 02:32:00\n28.97633\n-10.0249100\n\n\nALERT-20260708-113\ninformativa\n2.3\n1\n0\n0\n0.9\n0.9\n30.2\n2026-07-07 02:32:00\n33.89174\n-6.9506400\n\n\nALERT-20260708-114\ninformativa\n2.1\n1\n0\n0\n0.7\n0.7\n30.2\n2026-07-07 02:32:00\n28.21371\n-0.1585400\n\n\nALERT-20260708-115\ninformativa\n2.1\n1\n0\n0\n0.7\n0.7\n31.6\n2026-07-07 01:07:00\n35.78414\n0.5392400\n\n\nALERT-20260708-116\ninformativa\n1.9\n1\n0\n0\n0.6\n0.6\n30.2\n2026-07-07 02:28:00\n43.33075\n-5.7741400\n\n\nALERT-20260708-117\ninformativa\n1.8\n1\n0\n0\n0.5\n0.5\n30.2\n2026-07-07 02:32:00\n30.21896\n-9.1517100\n\n\nALERT-20260708-118\ninformativa\n1.8\n1\n0\n0\n0.5\n0.5\n30.2\n2026-07-07 02:28:00\n42.58806\n-7.9880900"
-  },
-  {
-    "objectID": "report.html#informe-markdown-generado",
-    "href": "report.html#informe-markdown-generado",
-    "title": "Informe operativo",
-    "section": "Informe Markdown generado",
-    "text": "Informe Markdown generado"
-  },
-  {
-    "objectID": "report.html#resumen",
-    "href": "report.html#resumen",
-    "title": "Informe operativo",
-    "section": "Resumen",
-    "text": "Resumen\n\nFocos FIRMS procesados: 692.\nClústeres/alertas generadas: 118.\nAlertas altas: 8.\nAlertas medias: 53."
-  },
-  {
-    "objectID": "report.html#criterio-de-clasificación",
-    "href": "report.html#criterio-de-clasificación",
-    "title": "Informe operativo",
-    "section": "Criterio de clasificación",
-    "text": "Criterio de clasificación\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia."
-  },
-  {
-    "objectID": "report.html#principales-alertas",
-    "href": "report.html#principales-alertas",
-    "title": "Informe operativo",
-    "section": "Principales alertas",
-    "text": "Principales alertas\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nNivel\nScore\nFocos\n≤6 h\n≤24 h\nFRP MW\nÚltima UTC\nLat\nLon\n\n\n\n\nALERT-20260708-001\nalta\n103.5\n59\n0\n16\n516.9\n2026-07-08 02:11:00\n41.63979\n2.127124\n\n\nALERT-20260708-002\nalta\n97.1\n19\n6\n19\n153.5\n2026-07-08 03:49:00\n42.70373\n-6.170136\n\n\nALERT-20260708-003\nalta\n88.2\n36\n0\n20\n447.9\n2026-07-07 14:12:00\n41.77384\n-8.031775\n\n\nALERT-20260708-004\nalta\n54.1\n27\n0\n8\n255.9\n2026-07-08 02:28:00\n41.55956\n1.664027\n\n\nALERT-20260708-005\nalta\n41.7\n10\n0\n10\n350.6\n2026-07-07 13:53:00\n43.62309\n3.204440\n\n\nALERT-20260708-006\nalta\n36.9\n7\n2\n7\n17.8\n2026-07-08 03:49:00\n42.98116\n-6.428216\n\n\nALERT-20260708-007\nalta\n36.1\n8\n0\n8\n427.9\n2026-07-07 14:10:00\n35.46572\n-1.117398\n\n\nALERT-20260708-008\nalta\n30.1\n7\n2\n4\n11.8\n2026-07-08 03:49:00\n43.02468\n-5.531967\n\n\nALERT-20260708-009\nmedia\n149.9\n65\n0\n38\n86.0\n2026-07-08 02:32:00\n32.89307\n3.219421\n\n\nALERT-20260708-010\nmedia\n68.6\n27\n0\n17\n43.9\n2026-07-08 02:30:00\n33.12416\n3.328484"
-  },
-  {
-    "objectID": "summary.html#estado-general",
-    "href": "summary.html#estado-general",
-    "title": "Resumen operativo",
-    "section": "",
-    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n346\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n97\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n2\ndata/processed/dashboard_history.csv"
-  },
-  {
-    "objectID": "summary.html#aemet",
-    "href": "summary.html#aemet",
-    "title": "Resumen operativo",
-    "section": "AEMET",
-    "text": "AEMET\nEsta página usa la misma convención que el mapa principal: D00 se interpreta como Día 1 de la fecha del fichero AEMET, sin desplazamiento adicional de un día. Si hay varias emisiones en disco, solo se resume la última emisión presente en el catálogo.\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nCapas AEMET en catálogo\n16\n\n\nCapas AEMET de última emisión\n16\n\n\nÚltima emisión\n2026-07-09\n\n\nPrimera fecha válida\n2026-07-09\n\n\nÚltima fecha válida\n2026-07-16\n\n\nÁreas disponibles\nCanarias, Península y Baleares\n\n\n\n\n\n\n\n\nCapas AEMET publicadas\n\n\n\n\n\n\n\n\n\n\narea\nfecha_emision\nfecha_valida\nhorizonte\ndia\ncapa\n\n\n\n\nCanarias\n2026-07-09\n2026-07-09\nDía 1\n2\naemet_2026_07_09_c_previsto_d1_aemet_incendios_20260709_c_previsto_d1\n\n\nCanarias\n2026-07-09\n2026-07-10\nDía 2\n3\naemet_2026_07_10_c_previsto_d2_aemet_incendios_20260710_c_previsto_d2\n\n\nCanarias\n2026-07-09\n2026-07-11\nDía 3\n4\naemet_2026_07_11_c_previsto_d3_aemet_incendios_20260711_c_previsto_d3\n\n\nCanarias\n2026-07-09\n2026-07-12\nDía 4\n5\naemet_2026_07_12_c_previsto_d4_aemet_incendios_20260712_c_previsto_d4\n\n\nCanarias\n2026-07-09\n2026-07-13\nDía 5\n6\naemet_2026_07_13_c_previsto_d5_aemet_incendios_20260713_c_previsto_d5\n\n\nCanarias\n2026-07-09\n2026-07-14\nDía 6\n7\naemet_2026_07_14_c_previsto_d6_aemet_incendios_20260714_c_previsto_d6\n\n\nCanarias\n2026-07-09\n2026-07-15\nDía 7\n8\naemet_2026_07_15_c_previsto_d7_aemet_incendios_20260715_c_previsto_d7\n\n\nCanarias\n2026-07-09\n2026-07-16\nDía 8\n9\naemet_2026_07_16_c_previsto_d8_aemet_incendios_20260716_c_previsto_d8\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-09\nDía 1\n2\naemet_2026_07_09_p_previsto_d1_aemet_incendios_20260709_p_previsto_d1\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-10\nDía 2\n3\naemet_2026_07_10_p_previsto_d2_aemet_incendios_20260710_p_previsto_d2\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-11\nDía 3\n4\naemet_2026_07_11_p_previsto_d3_aemet_incendios_20260711_p_previsto_d3\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-12\nDía 4\n5\naemet_2026_07_12_p_previsto_d4_aemet_incendios_20260712_p_previsto_d4\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-13\nDía 5\n6\naemet_2026_07_13_p_previsto_d5_aemet_incendios_20260713_p_previsto_d5\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-14\nDía 6\n7\naemet_2026_07_14_p_previsto_d6_aemet_incendios_20260714_p_previsto_d6\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-15\nDía 7\n8\naemet_2026_07_15_p_previsto_d7_aemet_incendios_20260715_p_previsto_d7\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-16\nDía 8\n9\naemet_2026_07_16_p_previsto_d8_aemet_incendios_20260716_p_previsto_d8"
-  },
-  {
-    "objectID": "summary.html#firms-y-alertas",
-    "href": "summary.html#firms-y-alertas",
-    "title": "Resumen operativo",
-    "section": "FIRMS y alertas",
-    "text": "FIRMS y alertas\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nDetecciones FIRMS\n346\n\n\nAlertas operativas\n97\n\n\n\n\n\n\n\n\nPrimeras alertas operativas\n\n\ncluster_id\n\n\n\n\nALERT-20260710-001\n\n\nALERT-20260710-002\n\n\nALERT-20260710-003\n\n\nALERT-20260710-004\n\n\nALERT-20260710-005\n\n\nALERT-20260710-006\n\n\nALERT-20260710-007\n\n\nALERT-20260710-008\n\n\nALERT-20260710-009\n\n\nALERT-20260710-010\n\n\nALERT-20260710-011\n\n\nALERT-20260710-012\n\n\nALERT-20260710-013\n\n\nALERT-20260710-014\n\n\nALERT-20260710-015\n\n\nALERT-20260710-016\n\n\nALERT-20260710-017\n\n\nALERT-20260710-018\n\n\nALERT-20260710-019\n\n\nALERT-20260710-020"
-  },
-  {
-    "objectID": "summary.html#effis",
-    "href": "summary.html#effis",
-    "title": "Resumen operativo",
-    "section": "EFFIS",
-    "text": "EFFIS\n\n\nEFFIS está desactivado o no se ha encontrado una capa visual actual publicable. Se evita mostrar información histórica como si fuera operativa."
-  },
-  {
-    "objectID": "history.html#histórico-del-visor",
-    "href": "history.html#histórico-del-visor",
-    "title": "Evolución",
-    "section": "",
-    "text": "indicador\nvalor\n\n\n\n\nRegistros\n2\n\n\nPrimera fecha\n2026-07-08\n\n\nÚltima fecha\n2026-07-10\n\n\nArchivo\ndata/processed/dashboard_history.csv"
-  },
-  {
-    "objectID": "history.html#métricas-principales",
-    "href": "history.html#métricas-principales",
-    "title": "Evolución",
-    "section": "Métricas principales",
-    "text": "Métricas principales\n\n\n\nÚltimo valor de métricas numéricas\n\n\nmetrica\nultimo_valor\nvalor_anterior\ncambio\n\n\n\n\nn_aemet_layers\n32.0\n16\n16.0\n\n\nn_firms\n346.0\n692\n-346.0\n\n\nn_firms_6h\n0.0\n12\n-12.0\n\n\nn_firms_24h\n117.0\n394\n-277.0\n\n\nfrp_total_mw\n2693.3\n4047\n-1353.7\n\n\nn_ccaa_con_focos\n10.0\n12\n-2.0\n\n\nn_provincias_con_focos\n19.0\n27\n-8.0\n\n\nn_alertas\n97.0\n118\n-21.0"
-  },
-  {
-    "objectID": "history.html#gráficos-de-evolución",
-    "href": "history.html#gráficos-de-evolución",
-    "title": "Evolución",
-    "section": "Gráficos de evolución",
-    "text": "Gráficos de evolución"
-  },
-  {
-    "objectID": "history.html#nota-sobre-aemet-y-effis",
-    "href": "history.html#nota-sobre-aemet-y-effis",
-    "title": "Evolución",
-    "section": "Nota sobre AEMET y EFFIS",
-    "text": "Nota sobre AEMET y EFFIS\nLa evolución debe interpretarse con la misma lógica que el mapa principal: AEMET publica la última emisión disponible, y las fechas antiguas no deben reaparecer si la limpieza previa se ha ejecutado correctamente. EFFIS puede aparecer como cero o ausente mientras no haya una capa WMS actual con contenido visual publicable."
-  },
-  {
-    "objectID": "CHANGELOG.html#v0.5.38---páginas-secundarias-sincronizadas",
-    "href": "CHANGELOG.html#v0.5.38---páginas-secundarias-sincronizadas",
-    "title": "Changelog",
-    "section": "",
-    "text": "Actualiza las páginas summary.qmd, report.qmd y history.qmd para usar la lógica corregida de fechas AEMET.\nAñade R/page_helpers.R con utilidades compartidas para leer catálogos, normalizar fechas y filtrar la última emisión.\nEl resumen y el informe ya no muestran capas AEMET antiguas salvo que sigan presentes en el catálogo como diagnóstico.\nLa página de evolución tolera históricos incompletos y muestra tablas/gráficos solo cuando hay datos suficientes.\nEFFIS se informa como desactivado o sin capa actual si no hay effis_layers.csv publicable."
+    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\n\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "report.html#informe-de-generación",
     "href": "report.html#informe-de-generación",
     "title": "Informe",
     "section": "",
-    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\n\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n346\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n97\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n2\ndata/processed/dashboard_history.csv"
+    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\n\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "report.html#control-de-fechas-aemet",
@@ -298,14 +32,14 @@
     "href": "report.html#firms",
     "title": "Informe",
     "section": "FIRMS",
-    "text": "FIRMS\n\n\n\nDetecciones FIRMS por satellite\n\n\nsatellite\ndetecciones\n\n\n\n\nN\n177\n\n\nN20\n169"
+    "text": "FIRMS\n\n\nNo hay archivo FIRMS o no hay detecciones."
   },
   {
     "objectID": "report.html#alertas-operativas",
     "href": "report.html#alertas-operativas",
     "title": "Informe",
     "section": "Alertas operativas",
-    "text": "Alertas operativas\n\n\n\nAlertas publicadas\n\n\ncluster_id\n\n\n\n\nALERT-20260710-001\n\n\nALERT-20260710-002\n\n\nALERT-20260710-003\n\n\nALERT-20260710-004\n\n\nALERT-20260710-005\n\n\nALERT-20260710-006\n\n\nALERT-20260710-007\n\n\nALERT-20260710-008\n\n\nALERT-20260710-009\n\n\nALERT-20260710-010\n\n\nALERT-20260710-011\n\n\nALERT-20260710-012\n\n\nALERT-20260710-013\n\n\nALERT-20260710-014\n\n\nALERT-20260710-015\n\n\nALERT-20260710-016\n\n\nALERT-20260710-017\n\n\nALERT-20260710-018\n\n\nALERT-20260710-019\n\n\nALERT-20260710-020\n\n\nALERT-20260710-021\n\n\nALERT-20260710-022\n\n\nALERT-20260710-023\n\n\nALERT-20260710-024\n\n\nALERT-20260710-025\n\n\nALERT-20260710-026\n\n\nALERT-20260710-027\n\n\nALERT-20260710-028\n\n\nALERT-20260710-029\n\n\nALERT-20260710-030"
+    "text": "Alertas operativas\n\n\nNo hay alertas operativas publicadas."
   },
   {
     "objectID": "report.html#effis",
@@ -313,5 +47,173 @@
     "title": "Informe",
     "section": "EFFIS",
     "text": "EFFIS\n\n\n\n\n\n\n\n\nNote\n\n\n\nEFFIS queda fuera del visor operativo hasta localizar una capa WMS actual con contenido visual. Los diagnósticos pueden seguir existiendo en data/raw/effis, pero no se publican capas históricas."
+  },
+  {
+    "objectID": "history.html",
+    "href": "history.html",
+    "title": "Evolución",
+    "section": "",
+    "text": "indicador\nvalor\n\n\n\n\nRegistros\n1\n\n\nPrimera fecha\n2026-07-10\n\n\nÚltima fecha\n2026-07-10\n\n\nArchivo\ndata/processed/dashboard_history.csv"
+  },
+  {
+    "objectID": "history.html#histórico-del-visor",
+    "href": "history.html#histórico-del-visor",
+    "title": "Evolución",
+    "section": "",
+    "text": "indicador\nvalor\n\n\n\n\nRegistros\n1\n\n\nPrimera fecha\n2026-07-10\n\n\nÚltima fecha\n2026-07-10\n\n\nArchivo\ndata/processed/dashboard_history.csv"
+  },
+  {
+    "objectID": "history.html#últimos-registros",
+    "href": "history.html#últimos-registros",
+    "title": "Evolución",
+    "section": "Últimos registros",
+    "text": "Últimos registros\n\n\n\nÚltimos registros del histórico\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsnapshot_date\ngenerated_at_utc\naemet_date\nn_aemet_layers\nn_firms\nn_firms_6h\nn_firms_24h\nfrp_total_mw\nultima_deteccion_utc\nn_ccaa_con_focos\nn_provincias_con_focos\nn_alertas\nn_alertas_altas\nn_alertas_medias\nn_alertas_seguimiento\nmax_alert_score\ntop_provincia\ntop_provincia_focos\ntop_ccaa\ntop_ccaa_focos\n\n\n\n\n2026-07-10\n2026-07-10 05:28:00\n2026-07-09,2026-07-10,2026-07-11,2026-07-12,2026-07-13,2026-07-14,2026-07-15,2026-07-16\n16\n0\n0\n0\n0\nNA\n0\n0\n0\n0\n0\n0\nNA\nNA\nNA\nNA\nNA"
+  },
+  {
+    "objectID": "history.html#métricas-principales",
+    "href": "history.html#métricas-principales",
+    "title": "Evolución",
+    "section": "Métricas principales",
+    "text": "Métricas principales\n\n\n\nÚltimo valor de métricas numéricas\n\n\nmetrica\nultimo_valor\n\n\n\n\nn_aemet_layers\n16\n\n\nn_firms\n0\n\n\nn_firms_6h\n0\n\n\nn_firms_24h\n0\n\n\nfrp_total_mw\n0\n\n\nn_ccaa_con_focos\n0\n\n\nn_provincias_con_focos\n0\n\n\nn_alertas\n0"
+  },
+  {
+    "objectID": "history.html#gráficos-de-evolución",
+    "href": "history.html#gráficos-de-evolución",
+    "title": "Evolución",
+    "section": "Gráficos de evolución",
+    "text": "Gráficos de evolución"
+  },
+  {
+    "objectID": "history.html#nota-sobre-aemet-y-effis",
+    "href": "history.html#nota-sobre-aemet-y-effis",
+    "title": "Evolución",
+    "section": "Nota sobre AEMET y EFFIS",
+    "text": "Nota sobre AEMET y EFFIS\nLa evolución debe interpretarse con la misma lógica que el mapa principal: AEMET publica la última emisión disponible, y las fechas antiguas no deben reaparecer si la limpieza previa se ha ejecutado correctamente. EFFIS puede aparecer como cero o ausente mientras no haya una capa WMS actual con contenido visual publicable."
+  },
+  {
+    "objectID": "CHANGELOG.html",
+    "href": "CHANGELOG.html",
+    "title": "Changelog",
+    "section": "",
+    "text": "Actualiza las páginas summary.qmd, report.qmd y history.qmd para usar la lógica corregida de fechas AEMET.\nAñade R/page_helpers.R con utilidades compartidas para leer catálogos, normalizar fechas y filtrar la última emisión.\nEl resumen y el informe ya no muestran capas AEMET antiguas salvo que sigan presentes en el catálogo como diagnóstico.\nLa página de evolución tolera históricos incompletos y muestra tablas/gráficos solo cuando hay datos suficientes.\nEFFIS se informa como desactivado o sin capa actual si no hay effis_layers.csv publicable."
+  },
+  {
+    "objectID": "CHANGELOG.html#v0.5.38---páginas-secundarias-sincronizadas",
+    "href": "CHANGELOG.html#v0.5.38---páginas-secundarias-sincronizadas",
+    "title": "Changelog",
+    "section": "",
+    "text": "Actualiza las páginas summary.qmd, report.qmd y history.qmd para usar la lógica corregida de fechas AEMET.\nAñade R/page_helpers.R con utilidades compartidas para leer catálogos, normalizar fechas y filtrar la última emisión.\nEl resumen y el informe ya no muestran capas AEMET antiguas salvo que sigan presentes en el catálogo como diagnóstico.\nLa página de evolución tolera históricos incompletos y muestra tablas/gráficos solo cuando hay datos suficientes.\nEFFIS se informa como desactivado o sin capa actual si no hay effis_layers.csv publicable."
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "Resumen operativo",
+    "section": "",
+    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
+  },
+  {
+    "objectID": "summary.html#estado-general",
+    "href": "summary.html#estado-general",
+    "title": "Resumen operativo",
+    "section": "",
+    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nDesactivado o sin capa actual\n0\n-\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
+  },
+  {
+    "objectID": "summary.html#aemet",
+    "href": "summary.html#aemet",
+    "title": "Resumen operativo",
+    "section": "AEMET",
+    "text": "AEMET\nEsta página usa la misma convención que el mapa principal: D00 se interpreta como Día 1 de la fecha del fichero AEMET, sin desplazamiento adicional de un día. Si hay varias emisiones en disco, solo se resume la última emisión presente en el catálogo.\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nCapas AEMET en catálogo\n16\n\n\nCapas AEMET de última emisión\n16\n\n\nÚltima emisión\n2026-07-09\n\n\nPrimera fecha válida\n2026-07-09\n\n\nÚltima fecha válida\n2026-07-16\n\n\nÁreas disponibles\nCanarias, Península y Baleares\n\n\n\n\n\n\n\n\nCapas AEMET publicadas\n\n\n\n\n\n\n\n\n\n\narea\nfecha_emision\nfecha_valida\nhorizonte\ndia\ncapa\n\n\n\n\nCanarias\n2026-07-09\n2026-07-09\nDía 1\n2\naemet_2026_07_09_c_previsto_d1_aemet_incendios_20260709_c_previsto_d1\n\n\nCanarias\n2026-07-09\n2026-07-10\nDía 2\n3\naemet_2026_07_10_c_previsto_d2_aemet_incendios_20260710_c_previsto_d2\n\n\nCanarias\n2026-07-09\n2026-07-11\nDía 3\n4\naemet_2026_07_11_c_previsto_d3_aemet_incendios_20260711_c_previsto_d3\n\n\nCanarias\n2026-07-09\n2026-07-12\nDía 4\n5\naemet_2026_07_12_c_previsto_d4_aemet_incendios_20260712_c_previsto_d4\n\n\nCanarias\n2026-07-09\n2026-07-13\nDía 5\n6\naemet_2026_07_13_c_previsto_d5_aemet_incendios_20260713_c_previsto_d5\n\n\nCanarias\n2026-07-09\n2026-07-14\nDía 6\n7\naemet_2026_07_14_c_previsto_d6_aemet_incendios_20260714_c_previsto_d6\n\n\nCanarias\n2026-07-09\n2026-07-15\nDía 7\n8\naemet_2026_07_15_c_previsto_d7_aemet_incendios_20260715_c_previsto_d7\n\n\nCanarias\n2026-07-09\n2026-07-16\nDía 8\n9\naemet_2026_07_16_c_previsto_d8_aemet_incendios_20260716_c_previsto_d8\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-09\nDía 1\n2\naemet_2026_07_09_p_previsto_d1_aemet_incendios_20260709_p_previsto_d1\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-10\nDía 2\n3\naemet_2026_07_10_p_previsto_d2_aemet_incendios_20260710_p_previsto_d2\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-11\nDía 3\n4\naemet_2026_07_11_p_previsto_d3_aemet_incendios_20260711_p_previsto_d3\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-12\nDía 4\n5\naemet_2026_07_12_p_previsto_d4_aemet_incendios_20260712_p_previsto_d4\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-13\nDía 5\n6\naemet_2026_07_13_p_previsto_d5_aemet_incendios_20260713_p_previsto_d5\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-14\nDía 6\n7\naemet_2026_07_14_p_previsto_d6_aemet_incendios_20260714_p_previsto_d6\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-15\nDía 7\n8\naemet_2026_07_15_p_previsto_d7_aemet_incendios_20260715_p_previsto_d7\n\n\nPenínsula y Baleares\n2026-07-09\n2026-07-16\nDía 8\n9\naemet_2026_07_16_p_previsto_d8_aemet_incendios_20260716_p_previsto_d8"
+  },
+  {
+    "objectID": "summary.html#firms-y-alertas",
+    "href": "summary.html#firms-y-alertas",
+    "title": "Resumen operativo",
+    "section": "FIRMS y alertas",
+    "text": "FIRMS y alertas\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nDetecciones FIRMS\n0\n\n\nAlertas operativas\n0\n\n\n\n\n\n\n\nNo hay alertas operativas en el último procesamiento."
+  },
+  {
+    "objectID": "summary.html#effis",
+    "href": "summary.html#effis",
+    "title": "Resumen operativo",
+    "section": "EFFIS",
+    "text": "EFFIS\n\n\nEFFIS está desactivado o no se ha encontrado una capa visual actual publicable. Se evita mostrar información histórica como si fuera operativa."
+  },
+  {
+    "objectID": "aemet.html",
+    "href": "aemet.html",
+    "title": "AEMET",
+    "section": "",
+    "text": "WarningImportante\n\n\n\nEstas imágenes son el producto oficial descargado desde AEMET OpenData. Se muestran como imagen oficial, no como capa superpuesta en el mapa Leaflet, porque el PNG descargado no queda alineado de forma fiable al usarlo como imageOverlay rectangular. Para el mapa geográfico alineado se usan NASA FIRMS, EFFIS WMS y límites GISCO/NUTS.\nImágenes disponibles: 16. Catálogo: data/processed/layers.json\n\n\n2026-07-09 · Canarias · Previsto · D+1\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-10 · Canarias · Previsto · D+2\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-11 · Canarias · Previsto · D+3\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-12 · Canarias · Previsto · D+4\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-13 · Canarias · Previsto · D+5\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-14 · Canarias · Previsto · D+6\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-15 · Canarias · Previsto · D+7\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-16 · Canarias · Previsto · D+8\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-09 · Península y Baleares · Previsto · D+1\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-10 · Península y Baleares · Previsto · D+2\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-11 · Península y Baleares · Previsto · D+3\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-12 · Península y Baleares · Previsto · D+4\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-13 · Península y Baleares · Previsto · D+5\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-14 · Península y Baleares · Previsto · D+6\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-15 · Península y Baleares · Previsto · D+7\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación.\n\n\n2026-07-16 · Península y Baleares · Previsto · D+8\n\nFuente: AEMET OpenData. Imagen no superpuesta en Leaflet por control de alineación."
+  },
+  {
+    "objectID": "aemet.html#enlaces",
+    "href": "aemet.html#enlaces",
+    "title": "AEMET",
+    "section": "Enlaces",
+    "text": "Enlaces\n\nVisor oficial de incendios de AEMET\nAEMET OpenData"
+  },
+  {
+    "objectID": "assets/alerts/operational_report.html",
+    "href": "assets/alerts/operational_report.html",
+    "title": "Informe operativo automático",
+    "section": "",
+    "text": "Generado UTC: 2026-07-10T05:28:00Z\n\n\n\nFocos FIRMS procesados: 0.\nClústeres/alertas generadas: 0.\nAlertas altas: 0.\nAlertas medias: 0.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia."
+  },
+  {
+    "objectID": "assets/alerts/operational_report.html#resumen",
+    "href": "assets/alerts/operational_report.html#resumen",
+    "title": "Informe operativo automático",
+    "section": "",
+    "text": "Focos FIRMS procesados: 0.\nClústeres/alertas generadas: 0.\nAlertas altas: 0.\nAlertas medias: 0."
+  },
+  {
+    "objectID": "assets/alerts/operational_report.html#criterio-de-clasificación",
+    "href": "assets/alerts/operational_report.html#criterio-de-clasificación",
+    "title": "Informe operativo automático",
+    "section": "",
+    "text": "Alta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia."
+  },
+  {
+    "objectID": "data/processed/operational_report.html",
+    "href": "data/processed/operational_report.html",
+    "title": "Informe operativo automático",
+    "section": "",
+    "text": "Generado UTC: 2026-07-10T05:28:00Z\n\n\n\nFocos FIRMS procesados: 0.\nClústeres/alertas generadas: 0.\nAlertas altas: 0.\nAlertas medias: 0.\n\n\n\n\n\nAlta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia."
+  },
+  {
+    "objectID": "data/processed/operational_report.html#resumen",
+    "href": "data/processed/operational_report.html#resumen",
+    "title": "Informe operativo automático",
+    "section": "",
+    "text": "Focos FIRMS procesados: 0.\nClústeres/alertas generadas: 0.\nAlertas altas: 0.\nAlertas medias: 0."
+  },
+  {
+    "objectID": "data/processed/operational_report.html#criterio-de-clasificación",
+    "href": "data/processed/operational_report.html#criterio-de-clasificación",
+    "title": "Informe operativo automático",
+    "section": "",
+    "text": "Alta: varios focos muy recientes o FRP total elevado.\nMedia: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.\nSeguimiento: detecciones recientes sin concentración clara.\n\nEste informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Mapa de riesgo de incendios",
+    "section": "",
+    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-10 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 0\n\n\n\nAlertas operativas: 0 · Altas: 0 · Medias: 0\n\n\n\nEFFIS WMS: desactivado"
+  },
+  {
+    "objectID": "index.html#mapa",
+    "href": "index.html#mapa",
+    "title": "Mapa de riesgo de incendios",
+    "section": "Mapa",
+    "text": "Mapa"
+  },
+  {
+    "objectID": "index.html#enlaces-útiles",
+    "href": "index.html#enlaces-útiles",
+    "title": "Mapa de riesgo de incendios",
+    "section": "Enlaces útiles",
+    "text": "Enlaces útiles\n\nVisor oficial de incendios de AEMET\nAEMET OpenData\nNASA FIRMS\nEFFIS / Copernicus EMS"
   }
 ]
