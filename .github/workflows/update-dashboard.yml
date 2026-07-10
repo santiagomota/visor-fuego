@@ -33,29 +33,29 @@ jobs:
           echo "R_LIBS_SITE=/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library" >> "$GITHUB_ENV"
 
       - name: Instalar R, librerías geoespaciales y paquetes apt disponibles
-        shell: bash
         run: |
+          set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             r-base r-base-dev \
             libcurl4-openssl-dev libssl-dev libxml2-dev \
             libgdal-dev libgeos-dev libproj-dev libudunits2-dev \
-            gdal-bin proj-bin make pandoc \
-            libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
-            libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+            gdal-bin proj-bin pandoc ca-certificates
 
-          # Paquetes R disponibles como binarios de Ubuntu. Leaflet no está en apt en ubuntu-24.04.
-          pkgs=(
+          apt_pkgs=(
             r-cran-curl r-cran-jsonlite r-cran-readr r-cran-dplyr r-cran-purrr
             r-cran-stringr r-cran-tibble r-cran-fs r-cran-glue r-cran-tidyr
             r-cran-httr2 r-cran-xml2 r-cran-lubridate r-cran-sf r-cran-terra
             r-cran-stars r-cran-units r-cran-lwgeom r-cran-htmltools
             r-cran-htmlwidgets r-cran-rmarkdown r-cran-knitr r-cran-yaml
             r-cran-dt r-cran-plotly r-cran-ggplot2 r-cran-png r-cran-scales
-            r-cran-digest r-cran-base64enc r-cran-here r-cran-cli r-cran-remotes
+            r-cran-digest r-cran-base64enc r-cran-here r-cran-cli
+            r-cran-sp r-cran-raster r-cran-magrittr r-cran-markdown
+            r-cran-viridislite r-cran-rcolorbrewer r-cran-crosstalk r-cran-jquerylib
+            r-cran-remotes
           )
 
-          for pkg in "${pkgs[@]}"; do
+          for pkg in "${apt_pkgs[@]}"; do
             if apt-cache show "$pkg" >/dev/null 2>&1; then
               sudo apt-get install -y --no-install-recommends "$pkg"
             else
@@ -64,7 +64,6 @@ jobs:
           done
 
       - name: Instalar paquetes R restantes desde CRAN en librería de usuario
-        shell: bash
         run: |
           cat > /tmp/install_required_packages.R <<'RSCRIPT'
           required <- c(
@@ -72,7 +71,9 @@ jobs:
             "fs", "glue", "tidyr", "httr2", "xml2", "lubridate", "sf", "terra",
             "stars", "units", "lwgeom", "leaflet", "leaflet.providers", "htmltools",
             "htmlwidgets", "rmarkdown", "knitr", "yaml", "DT", "plotly", "ggplot2",
-            "png", "scales", "digest", "base64enc", "here", "cli"
+            "png", "scales", "digest", "base64enc", "here", "cli",
+            "sp", "raster", "magrittr", "markdown", "viridisLite", "RColorBrewer",
+            "crosstalk", "jquerylib"
           )
 
           user_lib <- Sys.getenv("R_LIBS_USER", unset = file.path(Sys.getenv("RUNNER_TEMP"), "Rlib"))
@@ -83,26 +84,45 @@ jobs:
           message(".libPaths()=")
           print(.libPaths())
 
-          installed <- rownames(installed.packages())
-          missing <- setdiff(required, installed)
-          message("Paquetes requeridos: ", paste(required, collapse = ", "))
+          options(repos = c(CRAN = "https://cloud.r-project.org"))
+
+          is_available <- function(pkg) {
+            suppressWarnings(requireNamespace(pkg, quietly = TRUE))
+          }
+
+          missing <- required[!vapply(required, is_available, logical(1))]
           message("Paquetes faltantes antes de CRAN: ", if (length(missing)) paste(missing, collapse = ", ") else "ninguno")
 
-          if (length(missing)) {
-            options(repos = c(CRAN = "https://cloud.r-project.org"))
+          # No instalar leaflet con dependencies=TRUE: en Ubuntu puede intentar recompilar terra/raster desde CRAN
+          # aunque existan como paquetes apt. Primero instalamos cualquier otro faltante y luego leaflet sin deps.
+          leaflet_pkgs <- c("leaflet.providers", "leaflet")
+          non_leaflet_missing <- setdiff(missing, leaflet_pkgs)
+
+          if (length(non_leaflet_missing)) {
             install.packages(
-              missing,
+              non_leaflet_missing,
               lib = user_lib,
               dependencies = c("Depends", "Imports", "LinkingTo"),
               Ncpus = 2
             )
           }
 
-          installed2 <- rownames(installed.packages(lib.loc = .libPaths()))
-          missing2 <- setdiff(required, installed2)
+          # leaflet.providers no necesita compilar dependencias pesadas.
+          if (!is_available("leaflet.providers")) {
+            install.packages("leaflet.providers", lib = user_lib, dependencies = FALSE, Ncpus = 2)
+          }
+
+          # leaflet usa raster/sp/sf/htmlwidgets/etc.; los proporcionamos por apt para evitar recompilar terra.
+          if (!is_available("leaflet")) {
+            install.packages("leaflet", lib = user_lib, dependencies = FALSE, Ncpus = 2)
+          }
+
+          missing2 <- required[!vapply(required, is_available, logical(1))]
           if (length(missing2)) {
             message("Paquetes R que siguen faltando tras la instalación:")
             print(missing2)
+            message("Paquetes instalados visibles:")
+            print(sort(rownames(installed.packages(lib.loc = .libPaths()))))
             sessionInfo()
             quit(status = 1)
           }
@@ -113,7 +133,6 @@ jobs:
           Rscript /tmp/install_required_packages.R
 
       - name: Diagnóstico de entorno
-        shell: bash
         run: |
           R --version
           quarto --version
@@ -121,17 +140,17 @@ jobs:
           Rscript - <<'RSCRIPT'
           message("R_LIBS_USER=", Sys.getenv("R_LIBS_USER"))
           print(.libPaths())
-          pkgs <- c("sf", "terra", "leaflet", "leaflet.providers", "htmlwidgets", "dplyr", "readr")
+          pkgs <- c("sf", "terra", "raster", "leaflet", "leaflet.providers", "htmlwidgets", "dplyr", "readr")
           for (p in pkgs) {
-            cat(p, "=>", as.character(utils::packageVersion(p)), "\n")
+            suppressPackageStartupMessages(library(p, character.only = TRUE))
+            cat(p, as.character(packageVersion(p)), "\n")
           }
           sessionInfo()
           RSCRIPT
 
       - name: Configurar variables del visor
-        shell: bash
         run: |
-          cat > .Renviron <<'EOF'
+          cat > .Renviron <<EOF
           AEMET_PROVIDER=classic
           AEMET_CLASSIC_VALID_START_OFFSET_DAYS=0
           AEMET_CLASSIC_KEEP_LATEST_ISSUE_ONLY=true
@@ -149,8 +168,8 @@ jobs:
           EOF
 
       - name: Actualizar datos
-        shell: bash
         run: |
+          set -euo pipefail
           Rscript scripts/01_download_aemet_incendios.R
           Rscript scripts/02_prepare_web_assets.R
           Rscript scripts/05_download_firms_active_fires.R || true
@@ -159,12 +178,10 @@ jobs:
           Rscript scripts/24_check_aemet_valid_dates.R
 
       - name: Renderizar sitio
-        shell: bash
         run: |
           quarto render --execute
 
       - name: Commit si hay cambios
-        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
