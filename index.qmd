@@ -22,6 +22,10 @@ library(purrr)
 source("R/effis.R", encoding = "UTF-8")
 source("R/admin.R", encoding = "UTF-8")
 
+`%||%` <- function(x, y) {
+  if (is.null(x) || length(x) == 0 || all(is.na(x)) || !nzchar(paste(x, collapse = ""))) y else x
+}
+
 read_layers_json <- function() {
   candidates <- c(
     "data/processed/layers.json",
@@ -55,6 +59,7 @@ read_layers_json <- function() {
         select(-bounds_json) |>
         jsonlite::toJSON(dataframe = "rows", auto_unbox = TRUE, null = "null") |>
         jsonlite::fromJSON(simplifyVector = FALSE)
+
       attr(layers, "source_path") <- csv_path
       return(layers)
     }
@@ -70,29 +75,37 @@ read_firms_csv <- function() {
     "data/processed/firms_active_fires.csv",
     "assets/firms/firms_active_fires.csv"
   )
+
   for (path in candidates) {
     if (file.exists(path) && file.info(path)$size > 0) {
-      out <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
+      out <- tryCatch(
+        readr::read_csv(path, show_col_types = FALSE),
+        error = function(e) tibble::tibble()
+      )
       if (nrow(out) > 0 && all(c("longitude", "latitude") %in% names(out))) {
         attr(out, "source_path") <- path
         return(out)
       }
     }
   }
+
   out <- tibble::tibble()
   attr(out, "source_path") <- NA_character_
   out
 }
 
-
 read_csv_optional <- function(paths) {
   for (path in paths) {
     if (file.exists(path) && file.info(path)$size > 0) {
-      out <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
+      out <- tryCatch(
+        readr::read_csv(path, show_col_types = FALSE),
+        error = function(e) tibble::tibble()
+      )
       attr(out, "source_path") <- path
       return(out)
     }
   }
+
   out <- tibble::tibble()
   attr(out, "source_path") <- NA_character_
   out
@@ -140,10 +153,15 @@ safe_value <- function(x, default = "—") {
 add_admin_boundaries <- function(map, path, group, weight = 1) {
   if (!requireNamespace("sf", quietly = TRUE)) return(map)
   if (!file.exists(path) || file.info(path)$size == 0) return(map)
+
   x <- tryCatch(sf::st_read(path, quiet = TRUE), error = function(e) NULL)
   if (is.null(x) || nrow(x) == 0) return(map)
+
   x <- force_wgs84_lonlat(x)
-  if (!"admin_name" %in% names(x)) x$admin_name <- if ("NUTS_NAME" %in% names(x)) x$NUTS_NAME else x$admin_id
+  if (!"admin_name" %in% names(x)) {
+    x$admin_name <- if ("NUTS_NAME" %in% names(x)) x$NUTS_NAME else x$admin_id
+  }
+
   leaflet::addPolygons(
     map,
     data = x,
@@ -157,18 +175,68 @@ add_admin_boundaries <- function(map, path, group, weight = 1) {
   )
 }
 
+read_effis_ba_geojson <- function() {
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    out <- NULL
+    attr(out, "source_path") <- NA_character_
+    return(out)
+  }
+
+  candidates <- c(
+    "data/processed/effis_burnt_areas.geojson",
+    "assets/effis_ba/effis_burnt_areas.geojson",
+    "docs/assets/effis_ba/effis_burnt_areas.geojson"
+  )
+
+  for (path in candidates) {
+    if (file.exists(path) && file.info(path)$size > 0) {
+      x <- tryCatch(sf::st_read(path, quiet = TRUE), error = function(e) NULL)
+      if (!is.null(x) && nrow(x) > 0) {
+        x <- force_wgs84_lonlat(x)
+        attr(x, "source_path") <- path
+        return(x)
+      }
+    }
+  }
+
+  out <- NULL
+  attr(out, "source_path") <- NA_character_
+  out
+}
+
+build_effis_ba_popup <- function(x) {
+  geom_cols <- attr(x, "sf_column")
+  cols <- setdiff(names(x), geom_cols)
+
+  if (length(cols) == 0) {
+    return(rep("EFFIS Burnt Area", nrow(x)))
+  }
+
+  preferred <- c(
+    "id", "ID", "fireid", "FireId", "area_ha", "AREA_HA", "area", "AREA",
+    "date", "DATE", "firstdate", "FIRSTDATE", "lastdate", "LASTDATE",
+    "country", "COUNTRY", "name", "NAME"
+  )
+  shown <- intersect(preferred, cols)
+  if (length(shown) == 0) shown <- cols[seq_len(min(8, length(cols)))]
+
+  apply(as.data.frame(sf::st_drop_geometry(x)[shown]), 1, function(row) {
+    parts <- paste0(names(row), ": ", ifelse(is.na(row) | row == "", "s/d", row))
+    paste(c("EFFIS Burnt Area", parts), collapse = "<br>")
+  })
+}
+
 layers_data <- read_layers_json()
 layers_source <- attr(layers_data, "source_path")
 
-# Orden del selector AEMET en Leaflet. El paquete SIG clásico usa nombres
-# down_YYYYMMDD...D00..D07, donde YYYYMMDD es fecha de emisión y Dxx el
-# horizonte. En el catálogo ya se guarda valid_date = issue_date + D.
-# Queremos que Península/Baleares aparezca antes que Canarias y que, dentro
-# de cada zona, la primera capa sea la válida para la fecha de renderizado.
+# Orden del selector AEMET en Leaflet.
+# El paquete SIG clásico usa nombres down_YYYYMMDD...D00..D07,
+# donde YYYYMMDD es la fecha civil del primer mapa y Dxx el horizonte.
+# En el catálogo se guarda valid_date = issue_date + D.
 aemet_valid_date_rank <- function(date_chr, today = Sys.Date()) {
   d <- suppressWarnings(as.Date(date_chr))
   if (is.na(d)) return(999999L)
-  if (identical(d, today)) return(0L)
+  if (!is.na(d) && d == today) return(0L)
   if (d > today) return(as.integer(d - today))
   10000L + as.integer(today - d)
 }
@@ -181,17 +249,20 @@ aemet_layer_rank <- function(layer) {
     area == "c" ~ 3L,
     TRUE ~ 99L
   )
+
   tipo <- layer$tipo %||% ""
   tipo_rank <- dplyr::case_when(
     tipo == "previsto" ~ 1L,
     tipo == "estimado" ~ 2L,
     TRUE ~ 99L
   )
+
   valid_date <- layer$valid_date %||% layer$date %||% ""
   valid_rank <- aemet_valid_date_rank(valid_date)
   dia <- suppressWarnings(as.integer(layer$dia %||% 0L))
   if (is.na(dia)) dia <- 0L
   issue_date <- layer$issue_date %||% ""
+
   paste0(
     sprintf("%02d", area_rank), "_",
     sprintf("%06d", valid_rank), "_",
@@ -225,6 +296,9 @@ summary_ccaa <- read_summary_ccaa()
 summary_provincias <- read_summary_provincias()
 alerts_data <- read_operational_alerts()
 alerts_summary <- read_alerts_summary()
+effis_ba_data <- read_effis_ba_geojson()
+effis_ba_source <- attr(effis_ba_data, "source_path")
+n_effis_ba <- if (is.null(effis_ba_data)) 0L else nrow(effis_ba_data)
 
 if (nrow(overview_data) > 0) {
   overview <- overview_data[1, ]
@@ -242,6 +316,7 @@ if (nrow(overview_data) > 0) {
 
 effis_groups <- effis_overlay_groups()
 effis_cfg <- effis_layer_config()
+
 n_alerts <- nrow(alerts_data)
 n_alerts_high <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "alta", na.rm = TRUE) else 0L
 n_alerts_medium <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "media", na.rm = TRUE) else 0L
@@ -254,21 +329,25 @@ Este visor combina:
 
 - **AEMET OpenData**: riesgo meteorológico de incendios previsto.
 - **NASA FIRMS**: detecciones satelitales recientes de focos activos/thermal anomalies.
-- **EFFIS/Copernicus EMS**: capa WMS europea de Fire Weather Index.
+- **EFFIS/Copernicus EMS**: áreas quemadas y diagnóstico WMS europeo.
 - **Eurostat/GISCO NUTS**: límites de CCAA y provincias para resumen territorial.
 
 ```{r}
 cat("Capas AEMET:", n_layers)
 if (n_layers > 0) cat(" · Fecha:", last_update, "· Catálogo:", layers_source)
+
 cat("\nFocos NASA FIRMS:", n_firms)
 if (n_firms > 0) cat(" · Catálogo:", firms_source)
+
 cat("\nAlertas operativas:", n_alerts, "· Altas:", n_alerts_high, "· Medias:", n_alerts_medium)
+
+cat("\nEFFIS Burnt Areas:", n_effis_ba)
+if (n_effis_ba > 0) cat(" · Catálogo:", effis_ba_source)
+
 cat("\nEFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") else "desactivado")
 if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
 ```
 :::
-
-
 
 ## Mapa
 
@@ -281,6 +360,34 @@ map <- leaflet(width = "100%", height = "84vh", options = leafletOptions(preferC
   addProviderTiles(providers$Esri.WorldImagery, group = "Satélite") |>
   setView(lng = -3.7, lat = 40.2, zoom = 6)
 
+# Panes: AEMET queda por debajo; EFFIS BA en medio; FIRMS/alertas por encima.
+map <- map |>
+  addMapPane("aemetPane", zIndex = 350) |>
+  addMapPane("effisBaPane", zIndex = 520) |>
+  addMapPane("firmsPane", zIndex = 650) |>
+  addMapPane("alertsPane", zIndex = 670)
+
+if (n_effis_ba > 0) {
+  effis_ba_data$popup_label <- build_effis_ba_popup(effis_ba_data)
+  effis_ba_data$layer_label <- "EFFIS Burnt Area"
+
+  map <- map |>
+    addPolygons(
+      data = effis_ba_data,
+      group = "EFFIS Burnt Areas",
+      color = "#5e3c99",
+      weight = 1.1,
+      opacity = 0.9,
+      fillColor = "#fdb863",
+      fillOpacity = 0.28,
+      popup = ~popup_label,
+      label = ~layer_label,
+      options = pathOptions(pane = "effisBaPane"),
+      highlightOptions = highlightOptions(weight = 2, color = "#2b1a54", bringToFront = TRUE)
+    )
+  overlay_groups <- c(overlay_groups, "EFFIS Burnt Areas")
+}
+
 if (n_firms > 0) {
   firms_data <- firms_data |>
     mutate(
@@ -292,7 +399,7 @@ if (n_firms > 0) {
     firms_data <- firms_data |>
       mutate(
         popup_label = paste0(
-          "<strong>NASA FIRMS</strong><br>",
+          "NASA FIRMS<br>",
           "Sensor: ", source_dataset, "<br>",
           "Fecha UTC: ", acq_datetime_utc, "<br>",
           "FRP: ", ifelse(is.na(frp), "s/d", paste0(frp, " MW"))
@@ -325,16 +432,16 @@ if (n_firms > 0) {
       fillOpacity = 0.82,
       weight = 1,
       popup = ~popup,
-      label = ~paste0("FIRMS · ", acq_datetime_utc)
+      label = ~paste0("FIRMS · ", acq_datetime_utc),
+      options = pathOptions(pane = "firmsPane")
     )
   overlay_groups <- c(overlay_groups, "NASA FIRMS - focos activos")
 }
 
-
 if (n_alerts > 0) {
   if (!"popup_label" %in% names(alerts_data)) {
     alerts_data <- alerts_data |>
-      mutate(popup_label = paste0("<strong>", cluster_id, "</strong><br>Nivel: ", alerta_operativa))
+      mutate(popup_label = paste0(cluster_id, "<br>Nivel: ", alerta_operativa))
   }
 
   alerts_data <- alerts_data |>
@@ -366,7 +473,8 @@ if (n_alerts > 0) {
         fillOpacity = 0.42,
         weight = 3,
         popup = ~popup,
-        label = ~paste0(cluster_id, " · ", alerta_operativa)
+        label = ~paste0(cluster_id, " · ", alerta_operativa),
+        options = pathOptions(pane = "alertsPane")
       )
     overlay_groups <- c(overlay_groups, "Alertas operativas FIRMS")
   }
@@ -387,16 +495,28 @@ map <- map |>
     overlayGroups = unique(overlay_groups),
     options = layersControlOptions(collapsed = TRUE)
   ) |>
-  hideGroup(c(effis_groups, "CCAA (NUTS2)", "Provincias (NUTS3)")) |>
+  hideGroup(c(effis_groups, "EFFIS Burnt Areas", "CCAA (NUTS2)", "Provincias (NUTS3)")) |>
   addControl(
-    html = HTML("<strong>Fuentes:</strong> AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS · Eurostat/GISCO<br><small>Visor informativo; no sustituye a avisos oficiales ni a servicios de emergencia.</small>"),
+    html = HTML(
+      "Fuentes: AEMET OpenData · NASA FIRMS · EFFIS/Copernicus EMS · Eurostat/GISCO<br>
+      Visor informativo; no sustituye a avisos oficiales ni a servicios de emergencia."
+    ),
     position = "bottomleft"
   )
 
 if (n_firms > 0) {
   map <- map |>
     addControl(
-      html = HTML("<strong>NASA FIRMS</strong><br><span class='dot dot-red'></span>&lt; 6 h<br><span class='dot dot-orange'></span>6–24 h<br><span class='dot dot-yellow'></span>24–48 h<br><span class='dot dot-grey'></span>&gt; 48 h<br><strong>Alertas</strong><br><span class='dot dot-purple'></span>alta<br><span class='dot dot-darkred'></span>media"),
+      html = HTML(
+        "<b>NASA FIRMS</b><br>
+        <span style='color:#d7191c'>●</span> &lt; 6 h<br>
+        <span style='color:#fdae61'>●</span> 6–24 h<br>
+        <span style='color:#bdb76b'>●</span> 24–48 h<br>
+        <span style='color:#999999'>●</span> &gt; 48 h<br>
+        <b>Alertas</b><br>
+        <span style='color:#7b3294'>●</span> alta<br>
+        <span style='color:#d7191c'>●</span> media"
+      ),
       position = "bottomright"
     )
 }
@@ -405,11 +525,13 @@ js_template <- r"(
 function(el, x) {
   const layers = __LAYERS_JSON__;
   const map = this;
+
   if (map.createPane && !map.getPane('aemetPane')) {
     map.createPane('aemetPane');
     map.getPane('aemetPane').style.zIndex = 350;
     map.getPane('aemetPane').style.pointerEvents = 'none';
   }
+
   let currentOverlay = null;
   let currentOpacity = 0.68;
 
@@ -427,13 +549,15 @@ function(el, x) {
   function updateLegend(layer) {
     const legend = document.getElementById('fire-risk-legend');
     if (!legend) return;
+
     if (!layer || !layer.legend_labels || !layer.legend_colours) {
-      legend.innerHTML = '<strong>Nivel de peligro AEMET</strong><br>No disponible';
+      legend.innerHTML = '<b>Nivel de peligro AEMET</b><br>No disponible';
       return;
     }
-    let html = '<strong>Nivel de peligro AEMET</strong>';
+
+    let html = '<b>Nivel de peligro AEMET</b>';
     for (let i = 0; i < layer.legend_labels.length; i++) {
-      html += '<br><span class="swatch" style="background:' + layer.legend_colours[i] + '"></span>' + layer.legend_labels[i];
+      html += '<br><span class="swatch" style="background:' + layer.legend_colours[i] + '"></span> ' + layer.legend_labels[i];
     }
     legend.innerHTML = html;
   }
@@ -476,6 +600,7 @@ function(el, x) {
       map.removeLayer(currentOverlay);
       currentOverlay = null;
     }
+
     const layer = layers[index];
     if (!layer) {
       updateLegend(null);
@@ -486,7 +611,9 @@ function(el, x) {
       fetch(layer.url)
         .then(response => response.json())
         .then(data => {
-          currentOverlay = L.geoJSON(data, { pane: 'aemetPane', style: function(feature) {
+          currentOverlay = L.geoJSON(data, {
+            pane: 'aemetPane',
+            style: function(feature) {
               const v = riskValue(feature.properties || {});
               return {
                 color: colourForRisk(v, layer),
@@ -507,7 +634,11 @@ function(el, x) {
           updateLegend(layer);
         });
     } else {
-      currentOverlay = L.imageOverlay(layer.url, layer.bounds, { opacity: currentOpacity, interactive: false, pane: 'aemetPane' }).addTo(map);
+      currentOverlay = L.imageOverlay(layer.url, layer.bounds, {
+        opacity: currentOpacity,
+        interactive: false,
+        pane: 'aemetPane'
+      }).addTo(map);
       try { map.fitBounds(layer.bounds); } catch(e) {}
       updateLegend(layer);
     }
@@ -517,19 +648,23 @@ function(el, x) {
   panel.onAdd = function(map) {
     const div = L.DomUtil.create('div', 'fire-panel');
     if (!layers || layers.length === 0) {
-      div.innerHTML = '<strong>Visor Fuego</strong><br>No hay capas AEMET descargadas.<br><code>Rscript scripts/99_run_all.R</code>';
+      div.innerHTML = '<b>Visor Fuego</b><br>No hay capas AEMET descargadas.<br><code>Rscript scripts/99_run_all.R</code>';
       return div;
     }
+
     let options = '';
     for (let i = 0; i < layers.length; i++) {
       options += '<option value="' + i + '">' + labelForLayer(layers[i]) + '</option>';
     }
-    div.innerHTML = '<strong>Visor Fuego</strong>' +
-      '<label for="fire-layer-select">Capa AEMET</label>' +
+
+    div.innerHTML =
+      '<b>Visor Fuego</b>' +
+      '<label>Capa AEMET</label>' +
       '<select id="fire-layer-select">' + options + '</select>' +
-      '<label for="fire-opacity">Opacidad AEMET</label>' +
-      '<input id="fire-opacity" type="range" min="0" max="1" step="0.05" value="0.68" style="width:220px;">' +
-      '<small>EFFIS y FIRMS se activan desde el control de capas de Leaflet.</small>';
+      '<label>Opacidad AEMET</label>' +
+      '<input id="fire-opacity" type="range" min="0" max="1" step="0.05" value="0.68" />' +
+      '<small>Copernicus, FIRMS y límites se activan desde el control de capas de Leaflet.</small>';
+
     L.DomEvent.disableClickPropagation(div);
     return div;
   };
@@ -539,18 +674,23 @@ function(el, x) {
   legend.onAdd = function(map) {
     const div = L.DomUtil.create('div', 'fire-legend');
     div.id = 'fire-risk-legend';
-    div.innerHTML = '<strong>Nivel de peligro AEMET</strong><br>No disponible';
+    div.innerHTML = '<b>Nivel de peligro AEMET</b><br>No disponible';
     return div;
   };
   legend.addTo(map);
 
   if (layers && layers.length > 0) {
     setLayer(0);
+
     const select = document.getElementById('fire-layer-select');
     const opacity = document.getElementById('fire-opacity');
+
     if (select) {
-      select.addEventListener('change', function(e) { setLayer(parseInt(e.target.value)); });
+      select.addEventListener('change', function(e) {
+        setLayer(parseInt(e.target.value));
+      });
     }
+
     if (opacity) {
       opacity.addEventListener('input', function(e) {
         currentOpacity = parseFloat(e.target.value);
@@ -563,7 +703,6 @@ function(el, x) {
 
 parts <- strsplit(js_template, "__LAYERS_JSON__", fixed = TRUE)[[1]]
 js <- paste0(parts[1], layers_json, parts[2])
-
 htmlwidgets::onRender(map, js)
 ```
 
@@ -574,61 +713,41 @@ htmlwidgets::onRender(map, js)
 - [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/)
 - [EFFIS / Copernicus EMS](https://forest-fire.emergency.copernicus.eu/)
 
-<!-- BEGIN EFFIS_BA_LAYER -->
 ```{=html}
-<script>
-(function() {
-  const url = 'assets/effis_ba/effis_burnt_areas.geojson';
-  function findLeafletMap() {
-    if (window.HTMLWidgets && HTMLWidgets.find) {
-      const widgets = HTMLWidgets.find('.leaflet');
-      for (const w of widgets) {
-        if (w && typeof w.getMap === 'function') return w.getMap();
-        if (w && w.instance && w.instance instanceof L.Map) return w.instance;
-        if (w && w.map && w.map instanceof L.Map) return w.map;
-      }
-    }
-    for (const k in window) {
-      try { if (window[k] instanceof L.Map) return window[k]; } catch(e) {}
-    }
-    return null;
-  }
-  function addEffisBurntAreas(map) {
-    if (!map || !window.L || map.__effisBurntAreasAdded) return;
-    map.__effisBurntAreasAdded = true;
-    if (!map.getPane('effisBaPane')) {
-      map.createPane('effisBaPane');
-      map.getPane('effisBaPane').style.zIndex = 430;
-    }
-    fetch(url, { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : null)
-      .then(gj => {
-        if (!gj || !gj.features || gj.features.length === 0) return;
-        const layer = L.geoJSON(gj, {
-          pane: 'effisBaPane',
-          style: function() {
-            return { color: '#7f2704', weight: 1.2, opacity: 0.85, fillColor: '#d94801', fillOpacity: 0.22 };
-          },
-          onEachFeature: function(feature, lyr) {
-            const p = feature.properties || {};
-            const label = p.effis_label || p.effis_id || 'Área quemada EFFIS';
-            const date = p.effis_date || '';
-            const area = p.effis_area_ha ? Number(p.effis_area_ha).toLocaleString('es-ES', {maximumFractionDigits: 1}) + ' ha' : '';
-            lyr.bindPopup('<strong>Copernicus/EFFIS</strong><br>' + label + '<br>' + date + '<br>' + area);
-          }
-        });
-        L.control.layers(null, { 'Copernicus/EFFIS · áreas quemadas': layer }, { collapsed: true }).addTo(map);
-      })
-      .catch(() => {});
-  }
-  function waitForMap(tries) {
-    const map = findLeafletMap();
-    if (map) addEffisBurntAreas(map);
-    else if (tries > 0) setTimeout(() => waitForMap(tries - 1), 400);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => waitForMap(20));
-  else waitForMap(20);
-})();
-</script>
+<style>
+.fire-panel,
+.fire-legend {
+  background: rgba(255, 255, 255, 0.94);
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.fire-panel label {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+}
+.fire-panel select {
+  width: 290px;
+  max-width: 42vw;
+}
+.fire-panel input {
+  width: 100%;
+}
+.fire-panel small {
+  display: block;
+  margin-top: 8px;
+  color: #555;
+}
+.fire-legend .swatch {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  margin-right: 5px;
+  border: 1px solid #777;
+  vertical-align: middle;
+}
+</style>
 ```
-<!-- END EFFIS_BA_LAYER -->
