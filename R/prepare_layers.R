@@ -43,6 +43,32 @@ read_numeric_env <- function(name, default = 0) {
   if (length(value) == 0 || is.na(value)) default else value
 }
 
+include_orphan_aemet_raw <- function() {
+  tolower(Sys.getenv("AEMET_INCLUDE_ORPHAN_RAW", unset = "false")) %in% c("1", "true", "yes", "si", "sí")
+}
+
+clean_aemet_web_assets <- function(out_dirs = c("assets/aemet", "docs/assets/aemet")) {
+  clean <- tolower(Sys.getenv("AEMET_CLEAN_WEB_ASSETS", unset = "true")) %in% c("1", "true", "yes", "si", "sí")
+  if (!clean) return(invisible(FALSE))
+
+  for (d in out_dirs) {
+    if (fs::dir_exists(d)) {
+      old <- tryCatch(
+        fs::dir_ls(
+          d,
+          regexp = "(aemet_|layers\\.json$).*(png|jpg|jpeg|webp|gif|geojson|json)$|layers\\.json$",
+          recurse = FALSE,
+          type = "file"
+        ),
+        error = function(e) character()
+      )
+      if (length(old) > 0) fs::file_delete(old)
+    }
+    fs::dir_create(d)
+  }
+
+  invisible(TRUE)
+}
 
 # Orden de presentación en el selector Leaflet: primero Península y Baleares,
 # luego Baleares si existe como producto independiente, y finalmente Canarias.
@@ -444,16 +470,22 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
 
   if (!"status" %in% names(manifest)) manifest$status <- "downloaded"
 
-  orphan_rows <- discover_orphan_raw_downloads(manifest) |>
-    normalise_manifest_types()
-  if (nrow(orphan_rows) > 0) {
-    message("Capas encontradas en data/raw/aemet fuera del manifest: ", nrow(orphan_rows))
-    manifest <- dplyr::bind_rows(
-      normalise_manifest_types(manifest),
-      normalise_manifest_types(orphan_rows)
-    ) |>
+  if (include_orphan_aemet_raw()) {
+    orphan_rows <- discover_orphan_raw_downloads(manifest) |>
       normalise_manifest_types()
+    if (nrow(orphan_rows) > 0) {
+      message("Capas encontradas en data/raw/aemet fuera del manifest: ", nrow(orphan_rows))
+      manifest <- dplyr::bind_rows(
+        normalise_manifest_types(manifest),
+        normalise_manifest_types(orphan_rows)
+      ) |>
+        normalise_manifest_types()
+    }
+  } else {
+    message("AEMET: no se incorporan ficheros huérfanos de data/raw/aemet. Define AEMET_INCLUDE_ORPHAN_RAW=true solo para diagnóstico.")
   }
+
+  clean_aemet_web_assets()
 
   supported <- discover_supported_files(manifest)
 

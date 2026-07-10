@@ -45,3 +45,29 @@ if (file.exists(layers_file)) {
 } else {
   message("\nNo existe ", layers_file, ". Ejecuta Rscript scripts/02_prepare_web_assets.R")
 }
+
+
+message("
+Diagnóstico de posibles capas antiguas:")
+if (file.exists(layers_file)) {
+  layers <- readr::read_csv(layers_file, show_col_types = FALSE)
+  if (all(c("area_label", "valid_date", "issue_date", "forecast_day", "source_file") %in% names(layers))) {
+    layers |>
+      dplyr::mutate(
+        valid_date = as.character(valid_date),
+        issue_date = as.character(issue_date)
+      ) |>
+      dplyr::count(area_label, issue_date, valid_date, forecast_day, name = "n") |>
+      dplyr::arrange(area_label, valid_date, forecast_day) |>
+      print(n = Inf)
+  }
+
+  if ("source_file" %in% names(layers)) {
+    missing_sources <- layers |>
+      dplyr::filter(!file.exists(source_file))
+    if (nrow(missing_sources) > 0) {
+      message("AVISO: hay capas con source_file inexistente: ", nrow(missing_sources))
+      print(missing_sources |> dplyr::select(dplyr::any_of(c("valid_date", "area_label", "forecast_day", "source_file"))), n = Inf)
+    }
+  }
+}

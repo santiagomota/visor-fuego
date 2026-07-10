@@ -151,6 +151,13 @@ classic_download_archive <- function(out_dir = "data/raw/aemet_classic") {
 }
 
 extract_classic_geotiffs <- function(archive_path, out_dir = "data/raw/aemet_classic/extracted") {
+  # IMPORTANTE: el nombre del paquete descargado es estable. Si reutilizamos el
+  # mismo directorio de extracción, pueden quedar GeoTIFFs de ejecuciones
+  # anteriores y el visor acaba mezclando fechas antiguas con las actuales.
+  # Desde v0.5.37 limpiamos siempre el directorio de extracción de esta descarga.
+  if (fs::dir_exists(out_dir)) {
+    fs::dir_delete(out_dir)
+  }
   fs::dir_create(out_dir)
 
   candidates <- extract_aemet_archive(archive_path, out_dir = out_dir)
@@ -174,29 +181,61 @@ extract_classic_geotiffs <- function(archive_path, out_dir = "data/raw/aemet_cla
     stop("No se han encontrado GeoTIFFs con patrón down_YYYYMMDD_peligro_[p|c]_Dxx.tif en el paquete AEMET clásico.", call. = FALSE)
   }
 
-  # Nos quedamos con un único fichero por fecha/área/día. El endpoint directo trae
-  # todos los D00..D07 para Península/Baleares (p) y Canarias (c), sin necesidad
-  # de probar parámetros adicionales.
+  keep_latest <- tolower(Sys.getenv(
+    "AEMET_CLASSIC_KEEP_LATEST_ISSUE_ONLY",
+    "true"
+  )) %in% c("1", "true", "yes", "si", "sí")
+
+  if (keep_latest && nrow(meta) > 0 && "issue_date" %in% names(meta)) {
+    latest_issue <- max(as.Date(meta$issue_date), na.rm = TRUE)
+    if (is.finite(as.numeric(latest_issue))) {
+      old_n <- nrow(meta)
+      meta <- meta |>
+        dplyr::filter(as.Date(issue_date) == latest_issue)
+      if (old_n != nrow(meta)) {
+        message(
+          "AEMET clásico: se conservan solo los GeoTIFFs de la emisión más reciente: ",
+          latest_issue,
+          " (", nrow(meta), " de ", old_n, ")"
+        )
+      }
+    }
+  }
+
+  # Nos quedamos con un único fichero por área/día dentro de la emisión vigente.
+  # El endpoint directo trae todos los D00..D07 para Península/Baleares (p) y
+  # Canarias (c), sin necesidad de probar parámetros adicionales.
   meta |>
     dplyr::arrange(area, valid_date, dia, original_file) |>
-    dplyr::distinct(issue_date, area, dia, .keep_all = TRUE)
+    dplyr::distinct(area, dia, .keep_all = TRUE)
 }
 
 install_classic_geotiffs <- function(tif_meta, raw_dir = "data/raw/aemet") {
   fs::dir_create(raw_dir)
 
-  # Evita que queden GeoTIFFs clásicos con la fecha de emisión antigua en el
-  # nombre. Desde v0.5.17 el nombre usa la fecha válida de la predicción.
-  old_classic <- tryCatch(
-    fs::dir_ls(
-      raw_dir,
-      regexp = "aemet_incendios_[0-9]{8}_[pc]_previsto_d[0-9]+\\.tif$",
-      recurse = FALSE,
-      type = "file"
-    ),
-    error = function(e) character()
-  )
-  if (length(old_classic) > 0) fs::file_delete(old_classic)
+  clean_raw <- tolower(Sys.getenv(
+    "AEMET_CLASSIC_CLEAN_RAW_BEFORE_INSTALL",
+    "true"
+  )) %in% c("1", "true", "yes", "si", "sí")
+
+  if (clean_raw) {
+    # Evita que queden productos AEMET antiguos en data/raw/aemet. Si permanecen,
+    # prepare_layers_for_web() puede descubrirlos como huérfanos o mezclarlos con
+    # el manifest actual, generando fechas antiguas en el selector Leaflet.
+    old_classic <- tryCatch(
+      fs::dir_ls(
+        raw_dir,
+        regexp = "aemet_incendios_.*\\.(png|jpg|jpeg|webp|gif|tif|tiff|zip|json|geojson|bin)$",
+        recurse = FALSE,
+        type = "file"
+      ),
+      error = function(e) character()
+    )
+    if (length(old_classic) > 0) {
+      message("AEMET clásico: eliminando productos antiguos en ", raw_dir, ": ", length(old_classic))
+      fs::file_delete(old_classic)
+    }
+  }
 
   purrr::pmap_dfr(tif_meta, function(issue_date, valid_date, date, area, dia, forecast_day, forecast_label, original_file) {
     valid_compact <- format(as.Date(valid_date), "%Y%m%d")
