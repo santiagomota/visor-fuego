@@ -172,7 +172,7 @@ jobs:
           set -euo pipefail
           Rscript scripts/01_download_aemet_incendios.R
           Rscript scripts/02_prepare_web_assets.R
-          Rscript scripts/05_download_firms_active_fires.R || true
+          Rscript scripts/05_download_firms_active_fires.R
           Rscript scripts/08_build_operational_alerts.R || true
           Rscript scripts/09_update_dashboard_history.R || true
           Rscript scripts/24_check_aemet_valid_dates.R
