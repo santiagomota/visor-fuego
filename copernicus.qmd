@@ -1,0 +1,100 @@
+---
+title: "Copernicus / EFFIS"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+suppressPackageStartupMessages({
+  library(readr)
+  library(dplyr)
+  library(tibble)
+  library(jsonlite)
+})
+
+summary_path <- "data/processed/effis_burnt_areas_summary.csv"
+ba_geojson_path <- "assets/effis_ba/effis_burnt_areas.geojson"
+
+summary <- if (file.exists(summary_path)) {
+  read_csv(summary_path, show_col_types = FALSE)
+} else {
+  tibble(
+    source = "Copernicus/EFFIS Burnt Areas",
+    generated_at = NA_character_,
+    n_features = 0L,
+    max_date = NA_character_,
+    min_date = NA_character_,
+    total_area_ha = 0,
+    bbox = NA_character_,
+    max_days = NA_real_,
+    min_area_ha = NA_real_,
+    raw_zip = NA_character_,
+    asset_geojson = NA_character_
+  )
+}
+
+fmt_num <- function(x) format(x, big.mark = ".", decimal.mark = ",", scientific = FALSE)
+```
+
+## Estado
+
+::: {.grid}
+::: {.g-col-12 .g-col-md-3}
+**Áreas quemadas**  
+`r fmt_num(summary$n_features[1])`
+:::
+
+::: {.g-col-12 .g-col-md-3}
+**Superficie total estimada**  
+`r fmt_num(round(summary$total_area_ha[1], 1))` ha
+:::
+
+::: {.g-col-12 .g-col-md-3}
+**Fecha más reciente**  
+`r summary$max_date[1] %||% "Sin datos"`
+:::
+
+::: {.g-col-12 .g-col-md-3}
+**Última generación**  
+`r summary$generated_at[1] %||% "Sin datos"`
+:::
+:::
+
+## Fuente
+
+Esta página resume la integración experimental de **Copernicus/EFFIS Burnt Areas** en el visor.
+
+```{r}
+summary |>
+  select(source, n_features, min_date, max_date, total_area_ha, bbox, max_days, min_area_ha) |>
+  knitr::kable()
+```
+
+## Ficheros publicados
+
+```{r}
+files <- tibble(
+  fichero = c(
+    "data/processed/effis_burnt_areas.geojson",
+    "data/processed/effis_burnt_areas_summary.csv",
+    "assets/effis_ba/effis_burnt_areas.geojson",
+    "assets/effis_ba/summary.json"
+  ),
+  existe = file.exists(fichero),
+  size_kb = ifelse(file.exists(fichero), round(file.info(fichero)$size / 1024, 1), NA_real_)
+)
+files |> knitr::kable()
+```
+
+## Nota metodológica
+
+- **AEMET** sigue siendo la capa principal de peligro previsto para España.
+- **NASA FIRMS** muestra detecciones térmicas recientes.
+- **Copernicus/EFFIS Burnt Areas** aporta perímetros o áreas quemadas procesadas, útiles como contexto de daños y evolución.
+- **EFFIS FWI WMS** se mantiene como diagnóstico, pero no se publica como capa operativa mientras no haya una combinación actual de `LAYER` + `TIME` con contenido visual fiable.

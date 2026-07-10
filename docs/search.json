@@ -214,7 +214,7 @@
     "href": "index.html",
     "title": "Mapa de riesgo de incendios",
     "section": "",
-    "text": "NoteFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-10 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 729\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 120 · Altas: 5 · Medias: 44\n\n\n\nEFFIS WMS: desactivado"
+    "text": "NotaFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: capa WMS europea de Fire Weather Index.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-07-10 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 346\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 97 · Altas: 2 · Medias: 19\n\n\n\nEFFIS WMS: desactivado"
   },
   {
     "objectID": "index.html#mapa",
@@ -229,5 +229,40 @@
     "title": "Mapa de riesgo de incendios",
     "section": "Enlaces útiles",
     "text": "Enlaces útiles\n\nVisor oficial de incendios de AEMET\nAEMET OpenData\nNASA FIRMS\nEFFIS / Copernicus EMS"
+  },
+  {
+    "objectID": "copernicus.html",
+    "href": "copernicus.html",
+    "title": "Copernicus / EFFIS",
+    "section": "",
+    "text": "Áreas quemadas\n5.555\n\n\nSuperficie total estimada\n819.241 ha\n\n\nFecha más reciente\n2026-07-09\n\n\nÚltima generación\n2026-07-10 15:05:09"
+  },
+  {
+    "objectID": "copernicus.html#estado",
+    "href": "copernicus.html#estado",
+    "title": "Copernicus / EFFIS",
+    "section": "",
+    "text": "Áreas quemadas\n5.555\n\n\nSuperficie total estimada\n819.241 ha\n\n\nFecha más reciente\n2026-07-09\n\n\nÚltima generación\n2026-07-10 15:05:09"
+  },
+  {
+    "objectID": "copernicus.html#fuente",
+    "href": "copernicus.html#fuente",
+    "title": "Copernicus / EFFIS",
+    "section": "Fuente",
+    "text": "Fuente\nEsta página resume la integración experimental de Copernicus/EFFIS Burnt Areas en el visor.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsource\nn_features\nmin_date\nmax_date\ntotal_area_ha\nbbox\nmax_days\nmin_area_ha\n\n\n\n\nCopernicus/EFFIS Burnt Areas\n5555\n2025-07-10\n2026-07-09\n819241\n-1927545\n365\n0"
+  },
+  {
+    "objectID": "copernicus.html#ficheros-publicados",
+    "href": "copernicus.html#ficheros-publicados",
+    "title": "Copernicus / EFFIS",
+    "section": "Ficheros publicados",
+    "text": "Ficheros publicados\n\n\n\n\n\nfichero\nexiste\nsize_kb\n\n\n\n\ndata/processed/effis_burnt_areas.geojson\nTRUE\n32619.3\n\n\ndata/processed/effis_burnt_areas_summary.csv\nTRUE\n0.3\n\n\nassets/effis_ba/effis_burnt_areas.geojson\nTRUE\n32619.3\n\n\nassets/effis_ba/summary.json\nTRUE\n0.4"
+  },
+  {
+    "objectID": "copernicus.html#nota-metodológica",
+    "href": "copernicus.html#nota-metodológica",
+    "title": "Copernicus / EFFIS",
+    "section": "Nota metodológica",
+    "text": "Nota metodológica\n\nAEMET sigue siendo la capa principal de peligro previsto para España.\nNASA FIRMS muestra detecciones térmicas recientes.\nCopernicus/EFFIS Burnt Areas aporta perímetros o áreas quemadas procesadas, útiles como contexto de daños y evolución.\nEFFIS FWI WMS se mantiene como diagnóstico, pero no se publica como capa operativa mientras no haya una combinación actual de LAYER + TIME con contenido visual fiable."
   }
 ]

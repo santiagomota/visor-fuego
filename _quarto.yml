@@ -1,38 +1,56 @@
 project:
   type: website
   output-dir: docs
-
-resources:
-  - assets/aemet/**
-  - assets/firms/**
-  - assets/admin/**
-  - assets/summary/**
-  - assets/alerts/**
-  - assets/history/**
-  - assets/effis/**
+  render:
+    - index.qmd
+    - summary.qmd
+    - report.qmd
+    - history.qmd
+    - copernicus.qmd
 
 website:
-  title: "Visor Fuego"
+  title: "Visor fuego"
+  site-url: "https://santiagomota.github.io/visor-fuego/"
+  repo-url: "https://github.com/santiagomota/visor-fuego"
+  repo-actions: [source, issue]
+  search: true
   navbar:
+    title: "Visor fuego"
     left:
-      - text: "Mapa"
-        href: index.html
-      - text: "Resumen"
-        href: summary.html
-      - text: "Informe"
-        href: report.html
-      - text: "Evolución"
-        href: history.html
+      - href: index.qmd
+        text: Mapa
+      - href: summary.qmd
+        text: Resumen
+      - href: report.qmd
+        text: Informe
+      - href: history.qmd
+        text: Evolución
+      - href: copernicus.qmd
+        text: Copernicus
     right:
       - icon: github
-        href: https://github.com/TU_USUARIO/visor-fuego
+        href: "https://github.com/santiagomota/visor-fuego"
+        aria-label: GitHub
+  page-footer:
+    left: "Datos: AEMET, NASA FIRMS, Copernicus/EFFIS y Eurostat/GISCO"
+    right: "Generado con Quarto"
 
 format:
   html:
     theme: cosmo
+    toc: true
+    toc-depth: 3
     page-layout: full
-    toc: false
     code-fold: true
-    css: styles.css
+    code-tools: false
+    embed-resources: false
+    self-contained: false
+    smooth-scroll: true
+    link-external-newwindow: true
+    lang: es
+
 execute:
-  freeze: false
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
