@@ -11,6 +11,14 @@ execute:
 ---
 
 ```{r}
+
+# Operador null-coalescing local para que copernicus.qmd renderice de forma autónoma
+`%||%` <- function(x, y) {
+  if (is.null(x) || length(x) == 0 || all(is.na(x))) return(y)
+  if (length(x) == 1 && is.character(x) && !nzchar(x)) return(y)
+  x
+}
+
 suppressPackageStartupMessages({
   library(readr)
   library(dplyr)
