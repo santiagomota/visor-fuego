@@ -405,6 +405,11 @@ js_template <- r"(
 function(el, x) {
   const layers = __LAYERS_JSON__;
   const map = this;
+  if (map.createPane && !map.getPane('aemetPane')) {
+    map.createPane('aemetPane');
+    map.getPane('aemetPane').style.zIndex = 350;
+    map.getPane('aemetPane').style.pointerEvents = 'none';
+  }
   let currentOverlay = null;
   let currentOpacity = 0.68;
 
@@ -481,8 +486,7 @@ function(el, x) {
       fetch(layer.url)
         .then(response => response.json())
         .then(data => {
-          currentOverlay = L.geoJSON(data, {
-            style: function(feature) {
+          currentOverlay = L.geoJSON(data, { pane: 'aemetPane', style: function(feature) {
               const v = riskValue(feature.properties || {});
               return {
                 color: colourForRisk(v, layer),
@@ -503,10 +507,7 @@ function(el, x) {
           updateLegend(layer);
         });
     } else {
-      currentOverlay = L.imageOverlay(layer.url, layer.bounds, {
-        opacity: currentOpacity,
-        interactive: false
-      }).addTo(map);
+      currentOverlay = L.imageOverlay(layer.url, layer.bounds, { opacity: currentOpacity, interactive: false, pane: 'aemetPane' }).addTo(map);
       try { map.fitBounds(layer.bounds); } catch(e) {}
       updateLegend(layer);
     }
