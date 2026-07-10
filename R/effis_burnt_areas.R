@@ -1,5 +1,5 @@
 # Copernicus / EFFIS Burnt Areas helpers
-# v0.6.0-alpha
+# v0.6.3
 
 `%||%` <- function(x, y) {
   if (is.null(x) || length(x) == 0 || all(is.na(x)) || !nzchar(paste(x, collapse = ""))) y else x
@@ -23,8 +23,9 @@ effis_ba_config <- function() {
       unset = "https://maps.effis.emergency.copernicus.eu/effis?outputformat=SHAPEZIP&request=getfeature&service=WFS&typename=ms:modis.ba.poly&version=1.1.0"
     ),
     bbox = Sys.getenv("EFFIS_BA_BBOX", unset = "-19,27,5,44.6"),
-    max_days = effis_ba_num("EFFIS_BA_MAX_DAYS", 365),
-    min_area_ha = effis_ba_num("EFFIS_BA_MIN_AREA_HA", 0),
+    max_days = effis_ba_num("EFFIS_BA_MAX_DAYS", 90),
+    min_area_ha = effis_ba_num("EFFIS_BA_MIN_AREA_HA", 5),
+    simplify_m = effis_ba_num("EFFIS_BA_SIMPLIFY_M", 100),
     raw_dir = Sys.getenv("EFFIS_BA_RAW_DIR", unset = "data/raw/effis_ba"),
     processed_dir = Sys.getenv("EFFIS_BA_PROCESSED_DIR", unset = "data/processed"),
     assets_dir = Sys.getenv("EFFIS_BA_ASSETS_DIR", unset = "assets/effis_ba"),
@@ -208,26 +209,33 @@ effis_ba_prepare <- function(cfg = effis_ba_config()) {
     x <- x[is.na(x$effis_area_ha) | x$effis_area_ha >= cfg$min_area_ha, ]
   }
 
-  # Reduce campos para web, pero conserva algunos originales de interés.
+  # Reduce campos y complejidad geométrica para la publicación web.
   base_cols <- c("effis_id", "effis_label", "effis_date", "effis_area_ha")
   optional_cols <- intersect(c(date_col, area_col, id_col, name_col, "country", "Country", "CNTR_CODE", "NUTS_ID"), names(x))
   keep_cols <- unique(c(base_cols, optional_cols, attr(x, "sf_column")))
   x_web <- x[, intersect(keep_cols, names(x)), drop = FALSE]
 
-  processed_geojson <- file.path(cfg$processed_dir, "effis_burnt_areas.geojson")
+  if (nrow(x_web) > 0 && is.finite(cfg$simplify_m) && cfg$simplify_m > 0) {
+    x_web <- sf::st_transform(x_web, 3035)
+    x_web <- sf::st_simplify(x_web, dTolerance = cfg$simplify_m, preserveTopology = TRUE)
+    x_web <- suppressWarnings(sf::st_make_valid(x_web))
+    x_web <- sf::st_transform(x_web, 4326)
+  }
+
+  # Solo se publica una copia del GeoJSON. El resumen tabular permanece en
+  # data/processed, pero la geometría web vive exclusivamente en assets/.
+  legacy_processed_geojson <- file.path(cfg$processed_dir, "effis_burnt_areas.geojson")
   asset_geojson <- file.path(cfg$assets_dir, "effis_burnt_areas.geojson")
   processed_summary <- file.path(cfg$processed_dir, "effis_burnt_areas_summary.csv")
   asset_summary_json <- file.path(cfg$assets_dir, "summary.json")
 
-  if (file.exists(processed_geojson)) unlink(processed_geojson)
+  if (file.exists(legacy_processed_geojson)) unlink(legacy_processed_geojson)
   if (file.exists(asset_geojson)) unlink(asset_geojson)
 
   if (nrow(x_web) > 0) {
-    sf::st_write(x_web, processed_geojson, driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE)
-    file.copy(processed_geojson, asset_geojson, overwrite = TRUE)
+    sf::st_write(x_web, asset_geojson, driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE)
   } else {
     empty_fc <- '{"type":"FeatureCollection","features":[]}'
-    writeLines(empty_fc, processed_geojson, useBytes = TRUE)
     writeLines(empty_fc, asset_geojson, useBytes = TRUE)
   }
 
@@ -241,6 +249,7 @@ effis_ba_prepare <- function(cfg = effis_ba_config()) {
     bbox = cfg$bbox,
     max_days = cfg$max_days,
     min_area_ha = cfg$min_area_ha,
+    simplify_m = cfg$simplify_m,
     raw_zip = zip_file,
     asset_geojson = asset_geojson
   )

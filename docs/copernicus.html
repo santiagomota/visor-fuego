@@ -42,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-bba5ebae505b5c03f3f0d8040a416a6b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-76af1169a4586be73940889218fbedb3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -73,6 +73,7 @@ ul.task-list li input[type="checkbox"] {
 <style>html{ scroll-behavior: smooth; }</style>
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -181,25 +182,26 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <div class="g-col-12 g-col-md-3">
 <p><strong>Última generación</strong><br>
-2026-07-10 16:02:20</p>
+2026-07-10 17:19:17</p>
 </div>
 </div>
 </section>
 <section id="fuente" class="level2">
 <h2 class="anchored" data-anchor-id="fuente">Fuente</h2>
-<p>Esta página resume la integración experimental de <strong>Copernicus/EFFIS Burnt Areas</strong> en el visor.</p>
+<p>Esta página resume la integración de <strong>Copernicus/EFFIS Burnt Areas</strong>. En el mapa principal, la geometría se descarga únicamente cuando el usuario activa la capa, evitando incrustar todo el GeoJSON dentro del HTML.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 27%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 13%">
-<col style="width: 8%">
-<col style="width: 8%">
+<col style="width: 24%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
 <col style="width: 11%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 9%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -211,6 +213,7 @@ ul.task-list li input[type="checkbox"] {
 <th style="text-align: right;">bbox</th>
 <th style="text-align: right;">max_days</th>
 <th style="text-align: right;">min_area_ha</th>
+<th style="text-align: right;">simplify_m</th>
 </tr>
 </thead>
 <tbody>
@@ -223,6 +226,7 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: right;">-1927545</td>
 <td style="text-align: right;">365</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">100</td>
 </tr>
 </tbody>
 </table>
@@ -243,21 +247,16 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">data/processed/effis_burnt_areas.geojson</td>
-<td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">32619.3</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">data/processed/effis_burnt_areas_summary.csv</td>
 <td style="text-align: left;">TRUE</td>
 <td style="text-align: right;">0.3</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">assets/effis_ba/effis_burnt_areas.geojson</td>
 <td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">32619.3</td>
+<td style="text-align: right;">3618.3</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">assets/effis_ba/summary.json</td>
 <td style="text-align: left;">TRUE</td>
 <td style="text-align: right;">0.4</td>
@@ -272,7 +271,8 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><strong>AEMET</strong> sigue siendo la capa principal de peligro previsto para España.</li>
 <li><strong>NASA FIRMS</strong> muestra detecciones térmicas recientes.</li>
-<li><strong>Copernicus/EFFIS Burnt Areas</strong> aporta perímetros o áreas quemadas procesadas, útiles como contexto de daños y evolución.</li>
+<li><strong>Copernicus/EFFIS Burnt Areas</strong> aporta perímetros o áreas quemadas como contexto de daños y evolución.</li>
+<li>Para limitar el volumen publicado, se filtran por antigüedad y superficie y se simplifica la geometría en una proyección métrica.</li>
 <li><strong>EFFIS FWI WMS</strong> se mantiene como diagnóstico, pero no se publica como capa operativa mientras no haya una combinación actual de <code>LAYER</code> + <code>TIME</code> con contenido visual fiable.</li>
 </ul>
 

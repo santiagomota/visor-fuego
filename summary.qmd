@@ -46,7 +46,7 @@ if (nrow(aemet_latest) > 0) {
       fecha_emision = as.character(aemet_latest$issue_date),
       fecha_valida = as.character(aemet_latest$valid_date),
       horizonte = aemet_latest$forecast_label,
-      dia = aemet_latest$forecast_day + 1L,
+      dia = aemet_latest$forecast_day,
       capa = capa
     ) |>
     dplyr::arrange(.data$area, .data$fecha_valida, .data$dia)

@@ -11,8 +11,6 @@ execute:
 ---
 
 ```{r}
-
-# Operador null-coalescing local para que copernicus.qmd renderice de forma autónoma
 `%||%` <- function(x, y) {
   if (is.null(x) || length(x) == 0 || all(is.na(x))) return(y)
   if (length(x) == 1 && is.character(x) && !nzchar(x)) return(y)
@@ -31,6 +29,8 @@ ba_geojson_path <- "assets/effis_ba/effis_burnt_areas.geojson"
 
 summary <- if (file.exists(summary_path)) {
   read_csv(summary_path, show_col_types = FALSE)
+} else if (file.exists("assets/effis_ba/summary.json")) {
+  as_tibble(fromJSON("assets/effis_ba/summary.json", simplifyVector = TRUE))
 } else {
   tibble(
     source = "Copernicus/EFFIS Burnt Areas",
@@ -40,11 +40,16 @@ summary <- if (file.exists(summary_path)) {
     min_date = NA_character_,
     total_area_ha = 0,
     bbox = NA_character_,
-    max_days = NA_real_,
-    min_area_ha = NA_real_,
+    max_days = 90,
+    min_area_ha = 5,
+    simplify_m = 100,
     raw_zip = NA_character_,
-    asset_geojson = NA_character_
+    asset_geojson = ba_geojson_path
   )
+}
+
+for (col in c("simplify_m", "asset_geojson")) {
+  if (!col %in% names(summary)) summary[[col]] <- NA
 }
 
 fmt_num <- function(x) format(x, big.mark = ".", decimal.mark = ",", scientific = FALSE)
@@ -76,11 +81,11 @@ fmt_num <- function(x) format(x, big.mark = ".", decimal.mark = ",", scientific 
 
 ## Fuente
 
-Esta página resume la integración experimental de **Copernicus/EFFIS Burnt Areas** en el visor.
+Esta página resume la integración de **Copernicus/EFFIS Burnt Areas**. En el mapa principal, la geometría se descarga únicamente cuando el usuario activa la capa, evitando incrustar todo el GeoJSON dentro del HTML.
 
 ```{r}
 summary |>
-  select(source, n_features, min_date, max_date, total_area_ha, bbox, max_days, min_area_ha) |>
+  select(source, n_features, min_date, max_date, total_area_ha, bbox, max_days, min_area_ha, simplify_m) |>
   knitr::kable()
 ```
 
@@ -89,7 +94,6 @@ summary |>
 ```{r}
 files <- tibble(
   fichero = c(
-    "data/processed/effis_burnt_areas.geojson",
     "data/processed/effis_burnt_areas_summary.csv",
     "assets/effis_ba/effis_burnt_areas.geojson",
     "assets/effis_ba/summary.json"
@@ -104,5 +108,6 @@ files |> knitr::kable()
 
 - **AEMET** sigue siendo la capa principal de peligro previsto para España.
 - **NASA FIRMS** muestra detecciones térmicas recientes.
-- **Copernicus/EFFIS Burnt Areas** aporta perímetros o áreas quemadas procesadas, útiles como contexto de daños y evolución.
+- **Copernicus/EFFIS Burnt Areas** aporta perímetros o áreas quemadas como contexto de daños y evolución.
+- Para limitar el volumen publicado, se filtran por antigüedad y superficie y se simplifica la geometría en una proyección métrica.
 - **EFFIS FWI WMS** se mantiene como diagnóstico, pero no se publica como capa operativa mientras no haya una combinación actual de `LAYER` + `TIME` con contenido visual fiable.

@@ -1,7 +1,31 @@
 Package: visorfuego
 Title: Visor operativo de peligro de incendios
-Version: 0.5.38
+Version: 0.6.3
 Authors@R: person("Santiago", "Mota", role = c("aut", "cre"))
-Description: Visor Quarto/Leaflet para seguimiento operativo de peligro de incendios con AEMET, FIRMS y capas auxiliares.
+Description: Visor Quarto y Leaflet para seguimiento operativo del peligro de incendios con AEMET, NASA FIRMS, Copernicus/EFFIS y límites Eurostat/GISCO.
 License: MIT
 Encoding: UTF-8
+Imports:
+    curl,
+    dplyr,
+    fs,
+    htmltools,
+    htmlwidgets,
+    jsonlite,
+    leaflet,
+    leaflet.providers,
+    lubridate,
+    png,
+    purrr,
+    readr,
+    sf,
+    stringr,
+    terra,
+    tibble
+Suggests:
+    DT,
+    ggplot2,
+    knitr,
+    plotly,
+    rmarkdown,
+    yaml

@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.6.3 - publicación AEMET y pipeline consolidado
+
+- Declara `assets/aemet/**` y `assets/effis_ba/**` como recursos del proyecto Quarto.
+- Corrige el fallo por el que las capas AEMET aparecían como rectángulos transparentes en GitHub Pages al no existir los PNG dentro de `docs/`.
+- Añade `styles.css` a la configuración HTML global y elimina los estilos duplicados de `index.qmd`.
+- Convierte `scripts/99_run_all.R` en el único pipeline canónico de actualización.
+- Ejecuta el resumen operativo antes de alertas e histórico para mantener coherentes los recuentos FIRMS y los resúmenes territoriales.
+- Elimina la tolerancia silenciosa para fallos en resumen, alertas, histórico y validaciones; EFFIS continúa siendo opcional de forma explícita.
+- Añade control de concurrencia al workflow y publica también `assets/summary` mediante `git add -A` sobre los directorios de datos y salida.
+- Añade `scripts/11_check_published_assets.R`, que valida páginas, PNG de AEMET, GeoJSON de EFFIS y tamaño del HTML principal.
+- Corrige el desfase de un día en la tabla AEMET de `summary.qmd`.
+- Cambia EFFIS Burnt Areas a carga bajo demanda desde JavaScript, evitando incrustar miles de polígonos en el HTML.
+- Reduce EFFIS por defecto a 90 días, superficie mínima de 5 ha y simplificación geométrica de 100 m.
+- Elimina la copia duplicada `data/processed/effis_burnt_areas.geojson`; la geometría publicable reside en `assets/effis_ba/`.
+- Retira scripts de parche ya consolidados y la antigua página `aemet.qmd` no utilizada.
+
 ## v0.5.38 - páginas secundarias sincronizadas
 
 - Actualiza las páginas `summary.qmd`, `report.qmd` y `history.qmd` para usar la lógica corregida de fechas AEMET.

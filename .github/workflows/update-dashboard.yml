@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: actualizar-visor-fuego
+  cancel-in-progress: false
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   R_KEEP_PKG_SOURCE: no
@@ -81,9 +85,7 @@ jobs:
           .libPaths(unique(c(user_lib, .libPaths())))
 
           message("R_LIBS_USER=", user_lib)
-          message(".libPaths()=")
           print(.libPaths())
-
           options(repos = c(CRAN = "https://cloud.r-project.org"))
 
           is_available <- function(pkg) {
@@ -93,8 +95,6 @@ jobs:
           missing <- required[!vapply(required, is_available, logical(1))]
           message("Paquetes faltantes antes de CRAN: ", if (length(missing)) paste(missing, collapse = ", ") else "ninguno")
 
-          # No instalar leaflet con dependencies=TRUE: en Ubuntu puede intentar recompilar terra/raster desde CRAN
-          # aunque existan como paquetes apt. Primero instalamos cualquier otro faltante y luego leaflet sin deps.
           leaflet_pkgs <- c("leaflet.providers", "leaflet")
           non_leaflet_missing <- setdiff(missing, leaflet_pkgs)
 
@@ -107,12 +107,10 @@ jobs:
             )
           }
 
-          # leaflet.providers no necesita compilar dependencias pesadas.
           if (!is_available("leaflet.providers")) {
             install.packages("leaflet.providers", lib = user_lib, dependencies = FALSE, Ncpus = 2)
           }
 
-          # leaflet usa raster/sp/sf/htmlwidgets/etc.; los proporcionamos por apt para evitar recompilar terra.
           if (!is_available("leaflet")) {
             install.packages("leaflet", lib = user_lib, dependencies = FALSE, Ncpus = 2)
           }
@@ -121,8 +119,6 @@ jobs:
           if (length(missing2)) {
             message("Paquetes R que siguen faltando tras la instalación:")
             print(missing2)
-            message("Paquetes instalados visibles:")
-            print(sort(rownames(installed.packages(lib.loc = .libPaths()))))
             sessionInfo()
             quit(status = 1)
           }
@@ -161,39 +157,44 @@ jobs:
           EFFIS_ENABLE=false
           EFFIS_RENDER_MODE=disabled
           EFFIS_BA_ENABLE=true
+          EFFIS_BA_OPTIONAL=true
           EFFIS_BA_BBOX=-19,27,5,44.6
-          EFFIS_BA_MAX_DAYS=365
-          EFFIS_BA_MIN_AREA_HA=0
+          EFFIS_BA_MAX_DAYS=90
+          EFFIS_BA_MIN_AREA_HA=5
+          EFFIS_BA_SIMPLIFY_M=100
 
           FIRMS_MAP_KEY=${{ secrets.FIRMS_MAP_KEY }}
           FIRMS_SOURCES=VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT
           FIRMS_DAYS=2
           FIRMS_BBOX=-19,27,5,44.6
+
+          UPDATE_ADMIN_BOUNDARIES=false
+          HISTORY_KEEP_DAYS=90
+          HISTORY_MODE=daily_latest
           EOF
 
-      - name: Actualizar datos
+      - name: Actualizar datos y validar entradas
         run: |
           set -euo pipefail
-          Rscript scripts/01_download_aemet_incendios.R
-          Rscript scripts/02_prepare_web_assets.R
-          Rscript scripts/05_download_firms_active_fires.R
-          # Copernicus/EFFIS Burnt Areas: tolerante en v0.6.0-alpha.
-          Rscript scripts/29_download_effis_burnt_areas.R || echo 'Aviso: falló descarga EFFIS Burnt Areas'
-          Rscript scripts/30_prepare_effis_burnt_areas_assets.R || echo 'Aviso: falló preparación EFFIS Burnt Areas'
-          Rscript scripts/08_build_operational_alerts.R || true
-          Rscript scripts/09_update_dashboard_history.R || true
-          Rscript scripts/24_check_aemet_valid_dates.R
+          Rscript scripts/99_run_all.R
 
       - name: Renderizar sitio
         run: |
+          set -euo pipefail
           quarto render --execute
+
+      - name: Validar sitio publicado
+        run: |
+          set -euo pipefail
+          Rscript scripts/11_check_published_assets.R
 
       - name: Commit si hay cambios
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add data/raw/aemet data/processed assets/aemet assets/effis_ba assets/firms assets/alerts assets/history docs || true
+          git add -A -- data/raw/aemet data/processed assets docs
 
           if git diff --cached --quiet; then
             echo "No hay cambios que publicar."

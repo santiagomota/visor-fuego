@@ -6,7 +6,7 @@
 }
 
 vf_load_packages <- function() {
-  pkgs <- c("readr", "dplyr", "tibble", "stringr", "knitr")
+  pkgs <- c("readr", "dplyr", "tibble", "stringr", "knitr", "jsonlite")
   invisible(lapply(pkgs, function(pkg) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
       stop(sprintf("Falta el paquete R requerido: %s", pkg), call. = FALSE)
@@ -140,7 +140,7 @@ vf_normalise_aemet_layers <- function(layers) {
 
   forecast_label <- as.character(layers$forecast_label)
   missing_label <- is.na(forecast_label) | !nzchar(forecast_label)
-  forecast_label[missing_label & !is.na(forecast_day)] <- paste0("Día ", forecast_day[missing_label & !is.na(forecast_day)] + 1L)
+  forecast_label[missing_label & !is.na(forecast_day)] <- paste0("Día ", forecast_day[missing_label & !is.na(forecast_day)])
 
   layers$issue_date <- issue_date
   layers$valid_date <- valid_date
@@ -190,14 +190,43 @@ vf_aemet_overview <- function(layers) {
   )
 }
 
+vf_read_effis_ba_summary <- function() {
+  vf_load_packages()
+
+  json_path <- vf_first_existing(c(
+    "assets/effis_ba/summary.json",
+    "docs/assets/effis_ba/summary.json"
+  ))
+  if (!is.na(json_path)) {
+    out <- tryCatch(
+      tibble::as_tibble(jsonlite::fromJSON(json_path, simplifyVector = TRUE)),
+      error = function(e) tibble::tibble()
+    )
+    attr(out, "source_path") <- json_path
+    return(out)
+  }
+
+  vf_read_csv("data/processed/effis_burnt_areas_summary.csv")
+}
+
 vf_status_table <- function() {
   vf_load_packages()
   aemet <- vf_read_csv(c("data/processed/layers.csv", "assets/aemet/layers.csv"))
   aemet_latest <- vf_latest_aemet_layers(aemet)
   firms <- vf_read_csv(c("data/processed/firms_active_fires.csv", "data/processed/firms.csv", "assets/firms/firms_active_fires.csv"))
   alerts <- vf_read_csv(c("data/processed/operational_alerts.csv", "assets/alerts/operational_alerts.csv"))
-  effis <- vf_read_csv(c("data/processed/effis_layers.csv", "assets/effis/effis_layers.csv"))
+  effis_wms <- vf_read_csv(c("data/processed/effis_layers.csv", "assets/effis/effis_layers.csv"))
+  effis_ba <- vf_read_effis_ba_summary()
   history <- vf_read_csv(c("data/processed/dashboard_history.csv", "assets/history/dashboard_history.csv"))
+
+  n_effis_ba <- if (nrow(effis_ba) > 0 && "n_features" %in% names(effis_ba)) {
+    suppressWarnings(as.integer(effis_ba$n_features[1]))
+  } else {
+    0L
+  }
+  if (is.na(n_effis_ba)) n_effis_ba <- 0L
+  n_effis <- max(nrow(effis_wms), n_effis_ba)
+  effis_path <- if (n_effis_ba > 0) attr(effis_ba, "source_path") else attr(effis_wms, "source_path")
 
   tibble::tibble(
     fuente = c("AEMET", "FIRMS", "Alertas", "EFFIS", "Histórico"),
@@ -205,15 +234,15 @@ vf_status_table <- function() {
       if (nrow(aemet_latest) > 0) "OK" else "Sin capas",
       if (nrow(firms) > 0) "OK" else "Sin detecciones/archivo",
       if (nrow(alerts) > 0) "OK" else "Sin alertas/archivo",
-      if (nrow(effis) > 0) "OK" else "Desactivado o sin capa actual",
+      if (n_effis > 0) "OK" else "Desactivado o sin capa actual",
       if (nrow(history) > 0) "OK" else "Sin histórico"
     ),
-    filas = c(nrow(aemet_latest), nrow(firms), nrow(alerts), nrow(effis), nrow(history)),
+    filas = c(nrow(aemet_latest), nrow(firms), nrow(alerts), n_effis, nrow(history)),
     archivo = c(
       attr(aemet, "source_path") %||% "-",
       attr(firms, "source_path") %||% "-",
       attr(alerts, "source_path") %||% "-",
-      attr(effis, "source_path") %||% "-",
+      effis_path %||% "-",
       attr(history, "source_path") %||% "-"
     )
   )

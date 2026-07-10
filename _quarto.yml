@@ -1,6 +1,9 @@
 project:
   type: website
   output-dir: docs
+  resources:
+    - "assets/aemet/**"
+    - "assets/effis_ba/**"
   render:
     - index.qmd
     - summary.qmd
@@ -38,6 +41,7 @@ website:
 format:
   html:
     theme: cosmo
+    css: styles.css
     toc: true
     toc-depth: 3
     page-layout: full

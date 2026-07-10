@@ -1,12 +1,34 @@
 # visor-fuego
 
-## v0.5.38: Resumen, Informe y Evolución
+## v0.6.3: publicación AEMET y pipeline operativo consolidado
 
-Las páginas secundarias del visor quedan sincronizadas con la lógica operativa actual:
+Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
-- AEMET clásico se interpreta sin desplazamiento adicional: `D00` es `Día 1` y corresponde a la fecha del fichero.
-- Si existen varias emisiones en el catálogo, las páginas resumen la última emisión disponible.
-- El informe muestra una comprobación explícita de emisiones presentes para detectar arrastre de capas antiguas.
-- La evolución lee `dashboard_history.csv` si existe y evita fallar cuando el histórico todavía está incompleto.
-- EFFIS queda documentado como desactivado o sin capa actual cuando no hay overlay publicable.
+- **AEMET**: peligro meteorológico previsto para Península/Baleares y Canarias.
+- **NASA FIRMS**: detecciones térmicas recientes y alertas agrupadas.
+- **Copernicus/EFFIS**: áreas quemadas como capa contextual.
+- **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
+### Cambios principales de v0.6.3
+
+- Los PNG de AEMET se declaran como recursos Quarto y se copian a `docs/assets/aemet/` durante el render.
+- El workflow utiliza `scripts/99_run_all.R` como único pipeline canónico.
+- El resumen FIRMS se genera antes que las alertas y el histórico.
+- La capa EFFIS se carga bajo demanda y no se incrusta en `docs/index.html`.
+- EFFIS publica una sola copia del GeoJSON, filtrada y simplificada para uso web.
+- Se valida que todos los recursos AEMET y EFFIS existan dentro de `docs/` antes de publicar.
+- Se corrige la numeración del horizonte AEMET en la página Resumen.
+
+### Ejecución local
+
+```bash
+Rscript scripts/99_run_all.R
+quarto render --execute
+Rscript scripts/11_check_published_assets.R
+```
+
+Para descargar FIRMS es necesario definir `FIRMS_MAP_KEY`. Las variables operativas pueden configurarse en `.Renviron`; el workflow crea este fichero durante cada ejecución.
+
+### Publicación
+
+GitHub Actions actualiza los datos, renderiza el sitio en `docs/`, valida los recursos publicados y realiza un commit únicamente cuando existen cambios.
