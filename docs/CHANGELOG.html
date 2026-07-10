@@ -133,13 +133,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="v0.5.34" class="level2">
-<h2 class="anchored" data-anchor-id="v0.5.34">v0.5.34</h2>
+<section id="changelog" class="level1">
+<h1>Changelog</h1>
+<section id="v0.5.38---páginas-secundarias-sincronizadas" class="level2">
+<h2 class="anchored" data-anchor-id="v0.5.38---páginas-secundarias-sincronizadas">v0.5.38 - páginas secundarias sincronizadas</h2>
 <ul>
-<li>Corrige parseo de TIME EFFIS cuando GetCapabilities incluye CURRENT, rangos o valores no ISO.</li>
+<li>Actualiza las páginas <code>summary.qmd</code>, <code>report.qmd</code> y <code>history.qmd</code> para usar la lógica corregida de fechas AEMET.</li>
+<li>Añade <code>R/page_helpers.R</code> con utilidades compartidas para leer catálogos, normalizar fechas y filtrar la última emisión.</li>
+<li>El resumen y el informe ya no muestran capas AEMET antiguas salvo que sigan presentes en el catálogo como diagnóstico.</li>
+<li>La página de evolución tolera históricos incompletos y muestra tablas/gráficos solo cuando hay datos suficientes.</li>
+<li>EFFIS se informa como desactivado o sin capa actual si no hay <code>effis_layers.csv</code> publicable.</li>
 </ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

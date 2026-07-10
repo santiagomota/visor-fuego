@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Informe operativo – Visor Fuego</title>
+<title>Informe – Visor Fuego</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -123,22 +123,34 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#informe-de-generación" id="toc-informe-de-generación" class="nav-link active" data-scroll-target="#informe-de-generación">Informe de generación</a></li>
+  <li><a href="#control-de-fechas-aemet" id="toc-control-de-fechas-aemet" class="nav-link" data-scroll-target="#control-de-fechas-aemet">Control de fechas AEMET</a></li>
+  <li><a href="#comprobación-de-arrastre-de-capas-antiguas" id="toc-comprobación-de-arrastre-de-capas-antiguas" class="nav-link" data-scroll-target="#comprobación-de-arrastre-de-capas-antiguas">Comprobación de arrastre de capas antiguas</a></li>
+  <li><a href="#firms" id="toc-firms" class="nav-link" data-scroll-target="#firms">FIRMS</a></li>
+  <li><a href="#alertas-operativas" id="toc-alertas-operativas" class="nav-link" data-scroll-target="#alertas-operativas">Alertas operativas</a></li>
+  <li><a href="#effis" id="toc-effis" class="nav-link" data-scroll-target="#effis">EFFIS</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Informe operativo</h1>
-<p class="subtitle lead">Clústeres de detecciones NASA FIRMS</p>
+<h1 class="title">Informe</h1>
 </div>
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -150,1910 +162,428 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-default callout-important callout-titled">
+<section id="informe-de-generación" class="level2">
+<h2 class="anchored" data-anchor-id="informe-de-generación">Informe de generación</h2>
+<p>El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 35%">
+<col style="width: 7%">
+<col style="width: 45%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">fuente</th>
+<th style="text-align: left;">estado</th>
+<th style="text-align: right;">filas</th>
+<th style="text-align: left;">archivo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AEMET</td>
+<td style="text-align: left;">OK</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">data/processed/layers.csv</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">FIRMS</td>
+<td style="text-align: left;">OK</td>
+<td style="text-align: right;">346</td>
+<td style="text-align: left;">data/processed/firms_active_fires.csv</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Alertas</td>
+<td style="text-align: left;">OK</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: left;">data/processed/operational_alerts.csv</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EFFIS</td>
+<td style="text-align: left;">Desactivado o sin capa actual</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Histórico</td>
+<td style="text-align: left;">OK</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">data/processed/dashboard_history.csv</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="control-de-fechas-aemet" class="level2">
+<h2 class="anchored" data-anchor-id="control-de-fechas-aemet">Control de fechas AEMET</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 77%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">campo</th>
+<th style="text-align: left;">valor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Última emisión</td>
+<td style="text-align: left;">2026-07-09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Primera fecha válida</td>
+<td style="text-align: left;">2026-07-09</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Última fecha válida</td>
+<td style="text-align: left;">2026-07-16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Regla</td>
+<td style="text-align: left;">D00 = Día 1 = fecha del fichero; D01 = fecha + 1; sin offset +1 adicional</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Fechas AEMET por área y horizonte</caption>
+<colgroup>
+<col style="width: 27%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 16%">
+<col style="width: 19%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">area_label</th>
+<th style="text-align: left;">issue_date</th>
+<th style="text-align: left;">valid_date</th>
+<th style="text-align: right;">forecast_day</th>
+<th style="text-align: left;">forecast_label</th>
+<th style="text-align: right;">capas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Día 1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-10</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Día 2</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-11</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Día 3</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-12</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Día 4</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-13</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Día 5</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-14</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Día 6</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-15</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Día 7</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Canarias</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-16</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Día 8</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Día 1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-10</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Día 2</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-11</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Día 3</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-12</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Día 4</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-13</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Día 5</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-14</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Día 6</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-15</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Día 7</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Península y Baleares</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-07-16</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Día 8</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="comprobación-de-arrastre-de-capas-antiguas" class="level2">
+<h2 class="anchored" data-anchor-id="comprobación-de-arrastre-de-capas-antiguas">Comprobación de arrastre de capas antiguas</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Este informe es <strong>informativo</strong>. No sustituye a AEMET, EFFIS/Copernicus, NASA FIRMS, Protección Civil ni servicios de emergencia.</p>
-<p>Consulta también la página de <a href="history.html">evolución temporal</a>.</p>
+<p>El catálogo contiene una única emisión AEMET. No se detecta arrastre de fechas antiguas en <code>layers.csv</code>.</p>
 </div>
 </div>
-<div class="summary-grid">
-<div class="summary-card">
-<span>Alertas</span>
-<strong>118</strong>
-</div>
-<div class="summary-card">
-<span>Altas</span>
-<strong>8</strong>
-</div>
-<div class="summary-card">
-<span>Medias</span>
-<strong>53</strong>
-</div>
-<div class="summary-card">
-<span>Radio clúster</span>
-<strong>12 km</strong>
 </div>
 </div>
-<section id="alertas-principales" class="level2">
-<h2 class="anchored" data-anchor-id="alertas-principales">Alertas principales</h2>
+</section>
+<section id="firms" class="level2">
+<h2 class="anchored" data-anchor-id="firms">FIRMS</h2>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 8%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 3%">
-<col style="width: 4%">
-<col style="width: 9%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 15%">
-<col style="width: 6%">
-<col style="width: 8%">
-</colgroup>
+<caption>Detecciones FIRMS por satellite</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;">ID</th>
-<th style="text-align: left;">Nivel</th>
-<th style="text-align: right;">Score</th>
-<th style="text-align: right;">Focos</th>
-<th style="text-align: right;">≤6 h</th>
-<th style="text-align: right;">≤24 h</th>
-<th style="text-align: right;">FRP total MW</th>
-<th style="text-align: right;">FRP máximo MW</th>
-<th style="text-align: right;">Edad mínima h</th>
-<th style="text-align: left;">Última detección UTC</th>
-<th style="text-align: right;">Lat</th>
-<th style="text-align: right;">Lon</th>
+<th style="text-align: left;">satellite</th>
+<th style="text-align: right;">detecciones</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260708-001</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">103.5</td>
-<td style="text-align: right;">59</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">516.9</td>
-<td style="text-align: right;">93.6</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:11:00</td>
-<td style="text-align: right;">41.63979</td>
-<td style="text-align: right;">2.1271242</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: right;">177</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260708-002</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">97.1</td>
-<td style="text-align: right;">19</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">19</td>
-<td style="text-align: right;">153.5</td>
-<td style="text-align: right;">14.1</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: left;">2026-07-08 03:49:00</td>
-<td style="text-align: right;">42.70373</td>
-<td style="text-align: right;">-6.1701358</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-003</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">88.2</td>
-<td style="text-align: right;">36</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">447.9</td>
-<td style="text-align: right;">49.9</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:12:00</td>
-<td style="text-align: right;">41.77384</td>
-<td style="text-align: right;">-8.0317747</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-004</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">54.1</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">255.9</td>
-<td style="text-align: right;">34.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">41.55956</td>
-<td style="text-align: right;">1.6640270</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-005</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">41.7</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">350.6</td>
-<td style="text-align: right;">121.0</td>
-<td style="text-align: right;">18.8</td>
-<td style="text-align: left;">2026-07-07 13:53:00</td>
-<td style="text-align: right;">43.62309</td>
-<td style="text-align: right;">3.2044400</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-006</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">36.9</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">17.8</td>
-<td style="text-align: right;">3.2</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: left;">2026-07-08 03:49:00</td>
-<td style="text-align: right;">42.98116</td>
-<td style="text-align: right;">-6.4282157</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-007</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">36.1</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">427.9</td>
-<td style="text-align: right;">145.3</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:10:00</td>
-<td style="text-align: right;">35.46572</td>
-<td style="text-align: right;">-1.1173975</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-008</td>
-<td style="text-align: left;">alta</td>
-<td style="text-align: right;">30.1</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">11.8</td>
-<td style="text-align: right;">2.8</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: left;">2026-07-08 03:49:00</td>
-<td style="text-align: right;">43.02468</td>
-<td style="text-align: right;">-5.5319671</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-009</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">149.9</td>
-<td style="text-align: right;">65</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">38</td>
-<td style="text-align: right;">86.0</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">32.89307</td>
-<td style="text-align: right;">3.2194212</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-010</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">68.6</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">17</td>
-<td style="text-align: right;">43.9</td>
-<td style="text-align: right;">6.1</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">33.12416</td>
-<td style="text-align: right;">3.3284841</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-011</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">63.2</td>
-<td style="text-align: right;">26</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">35.9</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">36.67410</td>
-<td style="text-align: right;">3.1289723</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-012</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">51.6</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">123.1</td>
-<td style="text-align: right;">42.9</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">40.40091</td>
-<td style="text-align: right;">-7.2594386</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-013</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">46.2</td>
-<td style="text-align: right;">17</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">98.4</td>
-<td style="text-align: right;">29.0</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">41.03158</td>
-<td style="text-align: right;">-8.0804476</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-014</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">43.2</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">35.1</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">28.19999</td>
-<td style="text-align: right;">-0.5173136</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-015</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">40.0</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">146.5</td>
-<td style="text-align: right;">14.8</td>
-<td style="text-align: right;">30.0</td>
-<td style="text-align: left;">2026-07-07 02:45:00</td>
-<td style="text-align: right;">42.69746</td>
-<td style="text-align: right;">2.6006910</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-016</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">39.8</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">28.6</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">32.55524</td>
-<td style="text-align: right;">3.1682223</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-017</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">39.5</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">24.7</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">35.78814</td>
-<td style="text-align: right;">-0.2597455</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-018</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">36.2</td>
-<td style="text-align: right;">26</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">58.6</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:11:00</td>
-<td style="text-align: right;">43.43943</td>
-<td style="text-align: right;">4.8925581</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-019</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">33.9</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">143.4</td>
-<td style="text-align: right;">31.8</td>
-<td style="text-align: right;">18.8</td>
-<td style="text-align: left;">2026-07-07 13:53:00</td>
-<td style="text-align: right;">44.44815</td>
-<td style="text-align: right;">1.5493112</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-020</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">31.6</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">43.9</td>
-<td style="text-align: right;">7.1</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">43.35963</td>
-<td style="text-align: right;">-4.7465675</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-021</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">31.6</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">43.0</td>
-<td style="text-align: right;">11.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">42.47283</td>
-<td style="text-align: right;">-6.5878775</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-022</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">29.8</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">17.4</td>
-<td style="text-align: right;">1.8</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">35.87938</td>
-<td style="text-align: right;">4.4467533</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-023</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">29.4</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">24.1</td>
-<td style="text-align: right;">4.5</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">32.27688</td>
-<td style="text-align: right;">3.9858955</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-024</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">27.6</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">9.1</td>
-<td style="text-align: right;">2.6</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: left;">2026-07-08 03:49:00</td>
-<td style="text-align: right;">43.11875</td>
-<td style="text-align: right;">-5.8941883</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-025</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">27.1</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">93.7</td>
-<td style="text-align: right;">16.2</td>
-<td style="text-align: right;">18.8</td>
-<td style="text-align: left;">2026-07-07 13:53:00</td>
-<td style="text-align: right;">41.83642</td>
-<td style="text-align: right;">1.3017450</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-026</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">25.8</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">49.4</td>
-<td style="text-align: right;">16.0</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">41.74063</td>
-<td style="text-align: right;">0.5892483</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-027</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">22.8</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">130.9</td>
-<td style="text-align: right;">20.6</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">43.14102</td>
-<td style="text-align: right;">-5.0862777</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-028</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">21.2</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">21.1</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">18.9</td>
-<td style="text-align: left;">2026-07-07 13:50:00</td>
-<td style="text-align: right;">31.73482</td>
-<td style="text-align: right;">3.7677000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-029</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">21.1</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">6.8</td>
-<td style="text-align: right;">1.1</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">36.14105</td>
-<td style="text-align: right;">2.9280067</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-030</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">20.5</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">70.1</td>
-<td style="text-align: right;">24.4</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:10:00</td>
-<td style="text-align: right;">40.19559</td>
-<td style="text-align: right;">-3.8623775</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-031</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">20.3</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">13.4</td>
-<td style="text-align: right;">2.6</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">36.12973</td>
-<td style="text-align: right;">1.2404700</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-032</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">19.5</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">42.5</td>
-<td style="text-align: right;">12.2</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:10:00</td>
-<td style="text-align: right;">37.61546</td>
-<td style="text-align: right;">-1.5706600</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-033</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">17.4</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">14.2</td>
-<td style="text-align: right;">7.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">33.80195</td>
-<td style="text-align: right;">-4.9289325</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-034</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">17.4</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">8.2</td>
-<td style="text-align: right;">1.5</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">32.40283</td>
-<td style="text-align: right;">4.0049329</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-035</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">16.0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">32.9</td>
-<td style="text-align: right;">14.4</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">41.54743</td>
-<td style="text-align: right;">1.2659067</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-036</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">15.3</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">4.1</td>
-<td style="text-align: right;">1.9</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">41.89991</td>
-<td style="text-align: right;">-5.4907175</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-037</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">14.9</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: right;">9.4</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">40.75715</td>
-<td style="text-align: right;">-2.8790533</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-038</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">14.5</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">69.2</td>
-<td style="text-align: right;">40.1</td>
-<td style="text-align: right;">20.3</td>
-<td style="text-align: left;">2026-07-07 12:27:00</td>
-<td style="text-align: right;">31.56303</td>
-<td style="text-align: right;">3.7811650</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-039</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">14.4</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2.4</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">40.58435</td>
-<td style="text-align: right;">-8.2532450</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-040</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">14.1</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">11.5</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">37.16244</td>
-<td style="text-align: right;">-3.6987500</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-041</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">13.0</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">2.1</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:13:00</td>
-<td style="text-align: right;">35.53032</td>
-<td style="text-align: right;">-0.2775820</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-042</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">12.9</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">41.15202</td>
-<td style="text-align: right;">1.2199533</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-043</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">12.1</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">20.6</td>
-<td style="text-align: right;">10.3</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">44.06432</td>
-<td style="text-align: right;">2.4510850</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-044</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">11.7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">16.7</td>
-<td style="text-align: right;">9.1</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">41.46533</td>
-<td style="text-align: right;">1.9045850</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-045</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">11.6</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">15.2</td>
-<td style="text-align: right;">7.8</td>
-<td style="text-align: right;">20.5</td>
-<td style="text-align: left;">2026-07-07 12:10:00</td>
-<td style="text-align: right;">38.55230</td>
-<td style="text-align: right;">-0.9634600</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-046</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">11.5</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">14.8</td>
-<td style="text-align: right;">7.4</td>
-<td style="text-align: right;">18.8</td>
-<td style="text-align: left;">2026-07-07 13:53:00</td>
-<td style="text-align: right;">41.53119</td>
-<td style="text-align: right;">0.8602150</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-047</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">11.5</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">14.3</td>
-<td style="text-align: right;">7.5</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:10:00</td>
-<td style="text-align: right;">38.66921</td>
-<td style="text-align: right;">-4.0476050</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-048</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">11.5</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">1.5</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">35.31133</td>
-<td style="text-align: right;">-1.3444525</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-049</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">11.1</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">11.6</td>
-<td style="text-align: right;">7.0</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">38.66678</td>
-<td style="text-align: right;">-0.8217900</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-050</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">10.7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">9.5</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">20.3</td>
-<td style="text-align: left;">2026-07-07 12:25:00</td>
-<td style="text-align: right;">27.45522</td>
-<td style="text-align: right;">0.3855200</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-051</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">10.5</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">1.8</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">34.28022</td>
-<td style="text-align: right;">-6.5738600</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-052</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">10.1</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">1.6</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">35.56739</td>
-<td style="text-align: right;">-0.9380533</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-053</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">9.8</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">1.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">38.50209</td>
-<td style="text-align: right;">-8.9351633</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-054</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">9.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: left;">2026-07-08 03:49:00</td>
-<td style="text-align: right;">42.92209</td>
-<td style="text-align: right;">-7.7369400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-055</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">9.7</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2.8</td>
-<td style="text-align: right;">1.1</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">38.37640</td>
-<td style="text-align: right;">-0.5447200</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-056</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">9.6</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">18.9</td>
-<td style="text-align: left;">2026-07-07 13:50:00</td>
-<td style="text-align: right;">32.21254</td>
-<td style="text-align: right;">-6.8016550</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-057</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">9.6</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2.7</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:13:00</td>
-<td style="text-align: right;">35.70874</td>
-<td style="text-align: right;">4.4761133</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-058</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">8.9</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">1.6</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">36.59710</td>
-<td style="text-align: right;">2.8774500</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-059</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">8.7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2.8</td>
-<td style="text-align: right;">2.0</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">41.92377</td>
-<td style="text-align: right;">0.1798500</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-060</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">8.3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2.2</td>
-<td style="text-align: right;">1.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">41.31215</td>
-<td style="text-align: right;">1.6612600</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-061</td>
-<td style="text-align: left;">media</td>
-<td style="text-align: right;">8.3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2.1</td>
-<td style="text-align: right;">1.5</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">39.93716</td>
-<td style="text-align: right;">-3.7420650</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-062</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">10.1</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">6.8</td>
-<td style="text-align: right;">2.3</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:13:00</td>
-<td style="text-align: right;">36.96840</td>
-<td style="text-align: right;">-1.9055200</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-063</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">8.0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">11.3</td>
-<td style="text-align: right;">11.3</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">41.24731</td>
-<td style="text-align: right;">-7.0361700</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-064</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">7.3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">7.5</td>
-<td style="text-align: right;">7.5</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">37.10908</td>
-<td style="text-align: right;">-5.3028400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-065</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.9</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">18.8</td>
-<td style="text-align: left;">2026-07-07 13:53:00</td>
-<td style="text-align: right;">42.62505</td>
-<td style="text-align: right;">-5.6252600</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-066</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.9</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:12:00</td>
-<td style="text-align: right;">43.29944</td>
-<td style="text-align: right;">-8.6229700</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-067</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.7</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:10:00</td>
-<td style="text-align: right;">37.38730</td>
-<td style="text-align: right;">-1.7449500</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-068</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">5.0</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:10:00</td>
-<td style="text-align: right;">37.16344</td>
-<td style="text-align: right;">-8.4002400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-069</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.6</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2.6</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">36.71366</td>
-<td style="text-align: right;">-4.3300200</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-070</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">4.9</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">37.27521</td>
-<td style="text-align: right;">-5.7153400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-071</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">18.5</td>
-<td style="text-align: left;">2026-07-07 14:10:00</td>
-<td style="text-align: right;">36.58419</td>
-<td style="text-align: right;">-4.6037100</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-072</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">36.89395</td>
-<td style="text-align: right;">-5.9661700</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-073</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">20.3</td>
-<td style="text-align: left;">2026-07-07 12:27:00</td>
-<td style="text-align: right;">34.70414</td>
-<td style="text-align: right;">-5.9505300</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-074</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">4.2</td>
-<td style="text-align: right;">20.5</td>
-<td style="text-align: left;">2026-07-07 12:12:00</td>
-<td style="text-align: right;">40.35192</td>
-<td style="text-align: right;">-2.9035400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-075</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">18.9</td>
-<td style="text-align: left;">2026-07-07 13:50:00</td>
-<td style="text-align: right;">36.79739</td>
-<td style="text-align: right;">3.7534800</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-076</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">3.9</td>
-<td style="text-align: right;">20.2</td>
-<td style="text-align: left;">2026-07-07 12:29:00</td>
-<td style="text-align: right;">38.84722</td>
-<td style="text-align: right;">-7.4188400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-077</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">3.5</td>
-<td style="text-align: right;">18.9</td>
-<td style="text-align: left;">2026-07-07 13:48:00</td>
-<td style="text-align: right;">29.80073</td>
-<td style="text-align: right;">1.4178300</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-078</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">6.0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.7</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">43.18600</td>
-<td style="text-align: right;">0.9912900</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-079</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">5.9</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">3.3</td>
-<td style="text-align: right;">20.3</td>
-<td style="text-align: left;">2026-07-07 12:27:00</td>
-<td style="text-align: right;">34.90831</td>
-<td style="text-align: right;">-4.4553800</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-080</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">5.4</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2.4</td>
-<td style="text-align: right;">2.4</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:11:00</td>
-<td style="text-align: right;">41.17236</td>
-<td style="text-align: right;">-7.9478600</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-081</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">5.3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2.2</td>
-<td style="text-align: right;">2.2</td>
-<td style="text-align: right;">20.3</td>
-<td style="text-align: left;">2026-07-07 12:27:00</td>
-<td style="text-align: right;">30.73348</td>
-<td style="text-align: right;">3.1973200</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-082</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">5.3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">33.87331</td>
-<td style="text-align: right;">2.6587900</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-083</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.9</td>
-<td style="text-align: right;">1.9</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">40.04347</td>
-<td style="text-align: right;">-6.0785000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-084</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.8</td>
-<td style="text-align: right;">1.8</td>
-<td style="text-align: right;">18.8</td>
-<td style="text-align: left;">2026-07-07 13:53:00</td>
-<td style="text-align: right;">39.39718</td>
-<td style="text-align: right;">-0.5152900</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-085</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">4.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">35.63131</td>
-<td style="text-align: right;">-5.2930600</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-086</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.3</td>
-<td style="text-align: right;">1.3</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:11:00</td>
-<td style="text-align: right;">34.03532</td>
-<td style="text-align: right;">-4.9247500</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-087</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.3</td>
-<td style="text-align: right;">1.3</td>
-<td style="text-align: right;">20.5</td>
-<td style="text-align: left;">2026-07-07 12:10:00</td>
-<td style="text-align: right;">36.44746</td>
-<td style="text-align: right;">2.6482000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-088</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.3</td>
-<td style="text-align: right;">1.3</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">37.35884</td>
-<td style="text-align: right;">-5.8636200</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-089</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">4.4</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">6.5</td>
-<td style="text-align: left;">2026-07-08 02:11:00</td>
-<td style="text-align: right;">40.24559</td>
-<td style="text-align: right;">-3.4745900</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-090</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">41.27257</td>
-<td style="text-align: right;">-8.4369400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-091</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">7.8</td>
-<td style="text-align: left;">2026-07-08 00:52:00</td>
-<td style="text-align: right;">29.98779</td>
-<td style="text-align: right;">2.9610200</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-092</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">3.7</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0.4</td>
-<td style="text-align: right;">0.4</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:28:00</td>
-<td style="text-align: right;">42.58829</td>
-<td style="text-align: right;">-6.0825400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-093</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0.2</td>
-<td style="text-align: right;">0.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:32:00</td>
-<td style="text-align: right;">32.97395</td>
-<td style="text-align: right;">-7.6115100</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-094</td>
-<td style="text-align: left;">seguimiento</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0.2</td>
-<td style="text-align: right;">0.2</td>
-<td style="text-align: right;">6.2</td>
-<td style="text-align: left;">2026-07-08 02:30:00</td>
-<td style="text-align: right;">36.11202</td>
-<td style="text-align: right;">1.4797600</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-095</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">11.3</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">12.9</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">43.52704</td>
-<td style="text-align: right;">-5.7312250</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-096</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">9.2</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">7.2</td>
-<td style="text-align: right;">2.2</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">43.30981</td>
-<td style="text-align: right;">-3.0254980</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-097</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">5.8</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5.6</td>
-<td style="text-align: right;">2.9</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">41.84994</td>
-<td style="text-align: right;">-5.2704050</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-098</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">5.8</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">30.0</td>
-<td style="text-align: left;">2026-07-07 02:45:00</td>
-<td style="text-align: right;">42.30541</td>
-<td style="text-align: right;">2.8877867</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-099</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">5.7</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2.8</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">38.29165</td>
-<td style="text-align: right;">-6.6719467</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-100</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">4.7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2.8</td>
-<td style="text-align: right;">1.5</td>
-<td style="text-align: right;">31.6</td>
-<td style="text-align: left;">2026-07-07 01:07:00</td>
-<td style="text-align: right;">34.43936</td>
-<td style="text-align: right;">2.0564400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-101</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">4.3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2.2</td>
-<td style="text-align: right;">1.5</td>
-<td style="text-align: right;">31.6</td>
-<td style="text-align: left;">2026-07-07 01:07:00</td>
-<td style="text-align: right;">36.41093</td>
-<td style="text-align: right;">3.3174000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-102</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">3.0</td>
-<td style="text-align: right;">31.6</td>
-<td style="text-align: left;">2026-07-07 01:07:00</td>
-<td style="text-align: right;">37.38200</td>
-<td style="text-align: right;">-4.5048200</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-103</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.5</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">39.96907</td>
-<td style="text-align: right;">-6.3174750</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-104</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">3.8</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">39.66604</td>
-<td style="text-align: right;">-0.2475600</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-105</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">0.6</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:51:00</td>
-<td style="text-align: right;">30.33595</td>
-<td style="text-align: right;">-9.5393300</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-106</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">3.4</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">0.6</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:47:00</td>
-<td style="text-align: right;">41.29445</td>
-<td style="text-align: right;">-8.1681100</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-107</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">3.2</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.8</td>
-<td style="text-align: right;">0.4</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:32:00</td>
-<td style="text-align: right;">32.17551</td>
-<td style="text-align: right;">4.7427000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-108</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">1.4</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:28:00</td>
-<td style="text-align: right;">41.47466</td>
-<td style="text-align: right;">-1.4889000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-109</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.2</td>
-<td style="text-align: right;">1.2</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:28:00</td>
-<td style="text-align: right;">41.42315</td>
-<td style="text-align: right;">2.2007900</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-110</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.5</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.1</td>
-<td style="text-align: right;">1.1</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:49:00</td>
-<td style="text-align: right;">32.56516</td>
-<td style="text-align: right;">-7.9819700</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-111</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.5</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.1</td>
-<td style="text-align: right;">1.1</td>
-<td style="text-align: right;">29.9</td>
-<td style="text-align: left;">2026-07-07 02:49:00</td>
-<td style="text-align: right;">37.31188</td>
-<td style="text-align: right;">-5.4560200</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-112</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.4</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">1.0</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:32:00</td>
-<td style="text-align: right;">28.97633</td>
-<td style="text-align: right;">-10.0249100</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-113</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: right;">0.9</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:32:00</td>
-<td style="text-align: right;">33.89174</td>
-<td style="text-align: right;">-6.9506400</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-114</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:32:00</td>
-<td style="text-align: right;">28.21371</td>
-<td style="text-align: right;">-0.1585400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-115</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">2.1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">31.6</td>
-<td style="text-align: left;">2026-07-07 01:07:00</td>
-<td style="text-align: right;">35.78414</td>
-<td style="text-align: right;">0.5392400</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-116</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">1.9</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.6</td>
-<td style="text-align: right;">0.6</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:28:00</td>
-<td style="text-align: right;">43.33075</td>
-<td style="text-align: right;">-5.7741400</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ALERT-20260708-117</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">1.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:32:00</td>
-<td style="text-align: right;">30.21896</td>
-<td style="text-align: right;">-9.1517100</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ALERT-20260708-118</td>
-<td style="text-align: left;">informativa</td>
-<td style="text-align: right;">1.8</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">0.5</td>
-<td style="text-align: right;">30.2</td>
-<td style="text-align: left;">2026-07-07 02:28:00</td>
-<td style="text-align: right;">42.58806</td>
-<td style="text-align: right;">-7.9880900</td>
+<td style="text-align: left;">N20</td>
+<td style="text-align: right;">169</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
-<section id="informe-markdown-generado" class="level2">
-<h2 class="anchored" data-anchor-id="informe-markdown-generado">Informe Markdown generado</h2>
-</section>
-<section id="informe-operativo-automático" class="level1">
-<h1>Informe operativo automático</h1>
-<p>Generado UTC: <code>2026-07-08T08:42:51Z</code></p>
-<section id="resumen" class="level2">
-<h2 class="anchored" data-anchor-id="resumen">Resumen</h2>
-<ul>
-<li>Focos FIRMS procesados: <strong>692</strong>.</li>
-<li>Clústeres/alertas generadas: <strong>118</strong>.</li>
-<li>Alertas altas: <strong>8</strong>.</li>
-<li>Alertas medias: <strong>53</strong>.</li>
-</ul>
-</section>
-<section id="criterio-de-clasificación" class="level2">
-<h2 class="anchored" data-anchor-id="criterio-de-clasificación">Criterio de clasificación</h2>
-<ul>
-<li><strong>Alta</strong>: varios focos muy recientes o FRP total elevado.</li>
-<li><strong>Media</strong>: al menos un foco muy reciente, varios focos en 24 h o FRP relevante.</li>
-<li><strong>Seguimiento</strong>: detecciones recientes sin concentración clara.</li>
-</ul>
-<p>Este informe es informativo y no sustituye a fuentes oficiales ni a servicios de emergencia.</p>
-</section>
-<section id="principales-alertas" class="level2">
-<h2 class="anchored" data-anchor-id="principales-alertas">Principales alertas</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 7%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 7%">
-<col style="width: 10%">
-<col style="width: 10%">
-</colgroup>
+<section id="alertas-operativas" class="level2">
+<h2 class="anchored" data-anchor-id="alertas-operativas">Alertas operativas</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Alertas publicadas</caption>
 <thead>
 <tr class="header">
-<th>ID</th>
-<th style="text-align: right;">Nivel</th>
-<th style="text-align: right;">Score</th>
-<th style="text-align: right;">Focos</th>
-<th style="text-align: right;">≤6 h</th>
-<th style="text-align: right;">≤24 h</th>
-<th style="text-align: right;">FRP MW</th>
-<th>Última UTC</th>
-<th style="text-align: right;">Lat</th>
-<th style="text-align: right;">Lon</th>
+<th style="text-align: left;">cluster_id</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>ALERT-20260708-001</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">103.5</td>
-<td style="text-align: right;">59</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">516.9</td>
-<td>2026-07-08 02:11:00</td>
-<td style="text-align: right;">41.63979</td>
-<td style="text-align: right;">2.127124</td>
+<td style="text-align: left;">ALERT-20260710-001</td>
 </tr>
 <tr class="even">
-<td>ALERT-20260708-002</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">97.1</td>
-<td style="text-align: right;">19</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">19</td>
-<td style="text-align: right;">153.5</td>
-<td>2026-07-08 03:49:00</td>
-<td style="text-align: right;">42.70373</td>
-<td style="text-align: right;">-6.170136</td>
+<td style="text-align: left;">ALERT-20260710-002</td>
 </tr>
 <tr class="odd">
-<td>ALERT-20260708-003</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">88.2</td>
-<td style="text-align: right;">36</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">447.9</td>
-<td>2026-07-07 14:12:00</td>
-<td style="text-align: right;">41.77384</td>
-<td style="text-align: right;">-8.031775</td>
+<td style="text-align: left;">ALERT-20260710-003</td>
 </tr>
 <tr class="even">
-<td>ALERT-20260708-004</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">54.1</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">255.9</td>
-<td>2026-07-08 02:28:00</td>
-<td style="text-align: right;">41.55956</td>
-<td style="text-align: right;">1.664027</td>
+<td style="text-align: left;">ALERT-20260710-004</td>
 </tr>
 <tr class="odd">
-<td>ALERT-20260708-005</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">41.7</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">350.6</td>
-<td>2026-07-07 13:53:00</td>
-<td style="text-align: right;">43.62309</td>
-<td style="text-align: right;">3.204440</td>
+<td style="text-align: left;">ALERT-20260710-005</td>
 </tr>
 <tr class="even">
-<td>ALERT-20260708-006</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">36.9</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">17.8</td>
-<td>2026-07-08 03:49:00</td>
-<td style="text-align: right;">42.98116</td>
-<td style="text-align: right;">-6.428216</td>
+<td style="text-align: left;">ALERT-20260710-006</td>
 </tr>
 <tr class="odd">
-<td>ALERT-20260708-007</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">36.1</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">427.9</td>
-<td>2026-07-07 14:10:00</td>
-<td style="text-align: right;">35.46572</td>
-<td style="text-align: right;">-1.117398</td>
+<td style="text-align: left;">ALERT-20260710-007</td>
 </tr>
 <tr class="even">
-<td>ALERT-20260708-008</td>
-<td style="text-align: right;">alta</td>
-<td style="text-align: right;">30.1</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">11.8</td>
-<td>2026-07-08 03:49:00</td>
-<td style="text-align: right;">43.02468</td>
-<td style="text-align: right;">-5.531967</td>
+<td style="text-align: left;">ALERT-20260710-008</td>
 </tr>
 <tr class="odd">
-<td>ALERT-20260708-009</td>
-<td style="text-align: right;">media</td>
-<td style="text-align: right;">149.9</td>
-<td style="text-align: right;">65</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">38</td>
-<td style="text-align: right;">86.0</td>
-<td>2026-07-08 02:32:00</td>
-<td style="text-align: right;">32.89307</td>
-<td style="text-align: right;">3.219421</td>
+<td style="text-align: left;">ALERT-20260710-009</td>
 </tr>
 <tr class="even">
-<td>ALERT-20260708-010</td>
-<td style="text-align: right;">media</td>
-<td style="text-align: right;">68.6</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">17</td>
-<td style="text-align: right;">43.9</td>
-<td>2026-07-08 02:30:00</td>
-<td style="text-align: right;">33.12416</td>
-<td style="text-align: right;">3.328484</td>
+<td style="text-align: left;">ALERT-20260710-010</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-011</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-012</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-013</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-015</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-016</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-017</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-018</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-019</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-021</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-022</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-023</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-024</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-025</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-026</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-027</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-028</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ALERT-20260710-029</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALERT-20260710-030</td>
 </tr>
 </tbody>
 </table>
-
-
+</div>
+</div>
 </section>
+<section id="effis" class="level2">
+<h2 class="anchored" data-anchor-id="effis">EFFIS</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>EFFIS queda fuera del visor operativo hasta localizar una capa WMS actual con contenido visual. Los diagnósticos pueden seguir existiendo en <code>data/raw/effis</code>, pero no se publican capas históricas.</p>
+</div>
+</div>
+</div>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

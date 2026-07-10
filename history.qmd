@@ -1,8 +1,8 @@
 ---
-title: "Evolución temporal"
-subtitle: "Histórico operativo del visor fuego"
+title: "Evolución"
 format:
   html:
+    toc: true
     page-layout: full
 execute:
   echo: false
@@ -10,183 +10,125 @@ execute:
   message: false
 ---
 
-```{r setup}
-library(readr)
-library(dplyr)
-library(ggplot2)
-library(knitr)
+```{r}
+source("R/page_helpers.R")
+vf_load_packages()
 
-read_history <- function() {
-  candidates <- c(
-    "data/processed/dashboard_history.csv",
-    "assets/history/dashboard_history.csv"
-  )
-  for (path in candidates) {
-    if (file.exists(path) && file.info(path)$size > 0) {
-      x <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
-      if (nrow(x) > 0) {
-        attr(x, "source_path") <- path
-        return(x)
-      }
-    }
-  }
-  x <- tibble::tibble()
-  attr(x, "source_path") <- NA_character_
-  x
-}
-
-safe_num <- function(x) suppressWarnings(as.numeric(x))
-
-hist <- read_history()
-hist_source <- attr(hist, "source_path")
-
-if (nrow(hist) > 0) {
-  hist <- hist |>
-    mutate(
-      snapshot_date = as.Date(snapshot_date),
-      n_firms = safe_num(n_firms),
-      n_firms_6h = safe_num(n_firms_6h),
-      n_firms_24h = safe_num(n_firms_24h),
-      frp_total_mw = safe_num(frp_total_mw),
-      n_alertas = safe_num(n_alertas),
-      n_alertas_altas = safe_num(n_alertas_altas),
-      n_alertas_medias = safe_num(n_alertas_medias),
-      max_alert_score = safe_num(max_alert_score)
-    ) |>
-    arrange(snapshot_date)
-
-  latest <- hist |> slice_tail(n = 1)
-  previous <- if (nrow(hist) >= 2) hist |> slice(nrow(hist) - 1) else tibble::tibble()
-
-  delta_value <- function(col) {
-    if (nrow(previous) == 0) return(NA_real_)
-    safe_num(latest[[col]])[1] - safe_num(previous[[col]])[1]
-  }
-
-  fmt_delta <- function(x) {
-    if (is.na(x)) return("—")
-    if (x > 0) paste0("+", x) else as.character(x)
-  }
-}
+history <- vf_read_csv(c("data/processed/dashboard_history.csv", "assets/history/dashboard_history.csv"))
 ```
 
-::: {.callout-note collapse="true"}
-## Cómo se genera este histórico
-
-Cada ejecución de `scripts/99_run_all.R` añade una fotografía operativa del visor a:
-
-```text
-assets/history/dashboard_history.csv
-```
-
-Por defecto se conserva la última ejecución de cada día (`HISTORY_MODE=daily_latest`) y se retienen 90 días (`HISTORY_KEEP_DAYS=90`).
+## Histórico del visor
 
 ```{r}
-if (nrow(hist) > 0) {
-  cat("Registros históricos:", nrow(hist), "· Fuente:", hist_source)
+if (nrow(history) == 0) {
+  knitr::asis_output("_No hay histórico disponible todavía. Ejecuta `scripts/09_update_dashboard_history.R` antes de renderizar si quieres alimentar esta página._\n")
 } else {
-  cat("No hay histórico todavía. Ejecuta `Rscript scripts/09_update_dashboard_history.R` después del pipeline.")
-}
-```
-:::
-
-```{r summary-cards, results='asis'}
-if (nrow(hist) > 0) {
-  htmltools::tags$div(
-    class = "summary-grid",
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Última fecha"), htmltools::tags$strong(as.character(latest$snapshot_date))),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Focos FIRMS"), htmltools::tags$strong(latest$n_firms), htmltools::tags$small(paste("Δ", fmt_delta(delta_value("n_firms"))))),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Focos ≤24 h"), htmltools::tags$strong(latest$n_firms_24h), htmltools::tags$small(paste("Δ", fmt_delta(delta_value("n_firms_24h"))))),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("FRP total"), htmltools::tags$strong(paste0(latest$frp_total_mw, " MW")), htmltools::tags$small(paste("Δ", fmt_delta(round(delta_value("frp_total_mw"), 1))))),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas"), htmltools::tags$strong(latest$n_alertas), htmltools::tags$small(paste("Δ", fmt_delta(delta_value("n_alertas"))))),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas altas"), htmltools::tags$strong(latest$n_alertas_altas), htmltools::tags$small(paste("Δ", fmt_delta(delta_value("n_alertas_altas"))))),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Top provincia"), htmltools::tags$strong(ifelse(is.na(latest$top_provincia), "—", latest$top_provincia))),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Top CCAA"), htmltools::tags$strong(ifelse(is.na(latest$top_ccaa), "—", latest$top_ccaa)))
+  date_col <- vf_history_date_column(history)
+  if (!is.na(date_col)) {
+    history[[date_col]] <- vf_as_date(history[[date_col]])
+    history <- history |> dplyr::arrange(.data[[date_col]])
+  }
+  summary <- tibble::tibble(
+    indicador = c("Registros", "Primera fecha", "Última fecha", "Archivo"),
+    valor = c(
+      as.character(nrow(history)),
+      if (!is.na(date_col)) as.character(vf_safe_min_date(history[[date_col]])) else "sin columna de fecha",
+      if (!is.na(date_col)) as.character(vf_safe_max_date(history[[date_col]])) else "sin columna de fecha",
+      attr(history, "source_path") %||% "-"
+    )
   )
-}
-```
-
-## Evolución de focos FIRMS
-
-```{r chart-firms}
-if (nrow(hist) > 0) {
-  ggplot(hist, aes(x = snapshot_date, y = n_firms)) +
-    geom_line() +
-    geom_point() +
-    labs(x = NULL, y = "Focos", title = "Detecciones FIRMS totales por ejecución diaria") +
-    theme_minimal(base_size = 12)
-} else {
-  cat("Sin datos para graficar.")
-}
-```
-
-## Focos recientes
-
-```{r chart-recent}
-if (nrow(hist) > 0) {
-  recent <- hist |>
-    select(snapshot_date, `≤6 h` = n_firms_6h, `≤24 h` = n_firms_24h) |>
-    tidyr::pivot_longer(-snapshot_date, names_to = "ventana", values_to = "focos")
-
-  ggplot(recent, aes(x = snapshot_date, y = focos, linetype = ventana)) +
-    geom_line() +
-    geom_point() +
-    labs(x = NULL, y = "Focos", linetype = "Ventana", title = "Detecciones recientes") +
-    theme_minimal(base_size = 12)
-} else {
-  cat("Sin datos para graficar.")
-}
-```
-
-## Evolución de FRP
-
-```{r chart-frp}
-if (nrow(hist) > 0) {
-  ggplot(hist, aes(x = snapshot_date, y = frp_total_mw)) +
-    geom_col() +
-    labs(x = NULL, y = "MW", title = "FRP total diario de las detecciones FIRMS") +
-    theme_minimal(base_size = 12)
-} else {
-  cat("Sin datos para graficar.")
-}
-```
-
-## Alertas operativas
-
-```{r chart-alerts}
-if (nrow(hist) > 0) {
-  alert_series <- hist |>
-    select(snapshot_date, Total = n_alertas, Altas = n_alertas_altas, Medias = n_alertas_medias) |>
-    tidyr::pivot_longer(-snapshot_date, names_to = "tipo", values_to = "alertas")
-
-  ggplot(alert_series, aes(x = snapshot_date, y = alertas, linetype = tipo)) +
-    geom_line() +
-    geom_point() +
-    labs(x = NULL, y = "Alertas", linetype = "Tipo", title = "Evolución de alertas FIRMS") +
-    theme_minimal(base_size = 12)
-} else {
-  cat("Sin datos para graficar.")
+  vf_kable(summary)
 }
 ```
 
 ## Últimos registros
 
-```{r table-history}
-if (nrow(hist) > 0) {
-  hist |>
-    arrange(desc(snapshot_date)) |>
-    select(
-      Fecha = snapshot_date,
-      `FIRMS` = n_firms,
-      `≤6 h` = n_firms_6h,
-      `≤24 h` = n_firms_24h,
-      `FRP MW` = frp_total_mw,
-      Alertas = n_alertas,
-      Altas = n_alertas_altas,
-      `Top provincia` = top_provincia,
-      `Top CCAA` = top_ccaa
-    ) |>
-    head(30) |>
-    knitr::kable()
+```{r}
+if (nrow(history) > 0) {
+  date_col <- vf_history_date_column(history)
+  if (!is.na(date_col)) {
+    history[[date_col]] <- vf_as_date(history[[date_col]])
+    show_history <- history |> dplyr::arrange(dplyr::desc(.data[[date_col]])) |> utils::head(20)
+  } else {
+    show_history <- history |> utils::head(20)
+  }
+  vf_kable(show_history, caption = "Últimos registros del histórico")
 }
 ```
+
+## Métricas principales
+
+```{r}
+if (nrow(history) > 0) {
+  metrics <- vf_numeric_metric_columns(history)
+  # Priorizamos nombres habituales; si no existen, se muestran las primeras métricas numéricas.
+  priority <- c(
+    "aemet_layers", "aemet_n_layers", "n_aemet_layers",
+    "firms_total", "n_firms", "firms_last_24h", "firms_24h",
+    "alerts_total", "n_alerts",
+    "effis_layers", "n_effis_layers"
+  )
+  selected <- unique(c(intersect(priority, metrics), metrics))
+  selected <- selected[seq_len(min(length(selected), 8))]
+
+  if (length(selected) > 0) {
+    last_row <- history[nrow(history), , drop = FALSE]
+    metric_table <- tibble::tibble(
+      metrica = selected,
+      ultimo_valor = as.numeric(last_row[1, selected, drop = TRUE])
+    )
+
+    if (nrow(history) >= 2) {
+      previous_row <- history[nrow(history) - 1L, , drop = FALSE]
+      metric_table$valor_anterior <- as.numeric(previous_row[1, selected, drop = TRUE])
+      metric_table$cambio <- metric_table$ultimo_valor - metric_table$valor_anterior
+    }
+
+    vf_kable(metric_table, caption = "Último valor de métricas numéricas")
+  } else {
+    knitr::asis_output("_El histórico no contiene métricas numéricas._\n")
+  }
+}
+```
+
+## Gráficos de evolución
+
+```{r}
+if (nrow(history) > 1 && requireNamespace("ggplot2", quietly = TRUE) && requireNamespace("tidyr", quietly = TRUE)) {
+  date_col <- vf_history_date_column(history)
+  metrics <- vf_numeric_metric_columns(history)
+  priority <- c(
+    "aemet_layers", "aemet_n_layers", "n_aemet_layers",
+    "firms_total", "n_firms", "firms_last_24h", "firms_24h",
+    "alerts_total", "n_alerts",
+    "effis_layers", "n_effis_layers"
+  )
+  selected <- unique(c(intersect(priority, metrics), metrics))
+  selected <- selected[seq_len(min(length(selected), 6))]
+
+  if (!is.na(date_col) && length(selected) > 0) {
+    plot_data <- history |>
+      dplyr::select(fecha = dplyr::all_of(date_col), dplyr::all_of(selected)) |>
+      tidyr::pivot_longer(cols = -fecha, names_to = "metrica", values_to = "valor") |>
+      dplyr::filter(!is.na(.data$fecha), !is.na(.data$valor))
+
+    if (nrow(plot_data) > 0) {
+      ggplot2::ggplot(plot_data, ggplot2::aes(x = .data$fecha, y = .data$valor)) +
+        ggplot2::geom_line() +
+        ggplot2::geom_point() +
+        ggplot2::facet_wrap(~ metrica, scales = "free_y") +
+        ggplot2::labs(x = NULL, y = NULL)
+    } else {
+      knitr::asis_output("_No hay datos suficientes para el gráfico._\n")
+    }
+  } else {
+    knitr::asis_output("_No se encuentra una columna de fecha o métricas adecuadas para graficar._\n")
+  }
+} else if (nrow(history) > 1) {
+  knitr::asis_output("_Para mostrar gráficos instala `ggplot2` y `tidyr`._\n")
+}
+```
+
+## Nota sobre AEMET y EFFIS
+
+La evolución debe interpretarse con la misma lógica que el mapa principal: AEMET publica la última emisión disponible, y las fechas antiguas no deben reaparecer si la limpieza previa se ha ejecutado correctamente. EFFIS puede aparecer como cero o ausente mientras no haya una capa WMS actual con contenido visual publicable.

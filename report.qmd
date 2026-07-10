@@ -1,88 +1,127 @@
 ---
-title: "Informe operativo"
-subtitle: "Clústeres de detecciones NASA FIRMS"
+title: "Informe"
 format:
   html:
-    page-layout: article
+    toc: true
+    page-layout: full
 execute:
   echo: false
   warning: false
   message: false
 ---
 
-```{r setup}
-library(readr)
-library(dplyr)
-library(knitr)
-library(htmltools)
+```{r}
+source("R/page_helpers.R")
+vf_load_packages()
 
-read_optional_csv <- function(path) {
-  if (!file.exists(path) || file.info(path)$size == 0) return(tibble::tibble())
-  tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
-}
-
-alerts <- read_optional_csv("data/processed/operational_alerts.csv")
-alerts_summary <- read_optional_csv("data/processed/operational_alerts_summary.csv")
-report_path <- if (file.exists("data/processed/operational_report.md")) {
-  "data/processed/operational_report.md"
-} else if (file.exists("assets/alerts/operational_report.md")) {
-  "assets/alerts/operational_report.md"
-} else {
-  NA_character_
-}
+layers <- vf_read_csv(c("data/processed/layers.csv", "assets/aemet/layers.csv"))
+aemet_all <- vf_normalise_aemet_layers(layers)
+aemet_latest <- vf_latest_aemet_layers(layers)
 ```
 
-::: {.callout-important}
-Este informe es **informativo**. No sustituye a AEMET, EFFIS/Copernicus, NASA FIRMS, Protección Civil ni servicios de emergencia.
+## Informe de generación
 
-Consulta también la página de [evolución temporal](history.html).
-:::
+El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.
 
-```{r summary-cards, results='asis'}
-if (nrow(alerts_summary) > 0) {
-  htmltools::tags$div(
-    class = "summary-grid",
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas"), htmltools::tags$strong(alerts_summary$n_alertas[1])),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Altas"), htmltools::tags$strong(alerts_summary$n_alertas_altas[1])),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Medias"), htmltools::tags$strong(alerts_summary$n_alertas_medias[1])),
-    htmltools::tags$div(class = "summary-card", htmltools::tags$span("Radio clúster"), htmltools::tags$strong(paste0(alerts_summary$cluster_km[1], " km")))
+```{r}
+vf_kable(vf_status_table())
+```
+
+## Control de fechas AEMET
+
+```{r}
+if (nrow(aemet_latest) > 0) {
+  issue <- vf_safe_max_date(aemet_latest$issue_date)
+  valid_min <- vf_safe_min_date(aemet_latest$valid_date)
+  valid_max <- vf_safe_max_date(aemet_latest$valid_date)
+  info <- tibble::tibble(
+    campo = c("Última emisión", "Primera fecha válida", "Última fecha válida", "Regla"),
+    valor = c(
+      as.character(issue),
+      as.character(valid_min),
+      as.character(valid_max),
+      "D00 = Día 1 = fecha del fichero; D01 = fecha + 1; sin offset +1 adicional"
+    )
   )
+  vf_kable(info)
 } else {
-  cat("No hay resumen de alertas. Ejecuta `Rscript scripts/99_run_all.R`.")
+  knitr::asis_output("_No hay capas AEMET en el catálogo._\n")
 }
 ```
 
-## Alertas principales
+```{r}
+if (nrow(aemet_latest) > 0) {
+  by_area <- aemet_latest |>
+    dplyr::count(.data$area_label, .data$issue_date, .data$valid_date, .data$forecast_day, .data$forecast_label, name = "capas") |>
+    dplyr::arrange(.data$area_label, .data$valid_date, .data$forecast_day)
+  vf_kable(by_area, caption = "Fechas AEMET por área y horizonte")
+}
+```
 
-```{r alerts-table}
+## Comprobación de arrastre de capas antiguas
+
+```{r}
+if (nrow(aemet_all) > 0) {
+  all_issues <- aemet_all |>
+    dplyr::count(.data$issue_date, name = "capas_en_catalogo") |>
+    dplyr::arrange(dplyr::desc(.data$issue_date))
+  vf_kable(all_issues, caption = "Emisiones presentes en el catálogo")
+
+  if (nrow(all_issues) > 1) {
+    knitr::asis_output("\n::: {.callout-warning}\nEl catálogo contiene más de una fecha de emisión. El visor usa la última, pero conviene revisar la limpieza de `data/raw/aemet` y `assets/aemet`.\n:::\n")
+  } else {
+    knitr::asis_output("\n::: {.callout-note}\nEl catálogo contiene una única emisión AEMET. No se detecta arrastre de fechas antiguas en `layers.csv`.\n:::\n")
+  }
+}
+```
+
+## FIRMS
+
+```{r}
+firms <- vf_read_csv(c("data/processed/firms_active_fires.csv", "data/processed/firms.csv", "assets/firms/firms_active_fires.csv"))
+if (nrow(firms) > 0) {
+  date_candidates <- intersect(c("acq_date", "date", "datetime", "observed_at", "last_seen"), names(firms))
+  firms_summary <- tibble::tibble(
+    indicador = c("Detecciones", "Columnas", "Archivo"),
+    valor = c(nrow(firms), ncol(firms), attr(firms, "source_path") %||% "-")
+  )
+  vf_kable(firms_summary)
+
+  group_cols <- intersect(c("ccaa", "province", "admin_name", "admin_level", "source", "satellite"), names(firms))
+  if (length(group_cols) > 0) {
+    group_col <- group_cols[[1]]
+    firms_by_group <- firms |>
+      dplyr::count(.data[[group_col]], sort = TRUE, name = "detecciones") |>
+      utils::head(15)
+    names(firms_by_group)[1] <- group_col
+    vf_kable(firms_by_group, caption = paste("Detecciones FIRMS por", group_col))
+  }
+} else {
+  knitr::asis_output("_No hay archivo FIRMS o no hay detecciones._\n")
+}
+```
+
+## Alertas operativas
+
+```{r}
+alerts <- vf_read_csv(c("data/processed/operational_alerts.csv", "assets/alerts/operational_alerts.csv"))
 if (nrow(alerts) > 0) {
-  alerts |>
-    select(
-      ID = cluster_id,
-      Nivel = alerta_operativa,
-      Score = score,
-      Focos = n_focos,
-      `≤6 h` = n_ultimas_6h,
-      `≤24 h` = n_ultimas_24h,
-      `FRP total MW` = frp_total_mw,
-      `FRP máximo MW` = frp_max_mw,
-      `Edad mínima h` = edad_min_h,
-      `Última detección UTC` = ultima_deteccion_utc,
-      Lat = latitude,
-      Lon = longitude
-    ) |>
-    knitr::kable()
+  alert_cols <- intersect(c("alert_id", "cluster_id", "ccaa", "province", "admin_name", "n_detections", "max_frp", "last_seen", "priority", "level"), names(alerts))
+  if (length(alert_cols) == 0) alert_cols <- names(alerts)[seq_len(min(10, ncol(alerts)))]
+  vf_kable(alerts |> dplyr::select(dplyr::all_of(alert_cols)) |> utils::head(30), caption = "Alertas publicadas")
 } else {
-  cat("No hay alertas operativas para el periodo seleccionado.")
+  knitr::asis_output("_No hay alertas operativas publicadas._\n")
 }
 ```
 
-## Informe Markdown generado
+## EFFIS
 
-```{r md-report, results='asis'}
-if (!is.na(report_path)) {
-  cat(paste(readLines(report_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n"))
+```{r}
+effis <- vf_read_csv(c("data/processed/effis_layers.csv", "assets/effis/effis_layers.csv"))
+if (nrow(effis) > 0) {
+  effis_cols <- intersect(c("layer", "label", "date", "base_url", "version", "format", "bbox", "url"), names(effis))
+  vf_kable(effis |> dplyr::select(dplyr::all_of(effis_cols)), caption = "Capas EFFIS publicadas")
 } else {
-  cat("No se encontró `operational_report.md`.")
+  knitr::asis_output("::: {.callout-note}\nEFFIS queda fuera del visor operativo hasta localizar una capa WMS actual con contenido visual. Los diagnósticos pueden seguir existiendo en `data/raw/effis`, pero no se publican capas históricas.\n:::\n")
 }
 ```

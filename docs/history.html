@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Evolución temporal – Visor Fuego</title>
+<title>Evolución – Visor Fuego</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -126,19 +126,30 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#histórico-del-visor" id="toc-histórico-del-visor" class="nav-link active" data-scroll-target="#histórico-del-visor">Histórico del visor</a></li>
+  <li><a href="#últimos-registros" id="toc-últimos-registros" class="nav-link" data-scroll-target="#últimos-registros">Últimos registros</a></li>
+  <li><a href="#métricas-principales" id="toc-métricas-principales" class="nav-link" data-scroll-target="#métricas-principales">Métricas principales</a></li>
+  <li><a href="#gráficos-de-evolución" id="toc-gráficos-de-evolución" class="nav-link" data-scroll-target="#gráficos-de-evolución">Gráficos de evolución</a></li>
+  <li><a href="#nota-sobre-aemet-y-effis" id="toc-nota-sobre-aemet-y-effis" class="nav-link" data-scroll-target="#nota-sobre-aemet-y-effis">Nota sobre AEMET y EFFIS</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Evolución temporal</h1>
-<p class="subtitle lead">Histórico operativo del visor fuego</p>
+<h1 class="title">Evolución</h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -150,113 +161,36 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Cómo se genera este histórico
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Cada ejecución de <code>scripts/99_run_all.R</code> añade una fotografía operativa del visor a:</p>
-<pre class="text"><code>assets/history/dashboard_history.csv</code></pre>
-<p>Por defecto se conserva la última ejecución de cada día (<code>HISTORY_MODE=daily_latest</code>) y se retienen 90 días (<code>HISTORY_KEEP_DAYS=90</code>).</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Registros históricos: 1 · Fuente: data/processed/dashboard_history.csv</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="summary-grid">
-<div class="summary-card">
-<span>Última fecha</span>
-<strong>2026-07-08</strong>
-</div>
-<div class="summary-card">
-<span>Focos FIRMS</span>
-<strong>692</strong>
-<small>Δ —</small>
-</div>
-<div class="summary-card">
-<span>Focos ≤24 h</span>
-<strong>394</strong>
-<small>Δ —</small>
-</div>
-<div class="summary-card">
-<span>FRP total</span>
-<strong>4047 MW</strong>
-<small>Δ —</small>
-</div>
-<div class="summary-card">
-<span>Alertas</span>
-<strong>118</strong>
-<small>Δ —</small>
-</div>
-<div class="summary-card">
-<span>Alertas altas</span>
-<strong>8</strong>
-<small>Δ —</small>
-</div>
-<div class="summary-card">
-<span>Top provincia</span>
-<strong>León</strong>
-</div>
-<div class="summary-card">
-<span>Top CCAA</span>
-<strong>Castilla y León</strong>
-</div>
-</div>
-<section id="evolución-de-focos-firms" class="level2">
-<h2 class="anchored" data-anchor-id="evolución-de-focos-firms">Evolución de focos FIRMS</h2>
+<section id="histórico-del-visor" class="level2">
+<h2 class="anchored" data-anchor-id="histórico-del-visor">Histórico del visor</h2>
 <div class="cell">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="history_files/figure-html/chart-firms-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="focos-recientes" class="level2">
-<h2 class="anchored" data-anchor-id="focos-recientes">Focos recientes</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="history_files/figure-html/chart-recent-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="evolución-de-frp" class="level2">
-<h2 class="anchored" data-anchor-id="evolución-de-frp">Evolución de FRP</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="history_files/figure-html/chart-frp-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="alertas-operativas" class="level2">
-<h2 class="anchored" data-anchor-id="alertas-operativas">Alertas operativas</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="history_files/figure-html/chart-alerts-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">indicador</th>
+<th style="text-align: left;">valor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Registros</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Primera fecha</td>
+<td style="text-align: left;">2026-07-08</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Última fecha</td>
+<td style="text-align: left;">2026-07-10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Archivo</td>
+<td style="text-align: left;">data/processed/dashboard_history.csv</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
@@ -265,46 +199,186 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
+<caption>Últimos registros del histórico</caption>
 <colgroup>
-<col style="width: 13%">
-<col style="width: 7%">
-<col style="width: 6%">
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 10%">
-<col style="width: 7%">
-<col style="width: 17%">
-<col style="width: 20%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 26%">
+<col style="width: 3%">
+<col style="width: 1%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 3%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Fecha</th>
-<th style="text-align: right;">FIRMS</th>
-<th style="text-align: right;">≤6 h</th>
-<th style="text-align: right;">≤24 h</th>
-<th style="text-align: right;">FRP MW</th>
-<th style="text-align: right;">Alertas</th>
-<th style="text-align: right;">Altas</th>
-<th style="text-align: left;">Top provincia</th>
-<th style="text-align: left;">Top CCAA</th>
+<th style="text-align: left;">snapshot_date</th>
+<th style="text-align: left;">generated_at_utc</th>
+<th style="text-align: left;">aemet_date</th>
+<th style="text-align: right;">n_aemet_layers</th>
+<th style="text-align: right;">n_firms</th>
+<th style="text-align: right;">n_firms_6h</th>
+<th style="text-align: right;">n_firms_24h</th>
+<th style="text-align: right;">frp_total_mw</th>
+<th style="text-align: left;">ultima_deteccion_utc</th>
+<th style="text-align: right;">n_ccaa_con_focos</th>
+<th style="text-align: right;">n_provincias_con_focos</th>
+<th style="text-align: right;">n_alertas</th>
+<th style="text-align: right;">n_alertas_altas</th>
+<th style="text-align: right;">n_alertas_medias</th>
+<th style="text-align: right;">n_alertas_seguimiento</th>
+<th style="text-align: right;">max_alert_score</th>
+<th style="text-align: left;">top_provincia</th>
+<th style="text-align: right;">top_provincia_focos</th>
+<th style="text-align: left;">top_ccaa</th>
+<th style="text-align: right;">top_ccaa_focos</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">2026-07-10</td>
+<td style="text-align: left;">2026-07-10 02:45:38</td>
+<td style="text-align: left;">2026-07-07,2026-07-08,2026-07-09,2026-07-10,2026-07-11,2026-07-12,2026-07-13,2026-07-14,2026-07-15,2026-07-16</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">346</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">117</td>
+<td style="text-align: right;">2693.3</td>
+<td style="text-align: left;">2026-07-09 13:33:00</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">83.1</td>
+<td style="text-align: left;">Toledo</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: left;">Castilla-La Mancha</td>
+<td style="text-align: right;">46</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">2026-07-08</td>
+<td style="text-align: left;">2026-07-08 08:42:51</td>
+<td style="text-align: left;">2026-07-08,2026-07-09,2026-07-10,2026-07-11,2026-07-12,2026-07-13,2026-07-14,2026-07-15</td>
+<td style="text-align: right;">16</td>
 <td style="text-align: right;">692</td>
 <td style="text-align: right;">12</td>
 <td style="text-align: right;">394</td>
-<td style="text-align: right;">4047</td>
+<td style="text-align: right;">4047.0</td>
+<td style="text-align: left;">2026-07-08 03:49:00</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">27</td>
 <td style="text-align: right;">118</td>
 <td style="text-align: right;">8</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">149.9</td>
 <td style="text-align: left;">León</td>
+<td style="text-align: right;">40</td>
 <td style="text-align: left;">Castilla y León</td>
+<td style="text-align: right;">46</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+</section>
+<section id="métricas-principales" class="level2">
+<h2 class="anchored" data-anchor-id="métricas-principales">Métricas principales</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Último valor de métricas numéricas</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">metrica</th>
+<th style="text-align: right;">ultimo_valor</th>
+<th style="text-align: right;">valor_anterior</th>
+<th style="text-align: right;">cambio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">n_aemet_layers</td>
+<td style="text-align: right;">32.0</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">16.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">n_firms</td>
+<td style="text-align: right;">346.0</td>
+<td style="text-align: right;">692</td>
+<td style="text-align: right;">-346.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">n_firms_6h</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">-12.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">n_firms_24h</td>
+<td style="text-align: right;">117.0</td>
+<td style="text-align: right;">394</td>
+<td style="text-align: right;">-277.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">frp_total_mw</td>
+<td style="text-align: right;">2693.3</td>
+<td style="text-align: right;">4047</td>
+<td style="text-align: right;">-1353.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">n_ccaa_con_focos</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">-2.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">n_provincias_con_focos</td>
+<td style="text-align: right;">19.0</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">-8.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">n_alertas</td>
+<td style="text-align: right;">97.0</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">-21.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="gráficos-de-evolución" class="level2">
+<h2 class="anchored" data-anchor-id="gráficos-de-evolución">Gráficos de evolución</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="history_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="nota-sobre-aemet-y-effis" class="level2">
+<h2 class="anchored" data-anchor-id="nota-sobre-aemet-y-effis">Nota sobre AEMET y EFFIS</h2>
+<p>La evolución debe interpretarse con la misma lógica que el mapa principal: AEMET publica la última emisión disponible, y las fechas antiguas no deben reaparecer si la limpieza previa se ha ejecutado correctamente. EFFIS puede aparecer como cero o ausente mientras no haya una capa WMS actual con contenido visual publicable.</p>
 
 
 </section>

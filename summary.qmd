@@ -1,8 +1,8 @@
 ---
 title: "Resumen operativo"
-subtitle: "Focos FIRMS · alertas · resumen territorial"
 format:
   html:
+    toc: true
     page-layout: full
 execute:
   echo: false
@@ -10,277 +10,90 @@ execute:
   message: false
 ---
 
-```{r setup}
-library(leaflet)
-library(htmltools)
-library(htmlwidgets)
-library(jsonlite)
-library(readr)
-library(dplyr)
-library(purrr)
+```{r}
+source("R/page_helpers.R")
+vf_load_packages()
 
-source("R/effis.R", encoding = "UTF-8")
-source("R/admin.R", encoding = "UTF-8")
-
-read_layers_json <- function() {
-  candidates <- c(
-    "data/processed/layers.json",
-    "assets/aemet/layers.json",
-    "docs/assets/aemet/layers.json"
-  )
-
-  for (path in candidates) {
-    if (file.exists(path) && file.info(path)$size > 2) {
-      layers <- tryCatch(
-        jsonlite::fromJSON(path, simplifyVector = FALSE),
-        error = function(e) list()
-      )
-      if (length(layers) > 0) {
-        attr(layers, "source_path") <- path
-        return(layers)
-      }
-    }
-  }
-
-  csv_path <- "data/processed/layers.csv"
-  if (file.exists(csv_path) && file.info(csv_path)$size > 0) {
-    layers_csv <- readr::read_csv(csv_path, show_col_types = FALSE)
-    if (nrow(layers_csv) > 0) {
-      layers <- layers_csv |>
-        mutate(
-          bounds = purrr::map(bounds_json, jsonlite::fromJSON),
-          legend_labels = strsplit(legend_labels, "\\|"),
-          legend_colours = strsplit(legend_colours, "\\|")
-        ) |>
-        select(-bounds_json) |>
-        jsonlite::toJSON(dataframe = "rows", auto_unbox = TRUE, null = "null") |>
-        jsonlite::fromJSON(simplifyVector = FALSE)
-      attr(layers, "source_path") <- csv_path
-      return(layers)
-    }
-  }
-
-  layers <- list()
-  attr(layers, "source_path") <- NA_character_
-  layers
-}
-
-read_firms_csv <- function() {
-  candidates <- c(
-    "data/processed/firms_active_fires.csv",
-    "assets/firms/firms_active_fires.csv"
-  )
-  for (path in candidates) {
-    if (file.exists(path) && file.info(path)$size > 0) {
-      out <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
-      if (nrow(out) > 0 && all(c("longitude", "latitude") %in% names(out))) {
-        attr(out, "source_path") <- path
-        return(out)
-      }
-    }
-  }
-  out <- tibble::tibble()
-  attr(out, "source_path") <- NA_character_
-  out
-}
-
-
-read_csv_optional <- function(paths) {
-  for (path in paths) {
-    if (file.exists(path) && file.info(path)$size > 0) {
-      out <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) tibble::tibble())
-      attr(out, "source_path") <- path
-      return(out)
-    }
-  }
-  out <- tibble::tibble()
-  attr(out, "source_path") <- NA_character_
-  out
-}
-
-read_dashboard_overview <- function() {
-  read_csv_optional(c(
-    "data/processed/dashboard_summary.csv",
-    "assets/summary/dashboard_summary.csv"
-  ))
-}
-
-read_summary_ccaa <- function() {
-  read_csv_optional(c(
-    "data/processed/firms_summary_ccaa.csv",
-    "assets/summary/firms_summary_ccaa.csv"
-  ))
-}
-
-read_summary_provincias <- function() {
-  read_csv_optional(c(
-    "data/processed/firms_summary_provincias.csv",
-    "assets/summary/firms_summary_provincias.csv"
-  ))
-}
-
-read_operational_alerts <- function() {
-  read_csv_optional(c(
-    "data/processed/operational_alerts.csv",
-    "assets/alerts/operational_alerts.csv"
-  ))
-}
-
-read_alerts_summary <- function() {
-  read_csv_optional(c(
-    "data/processed/operational_alerts_summary.csv",
-    "assets/alerts/operational_alerts_summary.csv"
-  ))
-}
-
-safe_value <- function(x, default = "—") {
-  if (length(x) == 0 || is.na(x) || identical(x, "")) default else as.character(x)
-}
-
-add_admin_boundaries <- function(map, path, group, weight = 1) {
-  if (!requireNamespace("sf", quietly = TRUE)) return(map)
-  if (!file.exists(path) || file.info(path)$size == 0) return(map)
-  x <- tryCatch(sf::st_read(path, quiet = TRUE), error = function(e) NULL)
-  if (is.null(x) || nrow(x) == 0) return(map)
-  x <- force_wgs84_lonlat(x)
-  if (!"admin_name" %in% names(x)) x$admin_name <- if ("NUTS_NAME" %in% names(x)) x$NUTS_NAME else x$admin_id
-  leaflet::addPolygons(
-    map,
-    data = x,
-    group = group,
-    color = "#333333",
-    weight = weight,
-    opacity = 0.85,
-    fillOpacity = 0,
-    label = ~admin_name,
-    highlightOptions = highlightOptions(weight = weight + 1, bringToFront = TRUE)
-  )
-}
-
-layers_data <- read_layers_json()
-layers_source <- attr(layers_data, "source_path")
-n_layers <- length(layers_data)
-layers_json <- jsonlite::toJSON(layers_data, auto_unbox = TRUE, null = "null")
-last_update <- if (n_layers > 0) {
-  unique(vapply(layers_data, function(x) {
-    value <- x[["date"]]
-    if (is.null(value) || length(value) == 0 || is.na(value)) NA_character_ else as.character(value)
-  }, character(1)))[1]
-} else {
-  NA_character_
-}
-
-firms_data <- read_firms_csv()
-firms_source <- attr(firms_data, "source_path")
-n_firms <- nrow(firms_data)
-
-overview_data <- read_dashboard_overview()
-summary_ccaa <- read_summary_ccaa()
-summary_provincias <- read_summary_provincias()
-alerts_data <- read_operational_alerts()
-alerts_summary <- read_alerts_summary()
-
-if (nrow(overview_data) > 0) {
-  overview <- overview_data[1, ]
-} else {
-  overview <- tibble::tibble(
-    n_firms = n_firms,
-    n_firms_6h = if (n_firms > 0 && "age_hours" %in% names(firms_data)) sum(!is.na(firms_data$age_hours) & firms_data$age_hours <= 6) else 0L,
-    n_firms_24h = if (n_firms > 0 && "age_hours" %in% names(firms_data)) sum(!is.na(firms_data$age_hours) & firms_data$age_hours <= 24) else 0L,
-    frp_total_mw = if (n_firms > 0 && "frp" %in% names(firms_data)) round(sum(as.numeric(firms_data$frp), na.rm = TRUE), 1) else 0,
-    ultima_deteccion_utc = NA_character_,
-    n_ccaa_con_focos = nrow(summary_ccaa),
-    n_provincias_con_focos = nrow(summary_provincias)
-  )
-}
-
-effis_groups <- effis_overlay_groups()
-effis_cfg <- effis_layer_config()
-n_alerts <- nrow(alerts_data)
-n_alerts_high <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "alta", na.rm = TRUE) else 0L
-n_alerts_medium <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "media", na.rm = TRUE) else 0L
+layers <- vf_read_csv(c("data/processed/layers.csv", "assets/aemet/layers.csv"))
+aemet_latest <- vf_latest_aemet_layers(layers)
+status <- vf_status_table()
 ```
 
-::: {.callout-note collapse="true"}
-## Fuente y actualización
-
-Este visor combina:
-
-- **AEMET OpenData**: riesgo meteorológico de incendios previsto.
-- **NASA FIRMS**: detecciones satelitales recientes de focos activos/thermal anomalies.
-- **EFFIS/Copernicus EMS**: capa WMS europea de Fire Weather Index.
-- **Eurostat/GISCO NUTS**: límites de CCAA y provincias para resumen territorial.
+## Estado general
 
 ```{r}
-cat("Capas AEMET:", n_layers)
-if (n_layers > 0) cat(" · Fecha:", last_update, "· Catálogo:", layers_source)
-cat("\nFocos NASA FIRMS:", n_firms)
-if (n_firms > 0) cat(" · Catálogo:", firms_source)
-cat("\nAlertas operativas:", n_alerts, "· Altas:", n_alerts_high, "· Medias:", n_alerts_medium)
-cat("\nEFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") else "desactivado")
-if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
+vf_kable(status)
 ```
-:::
 
+## AEMET
 
-## Resumen operativo
+Esta página usa la misma convención que el mapa principal: `D00` se interpreta como **Día 1** de la fecha del fichero AEMET, sin desplazamiento adicional de un día. Si hay varias emisiones en disco, solo se resume la **última emisión** presente en el catálogo.
 
-```{r operational-summary, results='asis'}
-htmltools::tags$div(
-  class = "summary-grid",
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Focos FIRMS"), htmltools::tags$strong(safe_value(overview$n_firms))),
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Últimas 6 h"), htmltools::tags$strong(safe_value(overview$n_firms_6h))),
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Últimas 24 h"), htmltools::tags$strong(safe_value(overview$n_firms_24h))),
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("FRP total"), htmltools::tags$strong(paste0(safe_value(overview$frp_total_mw, "0"), " MW"))),
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("CCAA con focos"), htmltools::tags$strong(safe_value(overview$n_ccaa_con_focos))),
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Provincias con focos"), htmltools::tags$strong(safe_value(overview$n_provincias_con_focos))),
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas/clústeres"), htmltools::tags$strong(safe_value(n_alerts, "0"))),
-  htmltools::tags$div(class = "summary-card", htmltools::tags$span("Alertas altas"), htmltools::tags$strong(safe_value(n_alerts_high, "0")))
+```{r}
+vf_kable(vf_aemet_overview(layers))
+```
+
+```{r}
+if (nrow(aemet_latest) > 0) {
+  capa <- dplyr::coalesce(
+    as.character(vf_get_col(aemet_latest, "label")),
+    as.character(vf_get_col(aemet_latest, "layer_id")),
+    as.character(vf_get_col(aemet_latest, "url")),
+    as.character(vf_get_col(aemet_latest, "source_file"))
+  )
+  aemet_table <- tibble::tibble(
+      area = aemet_latest$area_label,
+      fecha_emision = as.character(aemet_latest$issue_date),
+      fecha_valida = as.character(aemet_latest$valid_date),
+      horizonte = aemet_latest$forecast_label,
+      dia = aemet_latest$forecast_day + 1L,
+      capa = capa
+    ) |>
+    dplyr::arrange(.data$area, .data$fecha_valida, .data$dia)
+  vf_kable(aemet_table, caption = "Capas AEMET publicadas")
+} else {
+  knitr::asis_output("_No hay capas AEMET publicadas._\n")
+}
+```
+
+## FIRMS y alertas
+
+```{r}
+firms <- vf_read_csv(c("data/processed/firms_active_fires.csv", "data/processed/firms.csv", "assets/firms/firms_active_fires.csv"))
+alerts <- vf_read_csv(c("data/processed/operational_alerts.csv", "assets/alerts/operational_alerts.csv"))
+
+fires_total <- nrow(firms)
+alerts_total <- nrow(alerts)
+
+fire_cols <- names(firms)
+alert_cols <- names(alerts)
+
+summary_rows <- tibble::tibble(
+  indicador = c("Detecciones FIRMS", "Alertas operativas"),
+  valor = c(fires_total, alerts_total)
 )
+
+vf_kable(summary_rows)
 ```
 
-```{r top-alertas}
-if (nrow(alerts_data) > 0) {
-  alerts_data |>
-    select(
-      ID = cluster_id,
-      Nivel = alerta_operativa,
-      Score = score,
-      Focos = n_focos,
-      `≤6 h` = n_ultimas_6h,
-      `≤24 h` = n_ultimas_24h,
-      `FRP total MW` = frp_total_mw,
-      `Última detección UTC` = ultima_deteccion_utc
-    ) |>
-    head(10) |>
-    knitr::kable(caption = "Alertas operativas generadas a partir de clústeres NASA FIRMS")
+```{r}
+if (nrow(alerts) > 0) {
+  show_cols <- intersect(c("alert_id", "cluster_id", "admin_name", "ccaa", "province", "n_detections", "max_frp", "last_seen", "priority", "level"), names(alerts))
+  if (length(show_cols) == 0) show_cols <- names(alerts)[seq_len(min(8, ncol(alerts)))]
+  vf_kable(alerts |> dplyr::select(dplyr::all_of(show_cols)) |> utils::head(20), caption = "Primeras alertas operativas")
 } else {
-  cat("No hay alertas operativas. Ejecuta `Rscript scripts/08_build_operational_alerts.R` tras descargar FIRMS.")
+  knitr::asis_output("_No hay alertas operativas en el último procesamiento._\n")
 }
 ```
 
-```{r top-provincias}
-if (nrow(summary_provincias) > 0) {
-  summary_provincias |>
-    select(
-      Provincia = admin_name,
-      Focos = n_focos,
-      `≤6 h` = n_ultimas_6h,
-      `≤24 h` = n_ultimas_24h,
-      `FRP total MW` = frp_total_mw,
-      Alerta = alerta_operativa,
-      `Última detección UTC` = ultima_deteccion_utc
-    ) |>
-    head(10) |>
-    knitr::kable(caption = "Provincias con más detecciones recientes según NASA FIRMS")
+## EFFIS
+
+```{r}
+effis <- vf_read_csv(c("data/processed/effis_layers.csv", "assets/effis/effis_layers.csv"))
+if (nrow(effis) > 0) {
+  effis_cols <- intersect(c("layer", "label", "date", "base_url", "version", "format", "url"), names(effis))
+  vf_kable(effis |> dplyr::select(dplyr::all_of(effis_cols)), caption = "Capas EFFIS publicadas")
 } else {
-  cat("No hay resumen provincial disponible. Ejecuta `Rscript scripts/99_run_all.R` con límites GISCO y datos FIRMS.")
+  knitr::asis_output("EFFIS está desactivado o no se ha encontrado una capa visual actual publicable. Se evita mostrar información histórica como si fuera operativa.\n")
 }
 ```
-
-
-## Enlaces
-
-- [Volver al mapa](index.html)
-- [Informe operativo](report.html)
-- [Evolución temporal](history.html)
