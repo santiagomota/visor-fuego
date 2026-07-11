@@ -3,8 +3,8 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
-    # 04:30 y 12:30 hora peninsular de verano aprox. GitHub Actions usa UTC.
-    - cron: "30 2,10 * * *"
+    - cron: "30 4,12 * * *"
+      timezone: "Europe/Madrid"
 
 permissions:
   contents: write
@@ -25,6 +25,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Los eventos programados solo se ejecutan sobre la rama predeterminada.
+          # En las ejecuciones manuales usamos también esa rama para publicar siempre
+          # en el mismo destino.
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Mostrar motivo y horario de ejecución
+        run: |
+          echo "Evento: $GITHUB_EVENT_NAME"
+          echo "Rama de publicación: ${{ github.event.repository.default_branch }}"
+          echo "Hora UTC: $(date -u '+%Y-%m-%d %H:%M:%S %Z')"
+          echo "Hora Madrid: $(TZ=Europe/Madrid date '+%Y-%m-%d %H:%M:%S %Z')"
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
@@ -188,20 +201,44 @@ jobs:
           set -euo pipefail
           Rscript scripts/11_check_published_assets.R
 
-      - name: Commit si hay cambios
+      - name: Commit y publicación de cambios
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # data/raw contiene descargas temporales y está excluido en .gitignore.
-          # Las salidas reproducibles que alimentan el visor se publican desde
-          # data/processed, assets y docs.
           git add -A -- data/processed assets docs
 
           if git diff --cached --quiet; then
             echo "No hay cambios que publicar."
-          else
-            git commit -m "Actualiza visor automáticamente"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            exit 0
           fi
+
+          git commit -m "Actualiza visor automáticamente"
+
+          # El proceso tarda varios minutos. Durante ese tiempo puede entrar un commit
+          # nuevo en main. Rebasamos el commit generado y reintentamos el push sin
+          # sobrescribir el historial remoto.
+          for intento in 1 2 3; do
+            echo "Intento de publicación $intento de 3"
+            git fetch origin "$TARGET_BRANCH"
+
+            if ! git rebase "origin/$TARGET_BRANCH"; then
+              git rebase --abort || true
+              echo "::error::No se pudo integrar de forma segura un cambio remoto. Revisa si se modificaron simultáneamente assets, data/processed o docs."
+              exit 1
+            fi
+
+            if git push origin "HEAD:$TARGET_BRANCH"; then
+              echo "Cambios publicados correctamente."
+              exit 0
+            fi
+
+            sleep $((intento * 5))
+          done
+
+          echo "::error::No se pudo publicar después de tres intentos por cambios concurrentes en la rama remota."
+          exit 1
