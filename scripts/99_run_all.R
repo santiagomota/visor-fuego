@@ -50,4 +50,4 @@ run_script(9, total, "Preparando EFFIS Burnt Areas", "scripts/30_prepare_effis_b
 run_script(10, total, "Comprobando entradas del dashboard", "scripts/04_check_dashboard_inputs.R")
 run_script(11, total, "Validando fechas AEMET", "scripts/24_check_aemet_valid_dates.R")
 
-message("Pipeline v0.6.4 completado")
+message("Pipeline v0.6.6 completado")

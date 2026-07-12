@@ -28,7 +28,7 @@ firms_day_range <- function() {
   max(1L, min(5L, days))
 }
 
-firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.4", timeout = 120, connecttimeout = 30, retries = 2) {
+firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.6", timeout = 120, connecttimeout = 30, retries = 2) {
   if (!requireNamespace("curl", quietly = TRUE)) {
     stop("Falta el paquete R 'curl'. Instala con install.packages('curl').", call. = FALSE)
   }
@@ -64,6 +64,52 @@ build_firms_area_url <- function(map_key, source, bbox, days, date = Sys.getenv(
   if (nzchar(date)) paste0(base, "/", date) else base
 }
 
+firms_empty_normalised <- function() {
+  tibble::tibble(
+    bright_ti4 = double(),
+    scan = double(),
+    track = double(),
+    acq_date = character(),
+    acq_time = character(),
+    satellite = character(),
+    instrument = character(),
+    confidence = character(),
+    version = character(),
+    bright_ti5 = double(),
+    frp = double(),
+    daynight = character(),
+    source_dataset = character(),
+    acq_datetime_utc = character(),
+    age_hours = double(),
+    longitude = double(),
+    latitude = double()
+  )
+}
+
+firms_empty_output <- function() {
+  tibble::tibble(
+    bright_ti4 = double(),
+    scan = double(),
+    track = double(),
+    acq_date = character(),
+    acq_time = character(),
+    satellite = character(),
+    instrument = character(),
+    confidence = character(),
+    version = character(),
+    bright_ti5 = double(),
+    frp = double(),
+    daynight = character(),
+    source_dataset = character(),
+    acq_datetime_utc = character(),
+    age_hours = double(),
+    confidence_label = character(),
+    popup_label = character(),
+    longitude = double(),
+    latitude = double()
+  )
+}
+
 read_firms_csv_safely <- function(path) {
   if (!file.exists(path) || file.info(path)$size == 0) return(tibble::tibble())
 
@@ -76,7 +122,15 @@ read_firms_csv_safely <- function(path) {
   }
 
   tryCatch(
-    readr::read_csv(path, show_col_types = FALSE),
+    # Todas las columnas se leen inicialmente como texto. Las respuestas de dos
+    # sensores pueden contener tablas vacías o pequeñas diferencias de inferencia;
+    # la conversión a tipos canónicos se hace después en normalise_firms().
+    readr::read_csv(
+      path,
+      col_types = readr::cols(.default = readr::col_character()),
+      show_col_types = FALSE,
+      progress = FALSE
+    ),
     error = function(e) {
       warning("No se pudo leer CSV FIRMS ", path, ": ", conditionMessage(e), call. = FALSE)
       tibble::tibble()
@@ -84,9 +138,13 @@ read_firms_csv_safely <- function(path) {
   )
 }
 
+normalise_firms_time <- function(x) {
+  value <- suppressWarnings(as.integer(x))
+  ifelse(is.na(value), NA_character_, sprintf("%04d", value))
+}
+
 parse_firms_datetime <- function(acq_date, acq_time) {
-  t <- suppressWarnings(as.integer(acq_time))
-  hhmm <- ifelse(is.na(t), "0000", sprintf("%04d", t))
+  hhmm <- normalise_firms_time(acq_time)
   hh <- substr(hhmm, 1, 2)
   mm <- substr(hhmm, 3, 4)
   as.POSIXct(
@@ -97,37 +155,56 @@ parse_firms_datetime <- function(acq_date, acq_time) {
 }
 
 normalise_firms <- function(x, source) {
-  if (nrow(x) == 0) return(x)
+  if (!is.data.frame(x) || nrow(x) == 0) return(firms_empty_normalised())
 
   names(x) <- tolower(names(x))
-  if (!all(c("latitude", "longitude") %in% names(x))) return(tibble::tibble())
+  if (!all(c("latitude", "longitude") %in% names(x))) {
+    warning("FIRMS ", source, " no contiene latitude/longitude; se omite.", call. = FALSE)
+    return(firms_empty_normalised())
+  }
 
-  if (!"acq_date" %in% names(x)) x$acq_date <- NA_character_
-  if (!"acq_time" %in% names(x)) x$acq_time <- NA_character_
-  if (!"confidence" %in% names(x)) x$confidence <- NA_character_
-  if (!"frp" %in% names(x)) x$frp <- NA_real_
-  if (!"satellite" %in% names(x)) x$satellite <- NA_character_
-  if (!"instrument" %in% names(x)) x$instrument <- NA_character_
-  if (!"daynight" %in% names(x)) x$daynight <- NA_character_
+  required <- c(
+    "bright_ti4", "scan", "track", "acq_date", "acq_time", "satellite",
+    "instrument", "confidence", "version", "bright_ti5", "frp", "daynight",
+    "latitude", "longitude"
+  )
+  for (column in setdiff(required, names(x))) x[[column]] <- NA_character_
 
-  dt <- parse_firms_datetime(x$acq_date, x$acq_time)
+  acq_time <- normalise_firms_time(x$acq_time)
+  dt <- parse_firms_datetime(x$acq_date, acq_time)
   now_utc <- as.POSIXct(Sys.time(), tz = "UTC")
 
-  x |>
-    dplyr::mutate(
-      source_dataset = source,
-      longitude = suppressWarnings(as.numeric(longitude)),
-      latitude = suppressWarnings(as.numeric(latitude)),
-      acq_datetime_utc = format(dt, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
-      age_hours = round(as.numeric(difftime(now_utc, dt, units = "hours")), 1),
-      confidence = as.character(confidence),
-      frp = suppressWarnings(as.numeric(frp)),
-      satellite = as.character(satellite),
-      instrument = as.character(instrument),
-      daynight = as.character(daynight)
-    ) |>
+  tibble::tibble(
+    bright_ti4 = suppressWarnings(as.numeric(x$bright_ti4)),
+    scan = suppressWarnings(as.numeric(x$scan)),
+    track = suppressWarnings(as.numeric(x$track)),
+    acq_date = as.character(x$acq_date),
+    acq_time = acq_time,
+    satellite = as.character(x$satellite),
+    instrument = as.character(x$instrument),
+    confidence = as.character(x$confidence),
+    version = as.character(x$version),
+    bright_ti5 = suppressWarnings(as.numeric(x$bright_ti5)),
+    frp = suppressWarnings(as.numeric(x$frp)),
+    daynight = as.character(x$daynight),
+    source_dataset = as.character(source),
+    acq_datetime_utc = format(dt, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
+    age_hours = round(as.numeric(difftime(now_utc, dt, units = "hours")), 1),
+    longitude = suppressWarnings(as.numeric(x$longitude)),
+    latitude = suppressWarnings(as.numeric(x$latitude))
+  ) |>
     dplyr::filter(!is.na(longitude), !is.na(latitude)) |>
     dplyr::arrange(dplyr::desc(acq_datetime_utc))
+}
+
+bind_firms_sources <- function(results) {
+  usable <- purrr::keep(
+    results,
+    function(x) is.data.frame(x) && nrow(x) > 0
+  )
+
+  if (length(usable) == 0) return(firms_empty_normalised())
+  dplyr::bind_rows(usable)
 }
 
 confidence_label <- function(x) {
@@ -167,7 +244,7 @@ firms_to_geojson <- function(fires) {
 write_empty_firms_outputs <- function(reason = "Sin datos") {
   fs::dir_create("data/processed")
   fs::dir_create("assets/firms")
-  empty <- tibble::tibble()
+  empty <- firms_empty_output()
   readr::write_csv(empty, "data/processed/firms_active_fires.csv")
   geo <- list(type = "FeatureCollection", features = list(), note = reason)
   jsonlite::write_json(geo, "data/processed/firms_active_fires.geojson", auto_unbox = TRUE, pretty = TRUE, null = "null")
@@ -191,7 +268,7 @@ download_firms_active_fires <- function() {
   fs::dir_create("data/processed")
   fs::dir_create("assets/firms")
 
-  downloaded <- purrr::map_dfr(sources, function(source) {
+  results <- purrr::map(sources, function(source) {
     message("NASA FIRMS: ", source, " · últimos ", days, " días")
     url <- build_firms_area_url(map_key, source, bbox, days, date = date)
     stamp <- format(Sys.Date(), "%Y%m%d")
@@ -200,17 +277,21 @@ download_firms_active_fires <- function() {
     resp <- tryCatch(firms_curl_fetch_raw(url), error = function(e) e)
     if (inherits(resp, "error")) {
       warning("Fallo descargando FIRMS ", source, ": ", conditionMessage(resp), call. = FALSE)
-      return(tibble::tibble())
+      return(firms_empty_normalised())
     }
     if (resp$status_code >= 400) {
       warning("FIRMS respondió HTTP ", resp$status_code, " para ", source, call. = FALSE)
-      return(tibble::tibble())
+      return(firms_empty_normalised())
     }
 
     writeBin(resp$content, raw_path)
-    read_firms_csv_safely(raw_path) |>
+    out <- read_firms_csv_safely(raw_path) |>
       normalise_firms(source)
+    message("NASA FIRMS: ", source, " · detecciones válidas: ", nrow(out))
+    out
   })
+
+  downloaded <- bind_firms_sources(results)
 
   if (nrow(downloaded) == 0) {
     message("NASA FIRMS: no hay detecciones para el área/periodo seleccionado.")
@@ -229,7 +310,13 @@ download_firms_active_fires <- function() {
         "FRP: ", ifelse(is.na(frp), "s/d", paste0(frp, " MW"))
       )
     ) |>
-    dplyr::distinct(source_dataset, longitude, latitude, acq_datetime_utc, .keep_all = TRUE)
+    dplyr::distinct(source_dataset, longitude, latitude, acq_datetime_utc, .keep_all = TRUE) |>
+    dplyr::select(
+      bright_ti4, scan, track, acq_date, acq_time, satellite, instrument,
+      confidence, version, bright_ti5, frp, daynight, source_dataset,
+      acq_datetime_utc, age_hours, confidence_label, popup_label,
+      longitude, latitude
+    )
 
   readr::write_csv(fires, "data/processed/firms_active_fires.csv")
   geo <- firms_to_geojson(fires)

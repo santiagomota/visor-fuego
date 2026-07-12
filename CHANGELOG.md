@@ -1,106 +1,51 @@
 # Changelog
 
-Todos los cambios relevantes del proyecto se documentan en este fichero.
+## v0.6.6 - normalización robusta de NASA FIRMS
 
-El proyecto utiliza versiones semánticas incrementales.
+- Corrige el fallo de `purrr::map_dfr()` al combinar una respuesta FIRMS vacía, con `latitude` inferida como texto, y otra respuesta con detecciones numéricas.
+- Lee inicialmente todas las columnas CSV de FIRMS como texto y aplica después un esquema canónico explícito.
+- Convierte coordenadas, temperaturas, FRP, `scan` y `track` a tipos numéricos de forma controlada.
+- Excluye del `bind_rows()` las respuestas sin detecciones y genera salidas vacías con cabeceras y tipos estables.
+- Añade al log el número de detecciones válidas obtenido para cada sensor FIRMS.
+- Actualiza los identificadores de versión del pipeline y los agentes HTTP a 0.6.6.
 
-## [0.6.4] - 2026-07-10
+## v0.6.5 - horario de Madrid y control de concurrencia
 
-### Corregido
+- Programa el workflow a las 04:30 y 12:30 usando la zona IANA `Europe/Madrid`.
+- Evita tener que cambiar manualmente el cron al comenzar o terminar el horario de verano.
+- Corrige el rechazo `fetch first` cuando aparece un commit remoto durante la ejecución.
+- Añade `fetch`, `rebase` seguro y hasta tres reintentos antes del `push`.
+- Mantiene prohibido el `force push` para no sobrescribir cambios del usuario.
+
+## v0.6.4 - corrección de publicación automática
 
 - Corregido el paso `Commit si hay cambios` del workflow de GitHub Actions.
-- Eliminado `data/raw/aemet` de `git add`, ya que `data/raw/` contiene descargas temporales y está excluido mediante `.gitignore`.
+- Eliminado `data/raw/aemet` de `git add`: `data/raw/` contiene descargas temporales y está excluido por `.gitignore`.
+- El workflow publica únicamente las salidas reproducibles de `data/processed`, `assets` y `docs`.
 - El `push` se dirige explícitamente a la rama que ejecuta el workflow mediante `GITHUB_REF_NAME`.
-- Validada la actualización de ficheros ya versionados dentro de directorios que contienen reglas de exclusión.
+- Validado que los ficheros ignorados dentro de `data/processed` que ya están versionados se actualizan correctamente con `git add -A`.
+- Sustituido `.Renviron.example` por una configuración completa, sin duplicados y alineada con AEMET classic, FIRMS y EFFIS Burnt Areas.
 
-### Cambiado
+## v0.6.3 - publicación AEMET y pipeline consolidado
 
-- El workflow publica únicamente las salidas reproducibles de:
-  - `data/processed/`
-  - `assets/`
-  - `docs/`
-- Sustituido `.Renviron.example` por una configuración completa, sin duplicados y alineada con AEMET clásico, NASA FIRMS y EFFIS Burnt Areas.
+- Declara `assets/aemet/**` y `assets/effis_ba/**` como recursos del proyecto Quarto.
+- Corrige el fallo por el que las capas AEMET aparecían como rectángulos transparentes en GitHub Pages al no existir los PNG dentro de `docs/`.
+- Añade `styles.css` a la configuración HTML global y elimina los estilos duplicados de `index.qmd`.
+- Convierte `scripts/99_run_all.R` en el único pipeline canónico de actualización.
+- Ejecuta el resumen operativo antes de alertas e histórico para mantener coherentes los recuentos FIRMS y los resúmenes territoriales.
+- Elimina la tolerancia silenciosa para fallos en resumen, alertas, histórico y validaciones; EFFIS continúa siendo opcional de forma explícita.
+- Añade control de concurrencia al workflow y publica también `assets/summary` mediante `git add -A` sobre los directorios de datos y salida.
+- Añade `scripts/11_check_published_assets.R`, que valida páginas, PNG de AEMET, GeoJSON de EFFIS y tamaño del HTML principal.
+- Corrige el desfase de un día en la tabla AEMET de `summary.qmd`.
+- Cambia EFFIS Burnt Areas a carga bajo demanda desde JavaScript, evitando incrustar miles de polígonos en el HTML.
+- Reduce EFFIS por defecto a 90 días, superficie mínima de 5 ha y simplificación geométrica de 100 m.
+- Elimina la copia duplicada `data/processed/effis_burnt_areas.geojson`; la geometría publicable reside en `assets/effis_ba/`.
+- Retira scripts de parche ya consolidados y la antigua página `aemet.qmd` no utilizada.
 
-## [0.6.3] - 2026-07-10
+## v0.5.38 - páginas secundarias sincronizadas
 
-### Añadido
-
-- Declarados `assets/aemet/**` y `assets/effis_ba/**` como recursos del proyecto Quarto.
-- Añadido `scripts/11_check_published_assets.R`.
-- Añadido control de concurrencia al workflow.
-- Añadida validación de:
-  - páginas HTML;
-  - PNG de AEMET;
-  - GeoJSON de EFFIS;
-  - tamaño del HTML principal.
-
-### Corregido
-
-- Corregido el fallo por el que las capas AEMET aparecían como rectángulos transparentes en GitHub Pages al no existir los PNG dentro de `docs/`.
-- Corregido el desfase de un día en la tabla AEMET de `summary.qmd`.
-- Corregida la coherencia entre el resumen FIRMS, las alertas y el histórico.
-- Eliminada la tolerancia silenciosa a fallos en los pasos críticos del pipeline.
-
-### Cambiado
-
-- `scripts/99_run_all.R` pasa a ser el único pipeline canónico de actualización.
-- El resumen operativo se genera antes que las alertas y el histórico.
-- `styles.css` se incorpora a la configuración HTML global.
-- Eliminados estilos duplicados de `index.qmd`.
-- La capa EFFIS Burnt Areas se carga bajo demanda desde JavaScript.
-- EFFIS utiliza por defecto:
-  - 90 días de ventana;
-  - 5 hectáreas de superficie mínima;
-  - 100 metros de simplificación geométrica.
-- La geometría EFFIS publicable se mantiene únicamente en `assets/effis_ba/`.
-- El workflow publica también `assets/summary`.
-
-### Eliminado
-
-- Eliminada la copia duplicada `data/processed/effis_burnt_areas.geojson`.
-- Retirados scripts de parche ya consolidados.
-- Retirada la antigua página `aemet.qmd` que ya no se utilizaba.
-
-## [0.5.38] - 2026-07-09
-
-### Añadido
-
-- Añadido `R/page_helpers.R` con utilidades compartidas para:
-  - leer catálogos;
-  - normalizar fechas;
-  - filtrar la última emisión disponible.
-
-### Corregido
-
-- Actualizadas `summary.qmd`, `report.qmd` y `history.qmd` para usar la lógica corregida de fechas AEMET.
-- El resumen y el informe dejan de mostrar capas AEMET antiguas salvo que continúen presentes en el catálogo como diagnóstico.
-- La página de evolución tolera históricos incompletos.
-- Los gráficos y tablas históricas solo se muestran cuando existen datos suficientes.
-- EFFIS se informa como desactivado o sin capa actual cuando no existe un `effis_layers.csv` publicable.
-
-## [0.1.0] - 2026-07-07
-
-### Añadido
-
-- Primera versión funcional del visor.
-- Sitio Quarto con mapa Leaflet.
-- Integración inicial de previsiones de peligro de incendios de AEMET.
-- Publicación mediante GitHub Pages.
-- Estructura inicial de scripts de descarga, preparación de recursos y renderizado.
-
-## Historial anterior y versiones intermedias
-
-Entre `0.1.0` y `0.5.38` se desarrollaron de forma incremental:
-
-- separación del mapa y el resumen operativo;
-- ampliación del tamaño y diseño del visor;
-- incorporación de límites administrativos;
-- integración de NASA FIRMS;
-- integración de Copernicus/EFFIS;
-- generación de resúmenes y alertas;
-- incorporación de histórico operativo;
-- búsqueda y tratamiento de fuentes AEMET clásicas;
-- correcciones de fechas, emisiones y horizontes;
-- mejoras progresivas del workflow de GitHub Actions.
-
-Las entradas detalladas de algunas versiones intermedias no estaban disponibles al reconstruir este fichero. No se han inventado números de versión ni fechas adicionales.
+- Actualiza las páginas `summary.qmd`, `report.qmd` y `history.qmd` para usar la lógica corregida de fechas AEMET.
+- Añade `R/page_helpers.R` con utilidades compartidas para leer catálogos, normalizar fechas y filtrar la última emisión.
+- El resumen y el informe ya no muestran capas AEMET antiguas salvo que sigan presentes en el catálogo como diagnóstico.
+- La página de evolución tolera históricos incompletos y muestra tablas/gráficos solo cuando hay datos suficientes.
+- EFFIS se informa como desactivado o sin capa actual si no hay `effis_layers.csv` publicable.
