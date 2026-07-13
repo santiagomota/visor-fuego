@@ -3,7 +3,7 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 4,12 * * *"
+    - cron: "30 2,10 * * *"
       timezone: "Europe/Madrid"
 
 permissions:
