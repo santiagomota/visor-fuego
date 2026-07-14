@@ -132,6 +132,35 @@ read_summary_provincias <- function() {
   ))
 }
 
+read_territorial_summary <- function() {
+  candidates <- c(
+    "data/processed/territorial_summary.json",
+    "assets/summary/territorial_summary.json"
+  )
+
+  for (path in candidates) {
+    if (file.exists(path) && file.info(path)$size > 2) {
+      out <- tryCatch(
+        jsonlite::fromJSON(path, simplifyVector = FALSE),
+        error = function(e) NULL
+      )
+      if (!is.null(out)) {
+        attr(out, "source_path") <- path
+        return(out)
+      }
+    }
+  }
+
+  out <- list(
+    generated_at_utc = NA_character_,
+    methodology = list(),
+    ccaa = list(),
+    provincias = list()
+  )
+  attr(out, "source_path") <- NA_character_
+  out
+}
+
 read_operational_alerts <- function() {
   read_csv_optional(c(
     "data/processed/operational_alerts.csv",
@@ -150,7 +179,14 @@ safe_value <- function(x, default = "—") {
   if (length(x) == 0 || is.na(x) || identical(x, "")) default else as.character(x)
 }
 
-add_admin_boundaries <- function(map, path, group, weight = 1) {
+add_admin_boundaries <- function(
+  map,
+  path,
+  group,
+  weight = 1,
+  colour = "#333333",
+  fill_opacity = 0.01
+) {
   if (!requireNamespace("sf", quietly = TRUE)) return(map)
   if (!file.exists(path) || file.info(path)$size == 0) return(map)
 
@@ -166,12 +202,19 @@ add_admin_boundaries <- function(map, path, group, weight = 1) {
     map,
     data = x,
     group = group,
-    color = "#333333",
+    layerId = ~paste(admin_level, admin_id, sep = ":"),
+    color = colour,
     weight = weight,
     opacity = 0.85,
-    fillOpacity = 0,
-    label = ~admin_name,
-    highlightOptions = highlightOptions(weight = weight + 1, bringToFront = TRUE)
+    fillColor = colour,
+    fillOpacity = fill_opacity,
+    label = ~paste0(admin_name, " · clic para consultar"),
+    highlightOptions = highlightOptions(
+      color = "#1676a3",
+      weight = weight + 1,
+      fillOpacity = 0.10,
+      bringToFront = TRUE
+    )
   )
 }
 
@@ -274,6 +317,14 @@ n_firms <- nrow(firms_data)
 overview_data <- read_dashboard_overview()
 summary_ccaa <- read_summary_ccaa()
 summary_provincias <- read_summary_provincias()
+territorial_data <- read_territorial_summary()
+territorial_source <- attr(territorial_data, "source_path")
+territorial_json <- jsonlite::toJSON(
+  territorial_data,
+  auto_unbox = TRUE,
+  null = "null",
+  na = "null"
+)
 alerts_data <- read_operational_alerts()
 alerts_summary <- read_alerts_summary()
 effis_ba_summary <- read_effis_ba_summary()
@@ -498,12 +549,26 @@ map <- add_effis_wms_layers(map)
 overlay_groups <- c(overlay_groups, effis_groups)
 
 map <- map |>
-  add_admin_boundaries("data/processed/admin_nuts2_ccaa.geojson", "CCAA (NUTS2)", weight = 1.2) |>
-  add_admin_boundaries("data/processed/admin_nuts3_provincias.geojson", "Provincias (NUTS3)", weight = 0.7)
+  add_admin_boundaries(
+    "data/processed/admin_nuts2_ccaa.geojson",
+    "CCAA (NUTS2)",
+    weight = 1.2,
+    colour = "#2b5d87",
+    fill_opacity = 0.015
+  ) |>
+  add_admin_boundaries(
+    "data/processed/admin_nuts3_provincias.geojson",
+    "Provincias (NUTS3)",
+    weight = 0.7,
+    colour = "#555555",
+    fill_opacity = 0.01
+  )
 overlay_groups <- c(overlay_groups, "CCAA (NUTS2)", "Provincias (NUTS3)")
 
+# Las CCAA quedan visibles para habilitar la consulta territorial directa.
+# Las provincias continúan siendo opcionales desde el control de capas.
 hidden_groups <- intersect(
-  c(effis_groups, "EFFIS Burnt Areas", "CCAA (NUTS2)", "Provincias (NUTS3)"),
+  c(effis_groups, "EFFIS Burnt Areas", "Provincias (NUTS3)"),
   unique(overlay_groups)
 )
 
@@ -550,6 +615,7 @@ function(el, x) {
   const layers = __LAYERS_JSON__;
   const effisBurntAreas = __EFFIS_BA_CONFIG__;
   const freshness = __FRESHNESS_CONFIG__;
+  const territorial = __TERRITORIAL_DATA__;
   const map = this;
 
   if (map.createPane && !map.getPane('aemetPane')) {
@@ -566,6 +632,11 @@ function(el, x) {
   let currentLayerIndex = 0;
   let currentLayerRequest = 0;
   let playbackTimer = null;
+  let selectedTerritory = null;
+  let selectedTerritoryLayer = null;
+  let territoryPanelRequest = 0;
+  const adminLayersByKey = new Map();
+  const aemetImageCache = new Map();
   const playbackIntervalMs = 1800;
 
   function escapeHtml(value) {
@@ -638,6 +709,7 @@ function(el, x) {
 
   map.on('overlayadd', function(event) {
     if (event && event.name === 'EFFIS Burnt Areas') addEffisBurntAreas();
+    if (event && event.layer) attachTerritoryLayer(event.layer);
   });
   map.on('overlayremove', function(event) {
     if (event && event.name === 'EFFIS Burnt Areas') removeEffisBurntAreas();
@@ -875,6 +947,364 @@ function(el, x) {
     container.innerHTML = html;
   }
 
+  function normaliseTerritoryLevel(value) {
+    const level = String(value || '').toLowerCase();
+    if (level === 'provincia' || level === 'provincias') return 'provincia';
+    return 'ccaa';
+  }
+
+  function territoryKey(level, adminId) {
+    return normaliseTerritoryLevel(level) + '|' + String(adminId || '');
+  }
+
+  function territoryRows(level) {
+    if (!territorial) return [];
+    return normaliseTerritoryLevel(level) === 'provincia'
+      ? (territorial.provincias || [])
+      : (territorial.ccaa || []);
+  }
+
+  function adminPropertiesFromLayer(layer) {
+    if (layer && layer.feature && layer.feature.properties) {
+      return layer.feature.properties;
+    }
+
+    const layerId = layer && layer.options ? String(layer.options.layerId || '') : '';
+    const parts = layerId.split(':');
+    if (parts.length >= 2) {
+      return {
+        admin_level: parts[0],
+        admin_id: parts.slice(1).join(':')
+      };
+    }
+
+    return null;
+  }
+
+  function findTerritoryRecord(properties) {
+    const p = properties || {};
+    const level = normaliseTerritoryLevel(p.admin_level);
+    const id = String(p.admin_id || p.NUTS_ID || '');
+    return territoryRows(level).find(row => String(row.admin_id || '') === id) || {
+      admin_level: level,
+      admin_id: id,
+      admin_name: p.admin_name || p.NUTS_NAME || id,
+      representative_lon: null,
+      representative_lat: null,
+      n_focos: 0,
+      n_ultimas_6h: 0,
+      n_ultimas_12h: 0,
+      n_ultimas_24h: 0,
+      n_ultimas_48h: 0,
+      frp_total_mw: 0,
+      frp_media_mw: 0,
+      frp_max_mw: 0,
+      n_effis_30d: 0,
+      effis_area_ha_30d: 0,
+      n_effis_90d: 0,
+      effis_area_ha_90d: 0,
+      alerta_operativa: 'sin actividad'
+    };
+  }
+
+  function numberValue(value, fallback) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : (fallback === undefined ? 0 : fallback);
+  }
+
+  function formatMetric(value, digits) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return '—';
+    return new Intl.NumberFormat('es-ES', {
+      minimumFractionDigits: digits || 0,
+      maximumFractionDigits: digits || 0
+    }).format(n);
+  }
+
+  function formatTerritoryDateTime(value) {
+    const date = parseUtcTimestamp(value);
+    if (!date) return 'Sin detecciones';
+    return date.toLocaleString('es-ES', {
+      timeZone: 'Europe/Madrid',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  function riskStatusClass(label) {
+    const value = String(label || '').toLowerCase();
+    if (value.includes('extremo') || value.includes('muy alto')) return 'risk-critical';
+    if (value.includes('alto')) return 'risk-high';
+    if (value.includes('moderado')) return 'risk-medium';
+    if (value.includes('bajo')) return 'risk-low';
+    return 'risk-unavailable';
+  }
+
+  function hexToRgb(hex) {
+    const value = String(hex || '').replace('#', '');
+    if (!/^[0-9a-fA-F]{6}$/.test(value)) return null;
+    return {
+      r: parseInt(value.slice(0, 2), 16),
+      g: parseInt(value.slice(2, 4), 16),
+      b: parseInt(value.slice(4, 6), 16)
+    };
+  }
+
+  function mercatorY(latitude) {
+    const bounded = Math.max(-85.05112878, Math.min(85.05112878, Number(latitude)));
+    const rad = bounded * Math.PI / 180;
+    return Math.log(Math.tan(Math.PI / 4 + rad / 2));
+  }
+
+  function loadAemetImage(url) {
+    if (aemetImageCache.has(url)) return aemetImageCache.get(url);
+
+    const promise = new Promise(function(resolve, reject) {
+      const image = new Image();
+      image.onload = function() {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.naturalWidth || image.width;
+          canvas.height = image.naturalHeight || image.height;
+          const context = canvas.getContext('2d', {willReadFrequently: true});
+          context.drawImage(image, 0, 0);
+          resolve({
+            width: canvas.width,
+            height: canvas.height,
+            context: context
+          });
+        } catch (error) {
+          reject(error);
+        }
+      };
+      image.onerror = function() { reject(new Error('No se pudo cargar la imagen AEMET')); };
+      image.src = url;
+    });
+
+    aemetImageCache.set(url, promise);
+    return promise;
+  }
+
+  function estimateAemetRisk(layer, territoryRecord) {
+    if (!layer || layer.layer_kind !== 'image' || !layer.url || !layer.bounds) {
+      return Promise.resolve({status: 'unavailable', label: 'No calculable'});
+    }
+
+    const lon = Number(territoryRecord && territoryRecord.representative_lon);
+    const lat = Number(territoryRecord && territoryRecord.representative_lat);
+    if (!Number.isFinite(lon) || !Number.isFinite(lat)) {
+      return Promise.resolve({status: 'unavailable', label: 'Sin punto representativo'});
+    }
+
+    const south = Number(layer.bounds[0][0]);
+    const west = Number(layer.bounds[0][1]);
+    const north = Number(layer.bounds[1][0]);
+    const east = Number(layer.bounds[1][1]);
+    if (lon < west || lon > east || lat < south || lat > north) {
+      return Promise.resolve({status: 'outside', label: 'Fuera del área de la capa'});
+    }
+
+    const colours = (layer.legend_colours || []).map(hexToRgb);
+    if (colours.length === 0 || colours.some(item => !item)) {
+      return Promise.resolve({status: 'unavailable', label: 'Leyenda no disponible'});
+    }
+
+    return loadAemetImage(layer.url).then(function(imageData) {
+      const xRatio = (lon - west) / (east - west);
+      const northY = mercatorY(north);
+      const southY = mercatorY(south);
+      const yRatio = (northY - mercatorY(lat)) / (northY - southY);
+      const x = Math.max(0, Math.min(imageData.width - 1, Math.round(xRatio * (imageData.width - 1))));
+      const y = Math.max(0, Math.min(imageData.height - 1, Math.round(yRatio * (imageData.height - 1))));
+      const radius = 5;
+      const x0 = Math.max(0, x - radius);
+      const y0 = Math.max(0, y - radius);
+      const width = Math.min(imageData.width - x0, radius * 2 + 1);
+      const height = Math.min(imageData.height - y0, radius * 2 + 1);
+      const pixels = imageData.context.getImageData(x0, y0, width, height).data;
+      const counts = new Array(colours.length).fill(0);
+
+      for (let i = 0; i < pixels.length; i += 4) {
+        if (pixels[i + 3] < 80) continue;
+        let bestIndex = -1;
+        let bestDistance = Infinity;
+        for (let j = 0; j < colours.length; j++) {
+          const dr = pixels[i] - colours[j].r;
+          const dg = pixels[i + 1] - colours[j].g;
+          const db = pixels[i + 2] - colours[j].b;
+          const distance = Math.sqrt(dr * dr + dg * dg + db * db);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestIndex = j;
+          }
+        }
+        if (bestIndex >= 0 && bestDistance <= 95) counts[bestIndex] += 1;
+      }
+
+      const bestCount = Math.max.apply(null, counts);
+      if (!Number.isFinite(bestCount) || bestCount <= 0) {
+        return {status: 'unavailable', label: 'Sin dato en el punto'};
+      }
+
+      const index = counts.indexOf(bestCount);
+      return {
+        status: 'ok',
+        label: (layer.legend_labels || [])[index] || ('Nivel ' + (index + 1)),
+        colour: (layer.legend_colours || [])[index] || '#888888',
+        samples: bestCount
+      };
+    }).catch(function(error) {
+      console.error('No se pudo estimar el nivel AEMET territorial:', error);
+      return {status: 'unavailable', label: 'No disponible'};
+    });
+  }
+
+  function resetSelectedTerritoryStyle() {
+    if (!selectedTerritoryLayer || typeof selectedTerritoryLayer.setStyle !== 'function') return;
+    const p = adminPropertiesFromLayer(selectedTerritoryLayer) || {};
+    const province = normaliseTerritoryLevel(p.admin_level) === 'provincia';
+    selectedTerritoryLayer.setStyle({
+      color: province ? '#555555' : '#2b5d87',
+      weight: province ? 0.7 : 1.2,
+      fillColor: province ? '#555555' : '#2b5d87',
+      fillOpacity: province ? 0.01 : 0.015
+    });
+  }
+
+  function clearTerritorySelection() {
+    resetSelectedTerritoryStyle();
+    selectedTerritory = null;
+    selectedTerritoryLayer = null;
+    territoryPanelRequest += 1;
+    const panel = document.getElementById('territory-panel');
+    if (panel) {
+      panel.classList.add('is-empty');
+      panel.innerHTML =
+        '<div class="territory-panel-header"><strong>Consulta territorial</strong></div>' +
+        '<div class="territory-panel-empty">Haz clic en una comunidad autónoma. Activa <em>Provincias (NUTS3)</em> para consultar una provincia.</div>';
+    }
+  }
+
+  function renderTerritoryPanel() {
+    const panel = document.getElementById('territory-panel');
+    if (!panel || !selectedTerritory) return;
+
+    const record = selectedTerritory;
+    const layer = layers[currentLayerIndex];
+    const requestId = ++territoryPanelRequest;
+    const levelLabel = normaliseTerritoryLevel(record.admin_level) === 'provincia' ? 'Provincia' : 'Comunidad autónoma';
+    const parent = record.parent_admin_name ? (' · ' + escapeHtml(record.parent_admin_name)) : '';
+    const alertLevel = String(record.alerta_operativa || 'sin actividad');
+    const latestDetection = formatTerritoryDateTime(record.ultima_deteccion_utc);
+    const validDate = layer ? (layer.valid_date || layer.date || '') : '';
+
+    panel.classList.remove('is-empty');
+    panel.innerHTML =
+      '<div class="territory-panel-header">' +
+        '<div><span class="territory-level">' + escapeHtml(levelLabel) + parent + '</span>' +
+        '<strong>' + escapeHtml(record.admin_name || record.admin_id || 'Territorio') + '</strong></div>' +
+        '<button id="territory-panel-close" class="territory-close" type="button" aria-label="Cerrar panel">&#215;</button>' +
+      '</div>' +
+      '<div class="territory-section territory-aemet">' +
+        '<div class="territory-section-title">AEMET · ' + escapeHtml(formatAemetDate(validDate)) + '</div>' +
+        '<div id="territory-aemet-risk" class="territory-risk risk-loading"><span class="territory-risk-swatch"></span><span>Calculando nivel…</span></div>' +
+        '<small>Estimación en un punto representativo interior del territorio.</small>' +
+      '</div>' +
+      '<div class="territory-section">' +
+        '<div class="territory-section-title">NASA FIRMS</div>' +
+        '<div class="territory-window-grid">' +
+          '<div><strong>' + formatMetric(record.n_ultimas_6h) + '</strong><span>6 h</span></div>' +
+          '<div><strong>' + formatMetric(record.n_ultimas_12h) + '</strong><span>12 h</span></div>' +
+          '<div><strong>' + formatMetric(record.n_ultimas_24h) + '</strong><span>24 h</span></div>' +
+          '<div><strong>' + formatMetric(record.n_ultimas_48h) + '</strong><span>48 h</span></div>' +
+        '</div>' +
+        '<div class="territory-metrics">' +
+          '<span>FRP máx. <strong>' + formatMetric(record.frp_max_mw, 1) + ' MW</strong></span>' +
+          '<span>FRP media <strong>' + formatMetric(record.frp_media_mw, 1) + ' MW</strong></span>' +
+        '</div>' +
+        '<div class="territory-latest">Última detección: <strong>' + escapeHtml(latestDetection) + '</strong></div>' +
+        '<div class="territory-alert territory-alert-' + escapeHtml(alertLevel.replace(/[^a-záéíóúüñ]/gi, '-').toLowerCase()) + '">Prioridad FIRMS: ' + escapeHtml(alertLevel) + '</div>' +
+      '</div>' +
+      '<div class="territory-section">' +
+        '<div class="territory-section-title">EFFIS · áreas quemadas</div>' +
+        '<div class="territory-effis-grid">' +
+          '<div><strong>' + formatMetric(record.effis_area_ha_30d, 1) + ' ha</strong><span>' + formatMetric(record.n_effis_30d) + ' perímetros · 30 días</span></div>' +
+          '<div><strong>' + formatMetric(record.effis_area_ha_90d, 1) + ' ha</strong><span>' + formatMetric(record.n_effis_90d) + ' perímetros · 90 días</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="territory-actions">' +
+        '<button id="territory-zoom" type="button">Centrar y ampliar</button>' +
+      '</div>';
+
+    const close = document.getElementById('territory-panel-close');
+    if (close) close.addEventListener('click', clearTerritorySelection);
+    const zoom = document.getElementById('territory-zoom');
+    if (zoom && selectedTerritoryLayer) {
+      zoom.addEventListener('click', function() {
+        try { map.fitBounds(selectedTerritoryLayer.getBounds(), {padding: [24, 24]}); } catch (e) {}
+      });
+    }
+
+    estimateAemetRisk(layer, record).then(function(result) {
+      if (requestId !== territoryPanelRequest) return;
+      const risk = document.getElementById('territory-aemet-risk');
+      if (!risk) return;
+      risk.className = 'territory-risk ' + riskStatusClass(result.label);
+      const colour = result.colour || '#8a8a8a';
+      risk.innerHTML = '<span class="territory-risk-swatch" style="background:' + escapeHtml(colour) + '"></span><span>' + escapeHtml(result.label) + '</span>';
+    });
+  }
+
+  function selectTerritory(layer) {
+    const properties = adminPropertiesFromLayer(layer);
+    if (!layer || !properties) return;
+    resetSelectedTerritoryStyle();
+    selectedTerritoryLayer = layer;
+    selectedTerritory = findTerritoryRecord(properties);
+    if (typeof layer.setStyle === 'function') {
+      layer.setStyle({
+        color: '#005b83',
+        weight: 2.6,
+        fillColor: '#37a5cf',
+        fillOpacity: 0.16
+      });
+      if (typeof layer.bringToFront === 'function') layer.bringToFront();
+    }
+    renderTerritoryPanel();
+  }
+
+  function attachTerritoryLayer(layer) {
+    if (!layer) return;
+
+    const properties = adminPropertiesFromLayer(layer);
+    if (!properties && typeof layer.eachLayer === 'function') {
+      layer.eachLayer(attachTerritoryLayer);
+      return;
+    }
+    if (!properties || !properties.admin_id || !properties.admin_level) return;
+
+    const key = territoryKey(properties.admin_level, properties.admin_id);
+    adminLayersByKey.set(key, layer);
+    if (layer.__territoryInteractionAttached) return;
+
+    layer.__territoryInteractionAttached = true;
+    layer.on('click', function(event) {
+      if (event && event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent);
+      selectTerritory(layer);
+    });
+  }
+
+  function attachTerritorialInteractions() {
+    map.eachLayer(attachTerritoryLayer);
+  }
+
+  function refreshTerritoryPanel() {
+    if (selectedTerritory) renderTerritoryPanel();
+  }
+
   function colourForRisk(v, layer) {
     if (v === null || v === undefined || v === '') return '#888888';
     const n = parseInt(v);
@@ -948,11 +1378,14 @@ function(el, x) {
               lyr.bindTooltip('Nivel: ' + (v === null ? 'sin dato' : v));
             }
           }).addTo(map);
-          try { map.fitBounds(currentOverlay.getBounds()); } catch(e) {
-            try { map.fitBounds(layer.bounds); } catch(e2) {}
+          if (!selectedTerritory) {
+            try { map.fitBounds(currentOverlay.getBounds()); } catch(e) {
+              try { map.fitBounds(layer.bounds); } catch(e2) {}
+            }
           }
           updateLegend(layer);
           updateTimelineControls();
+          refreshTerritoryPanel();
         })
         .catch(error => {
           if (requestId === currentLayerRequest) console.error('No se pudo cargar la capa AEMET:', error);
@@ -963,9 +1396,12 @@ function(el, x) {
         interactive: false,
         pane: 'aemetPane'
       }).addTo(map);
-      try { map.fitBounds(layer.bounds); } catch(e) {}
+      if (!selectedTerritory) {
+        try { map.fitBounds(layer.bounds); } catch(e) {}
+      }
       updateLegend(layer);
       updateTimelineControls();
+      refreshTerritoryPanel();
     }
   }
 
@@ -1001,6 +1437,19 @@ function(el, x) {
     return div;
   };
   panel.addTo(map);
+
+  const territoryPanel = L.control({position: 'topleft'});
+  territoryPanel.onAdd = function(map) {
+    const div = L.DomUtil.create('div', 'territory-panel is-empty');
+    div.id = 'territory-panel';
+    div.innerHTML =
+      '<div class="territory-panel-header"><strong>Consulta territorial</strong></div>' +
+      '<div class="territory-panel-empty">Haz clic en una comunidad autónoma. Activa <em>Provincias (NUTS3)</em> para consultar una provincia.</div>';
+    L.DomEvent.disableClickPropagation(div);
+    L.DomEvent.disableScrollPropagation(div);
+    return div;
+  };
+  territoryPanel.addTo(map);
 
   const legend = L.control({position: 'bottomright'});
   legend.onAdd = function(map) {
@@ -1051,6 +1500,7 @@ function(el, x) {
     }
   }
 
+  attachTerritorialInteractions();
   updateFreshnessIndicator();
   window.setInterval(updateFreshnessIndicator, 60000);
 }
@@ -1065,6 +1515,7 @@ replace_js_token <- function(text, token, value) {
 js <- replace_js_token(js_template, "__LAYERS_JSON__", layers_json)
 js <- replace_js_token(js, "__EFFIS_BA_CONFIG__", effis_ba_config_json)
 js <- replace_js_token(js, "__FRESHNESS_CONFIG__", freshness_config_json)
+js <- replace_js_token(js, "__TERRITORIAL_DATA__", territorial_json)
 htmlwidgets::onRender(map, js)
 ```
 

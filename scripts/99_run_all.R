@@ -42,12 +42,14 @@ if (update_admin) {
   message("4/11 Límites administrativos ya disponibles; se omite la descarga")
 }
 
-run_script(5, total, "Construyendo resumen operativo", "scripts/07_build_operational_summary.R")
-run_script(6, total, "Construyendo alertas operativas", "scripts/08_build_operational_alerts.R")
-run_script(7, total, "Actualizando histórico del dashboard", "scripts/09_update_dashboard_history.R")
-run_script(8, total, "Descargando EFFIS Burnt Areas", "scripts/29_download_effis_burnt_areas.R", optional = effis_optional)
-run_script(9, total, "Preparando EFFIS Burnt Areas", "scripts/30_prepare_effis_burnt_areas_assets.R", optional = effis_optional)
+# EFFIS se actualiza antes del resumen territorial para que las superficies
+# mostradas en el panel correspondan a la misma ejecución del workflow.
+run_script(5, total, "Descargando EFFIS Burnt Areas", "scripts/29_download_effis_burnt_areas.R", optional = effis_optional)
+run_script(6, total, "Preparando EFFIS Burnt Areas", "scripts/30_prepare_effis_burnt_areas_assets.R", optional = effis_optional)
+run_script(7, total, "Construyendo resumen operativo y territorial", "scripts/07_build_operational_summary.R")
+run_script(8, total, "Construyendo alertas operativas", "scripts/08_build_operational_alerts.R")
+run_script(9, total, "Actualizando histórico del dashboard", "scripts/09_update_dashboard_history.R")
 run_script(10, total, "Comprobando entradas del dashboard", "scripts/04_check_dashboard_inputs.R")
 run_script(11, total, "Validando fechas AEMET", "scripts/24_check_aemet_valid_dates.R")
 
-message("Pipeline v0.6.8 completado")
+message("Pipeline v0.6.9 completado")

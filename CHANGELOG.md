@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.6.9 - panel territorial interactivo
+
+- Añade un panel lateral al pulsar sobre límites NUTS2 o NUTS3.
+- Mantiene las comunidades autónomas visibles por defecto y conserva las provincias como capa opcional.
+- Publica resúmenes FIRMS completos para 6, 12, 24 y 48 horas, con FRP total, media y máxima.
+- Incorpora recuentos y superficie EFFIS de los últimos 30 y 90 días por territorio.
+- Calcula puntos interiores representativos para las 19 CCAA y 59 provincias.
+- Estima en el navegador el nivel AEMET del territorio seleccionado mediante muestreo del PNG georreferenciado y comparación con la leyenda oficial de colores.
+- Actualiza el valor AEMET del panel cuando cambia la fecha, el área o el producto seleccionado.
+- Añade selección visual, cierre del panel y botón para centrar y ampliar el territorio.
+- Genera `territorial_summary.json` y sus versiones CSV en `data/processed` y `assets/summary`.
+- Reordena `scripts/99_run_all.R` para actualizar EFFIS antes de construir el resumen territorial.
+
 ## v0.6.8 - navegación temporal y actualidad de datos
 
 - Añade botones anterior y siguiente para recorrer los días AEMET dentro de la misma área, tipo de producto y emisión.

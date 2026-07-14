@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-
+<html lang="es" xml:lang="es" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta charset="utf-8"/>
+<meta content="quarto-1.9.38" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
 <title>Copernicus / EFFIS – Visor fuego</title>
 <style>
 /* Default styles provided by pandoc.
@@ -24,25 +21,23 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 </style>
-
-
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
+<meta content="./" name="quarto:offset"/>
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet"/>
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-bba5ebae505b5c03f3f0d8040a416a6b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
+<link append-hash="true" data-mode="light" href="site_libs/bootstrap/bootstrap-bba5ebae505b5c03f3f0d8040a416a6b.min.css" id="quarto-bootstrap" rel="stylesheet"/>
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,137 +66,117 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-
-
-<link rel="stylesheet" href="styles.css">
 </head>
-
 <body class="nav-fixed quarto-light">
-
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Visor fuego</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="Buscar"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Mapa</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./summary.html"> 
-<span class="menu-text">Resumen</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./report.html"> 
-<span class="menu-text">Informe</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./history.html"> 
-<span class="menu-text">Evolución</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./copernicus.html" aria-current="page"> 
-<span class="menu-text">Copernicus</span></a>
-  </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/santiagomota/visor-fuego"> <i class="bi bi-github" role="img" aria-label="GitHub">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-</ul>
-          </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
+<header class="headroom fixed-top" id="quarto-header">
+<nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+<div class="navbar-container container-fluid">
+<div class="navbar-brand-container mx-auto">
+<a class="navbar-brand" href="./index.html">
+<span class="navbar-title">Visor fuego</span>
+</a>
 </div>
-      </div> <!-- /container-fluid -->
-    </nav>
+<div class="" id="quarto-search" title="Buscar"></div>
+<button aria-controls="navbarCollapse" aria-expanded="false" aria-label="Navegación de palanca" class="navbar-toggler" data-bs-target="#navbarCollapse" data-bs-toggle="collapse" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }" role="menu" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarCollapse">
+<ul class="navbar-nav navbar-nav-scroll me-auto">
+<li class="nav-item">
+<a class="nav-link" href="./index.html">
+<span class="menu-text">Mapa</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="./summary.html">
+<span class="menu-text">Resumen</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="./report.html">
+<span class="menu-text">Informe</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="./history.html">
+<span class="menu-text">Evolución</span></a>
+</li>
+<li class="nav-item">
+<a aria-current="page" class="nav-link active" href="./copernicus.html">
+<span class="menu-text">Copernicus</span></a>
+</li>
+</ul>
+<ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item compact">
+<a class="nav-link" href="https://github.com/santiagomota/visor-fuego"> <i aria-label="GitHub" class="bi bi-github" role="img">
+</i>
+<span class="menu-text"></span></a>
+</li>
+</ul>
+</div> <!-- /navcollapse -->
+<div class="quarto-navbar-tools">
+</div>
+</div> <!-- /container-fluid -->
+</nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div class="quarto-container page-columns page-rows-contents page-layout-full page-navbar" id="quarto-content">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">En esta página</h2>
-   
-  <ul class="collapse">
-  <li><a href="#estado" id="toc-estado" class="nav-link active" data-scroll-target="#estado">Estado</a></li>
-  <li><a href="#fuente" id="toc-fuente" class="nav-link" data-scroll-target="#fuente">Fuente</a></li>
-  <li><a href="#ficheros-publicados" id="toc-ficheros-publicados" class="nav-link" data-scroll-target="#ficheros-publicados">Ficheros publicados</a></li>
-  <li><a href="#nota-metodológica" id="toc-nota-metodológica" class="nav-link" data-scroll-target="#nota-metodológica">Nota metodológica</a></li>
-  </ul>
-<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/santiagomota/visor-fuego/blob/main/copernicus.qmd" class="toc-action"><i class="bi bi-github"></i>Ver el código</a></li><li><a href="https://github.com/santiagomota/visor-fuego/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
-    </div>
+<div class="sidebar margin-sidebar" id="quarto-margin-sidebar">
+<nav class="toc-active" id="TOC" role="doc-toc">
+<h2 id="toc-title">En esta página</h2>
+<ul class="collapse">
+<li><a class="nav-link active" data-scroll-target="#estado" href="#estado" id="toc-estado">Estado</a></li>
+<li><a class="nav-link" data-scroll-target="#fuente" href="#fuente" id="toc-fuente">Fuente</a></li>
+<li><a class="nav-link" data-scroll-target="#ficheros-publicados" href="#ficheros-publicados" id="toc-ficheros-publicados">Ficheros publicados</a></li>
+<li><a class="nav-link" data-scroll-target="#nota-metodológica" href="#nota-metodológica" id="toc-nota-metodológica">Nota metodológica</a></li>
+</ul>
+<div class="toc-actions"><ul class="collapse"><li><a class="toc-action" href="https://github.com/santiagomota/visor-fuego/blob/main/copernicus.qmd"><i class="bi bi-github"></i>Ver el código</a></li><li><a class="toc-action" href="https://github.com/santiagomota/visor-fuego/issues/new"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
+</div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
+<header class="quarto-title-block default" id="title-block-header">
 <div class="quarto-title">
 <h1 class="title">Copernicus / EFFIS</h1>
 </div>
-
-
-
 <div class="quarto-title-meta column-page-left">
-
-    
-  
-    
-  </div>
-  
-
-
+</div>
 </header>
-
-
-<section id="estado" class="level2">
+<section class="level2" id="estado">
 <h2 class="anchored" data-anchor-id="estado">Estado</h2>
 <div class="grid">
 <div class="g-col-12 g-col-md-3">
-<p><strong>Áreas quemadas</strong><br>
-402</p>
+<p><strong>Áreas quemadas</strong><br/>
+404</p>
 </div>
 <div class="g-col-12 g-col-md-3">
-<p><strong>Superficie total estimada</strong><br>
-69.204 ha</p>
+<p><strong>Superficie total estimada</strong><br/>
+66.591 ha</p>
 </div>
 <div class="g-col-12 g-col-md-3">
-<p><strong>Fecha más reciente</strong><br>
-2026-07-13</p>
+<p><strong>Fecha más reciente</strong><br/>
+2026-07-09</p>
 </div>
 <div class="g-col-12 g-col-md-3">
-<p><strong>Última generación</strong><br>
-2026-07-14 07:04:35</p>
+<p><strong>Última generación</strong><br/>
+2026-07-10 17:05:27</p>
 </div>
 </div>
 </section>
-<section id="fuente" class="level2">
+<section class="level2" id="fuente">
 <h2 class="anchored" data-anchor-id="fuente">Fuente</h2>
-<p>Esta página resume la integración de <strong>Copernicus/EFFIS Burnt Areas</strong>. En el mapa principal, la geometría se descarga únicamente cuando el usuario activa la capa, evitando incrustar todo el GeoJSON dentro del HTML.</p>
+<p>Esta página resume la integración de <strong>Copernicus/EFFIS Burnt Areas</strong>. En el mapa principal, la geometría se descarga únicamente cuando se activa la capa.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 24%">
-<col style="width: 9%">
-<col style="width: 9%">
-<col style="width: 9%">
-<col style="width: 11%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 10%">
-<col style="width: 9%">
+<col style="width: 27%"/>
+<col style="width: 10%"/>
+<col style="width: 10%"/>
+<col style="width: 10%"/>
+<col style="width: 13%"/>
+<col style="width: 8%"/>
+<col style="width: 8%"/>
+<col style="width: 11%"/>
 </colgroup>
 <thead>
 <tr class="header">
@@ -213,27 +188,25 @@ ul.task-list li input[type="checkbox"] {
 <th style="text-align: right;">bbox</th>
 <th style="text-align: right;">max_days</th>
 <th style="text-align: right;">min_area_ha</th>
-<th style="text-align: right;">simplify_m</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Copernicus/EFFIS Burnt Areas</td>
-<td style="text-align: right;">402</td>
-<td style="text-align: left;">2026-04-15</td>
-<td style="text-align: left;">2026-07-13</td>
-<td style="text-align: right;">69204</td>
-<td style="text-align: right;">-1927545</td>
+<td style="text-align: right;">404</td>
+<td style="text-align: left;">2026-04-11</td>
+<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: right;">66591</td>
+<td style="text-align: left;">-19,27,5,44.6</td>
 <td style="text-align: right;">90</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: right;">100</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
-<section id="ficheros-publicados" class="level2">
+<section class="level2" id="ficheros-publicados">
 <h2 class="anchored" data-anchor-id="ficheros-publicados">Ficheros publicados</h2>
 <div class="cell">
 <div class="cell-output-display">
@@ -247,16 +220,17 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">assets/effis_ba/effis_burnt_areas.geojson</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">316.7</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">data/processed/effis_burnt_areas_summary.csv</td>
 <td style="text-align: left;">TRUE</td>
 <td style="text-align: right;">0.3</td>
 </tr>
+
 <tr class="even">
-<td style="text-align: left;">assets/effis_ba/effis_burnt_areas.geojson</td>
-<td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">334.0</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">assets/effis_ba/summary.json</td>
 <td style="text-align: left;">TRUE</td>
 <td style="text-align: right;">0.4</td>
@@ -266,19 +240,15 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </section>
-<section id="nota-metodológica" class="level2">
+<section class="level2" id="nota-metodológica">
 <h2 class="anchored" data-anchor-id="nota-metodológica">Nota metodológica</h2>
 <ul>
 <li><strong>AEMET</strong> sigue siendo la capa principal de peligro previsto para España.</li>
 <li><strong>NASA FIRMS</strong> muestra detecciones térmicas recientes.</li>
 <li><strong>Copernicus/EFFIS Burnt Areas</strong> aporta perímetros o áreas quemadas como contexto de daños y evolución.</li>
-<li>Para limitar el volumen publicado, se filtran por antigüedad y superficie y se simplifica la geometría en una proyección métrica.</li>
 <li><strong>EFFIS FWI WMS</strong> se mantiene como diagnóstico, pero no se publica como capa operativa mientras no haya una combinación actual de <code>LAYER</code> + <code>TIME</code> con contenido visual fiable.</li>
 </ul>
-
-
 </section>
-
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -687,21 +657,17 @@ ul.task-list li input[type="checkbox"] {
   </script>
 </div> <!-- /content -->
 <footer class="footer">
-  <div class="nav-footer">
-    <div class="nav-footer-left">
+<div class="nav-footer">
+<div class="nav-footer-left">
 <p>Datos: AEMET, NASA FIRMS, Copernicus/EFFIS y Eurostat/GISCO</p>
-</div>   
-    <div class="nav-footer-center">
-      &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/santiagomota/visor-fuego/blob/main/copernicus.qmd" class="toc-action"><i class="bi bi-github"></i>Ver el código</a></li><li><a href="https://github.com/santiagomota/visor-fuego/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div>
-    <div class="nav-footer-right">
+</div>
+<div class="nav-footer-center">
+       
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a class="toc-action" href="https://github.com/santiagomota/visor-fuego/blob/main/copernicus.qmd"><i class="bi bi-github"></i>Ver el código</a></li><li><a class="toc-action" href="https://github.com/santiagomota/visor-fuego/issues/new"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div>
+<div class="nav-footer-right">
 <p>Generado con Quarto</p>
 </div>
-  </div>
+</div>
 </footer>
-
-
-
-
 <script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

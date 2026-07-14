@@ -20,3 +20,8 @@
 Thumbs.db
 
 **/*.quarto_ipynb
+
+# Resumen territorial publicado y necesario para el panel interactivo
+!/data/processed/territorial_summary.json
+!/data/processed/territorial_summary_ccaa.csv
+!/data/processed/territorial_summary_provincias.csv

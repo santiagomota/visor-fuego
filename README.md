@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.8: navegación temporal y actualidad de datos
+## v0.6.9: panel territorial interactivo
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,18 +9,20 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.8
+### Cambios principales de v0.6.9
 
-- Añade botones para avanzar y retroceder entre los días de una misma serie AEMET.
-- Incorpora reproducción automática y pausa de los ocho horizontes temporales.
-- Mantiene sincronizados el selector, la leyenda, la capa del mapa y el indicador de posición.
-- Muestra el día de la semana y la fecha completa en español en el selector y la leyenda AEMET.
-- Añade indicadores de actualidad independientes para AEMET, NASA FIRMS y EFFIS.
-- Actualiza los tiempos relativos cada minuto y muestra la fecha exacta mediante ayuda contextual.
-- Usa estados verde, ámbar, rojo y gris para distinguir datos recientes, con retraso, antiguos o no disponibles.
-  - AEMET: verde si la emisión es de hoy, ámbar si es de ayer y rojo si es anterior.
-  - FIRMS: verde hasta 6 horas, ámbar hasta 24 horas y rojo por encima de 24 horas.
-  - EFFIS: verde hasta 24 horas, ámbar hasta 72 horas y rojo por encima de 72 horas.
+- Añade un panel territorial al pulsar sobre una comunidad autónoma o provincia.
+- Mantiene las CCAA visibles por defecto con un contorno discreto; las provincias se activan desde el control de capas.
+- Muestra detecciones FIRMS en las últimas 6, 12, 24 y 48 horas.
+- Incluye FRP máxima y media, última detección y prioridad FIRMS del territorio.
+- Resume los perímetros y la superficie quemada EFFIS de los últimos 30 y 90 días.
+- Estima el nivel AEMET para la fecha seleccionada mediante un punto representativo interior de cada territorio.
+- Actualiza automáticamente el nivel territorial AEMET al navegar entre días o reproducir la secuencia.
+- Permite centrar y ampliar el mapa sobre el territorio seleccionado.
+- Publica resúmenes completos para las 19 unidades NUTS2 y las 59 unidades NUTS3, incluidas las que no tienen actividad reciente.
+- Reordena el pipeline para preparar EFFIS antes del resumen territorial, garantizando que todos los indicadores procedan de la misma ejecución.
+
+La estimación territorial AEMET es orientativa: se obtiene del color del raster en un punto interior representativo y no equivale al máximo ni al promedio de toda la superficie del territorio.
 
 Se mantienen las mejoras anteriores:
 
