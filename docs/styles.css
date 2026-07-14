@@ -276,3 +276,244 @@
     grid-template-columns: 36px 36px 36px 1fr;
   }
 }
+
+/* Panel territorial interactivo v0.6.9 */
+.territory-panel {
+  width: 330px;
+  max-width: min(330px, 78vw);
+  max-height: calc(84vh - 80px);
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.34);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: #222;
+}
+
+.territory-panel.is-empty {
+  width: 280px;
+}
+
+.territory-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #d8dde2;
+  background: #f3f7fa;
+  border-radius: 8px 8px 0 0;
+}
+
+.territory-panel-header strong {
+  display: block;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.territory-level {
+  display: block;
+  margin-bottom: 2px;
+  color: #5d6873;
+  font-size: 0.75rem;
+}
+
+.territory-close {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #45515c;
+  font-size: 22px;
+  line-height: 26px;
+  cursor: pointer;
+}
+
+.territory-close:hover,
+.territory-close:focus-visible {
+  background: #dde8ef;
+  color: #123c55;
+}
+
+.territory-panel-empty {
+  padding: 10px 12px;
+  color: #4e5963;
+}
+
+.territory-section {
+  padding: 9px 12px;
+  border-bottom: 1px solid #e1e5e8;
+}
+
+.territory-section-title {
+  margin-bottom: 6px;
+  color: #34434f;
+  font-weight: 700;
+}
+
+.territory-section small {
+  display: block;
+  margin-top: 5px;
+  color: #66727c;
+  font-size: 0.72rem;
+}
+
+.territory-risk {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 31px;
+  padding: 6px 8px;
+  border: 1px solid #d7dde1;
+  border-radius: 5px;
+  background: #f7f8f9;
+  font-weight: 700;
+}
+
+.territory-risk-swatch {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  background: #9aa0a6;
+}
+
+.risk-critical { border-color: #9b1c1c; background: #fff0f0; }
+.risk-high { border-color: #d46b1f; background: #fff5ec; }
+.risk-medium { border-color: #c49a00; background: #fffbea; }
+.risk-low { border-color: #4e91b5; background: #eef8fd; }
+.risk-loading,
+.risk-unavailable { color: #626d75; }
+
+.territory-window-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.territory-window-grid > div {
+  padding: 5px 3px;
+  border: 1px solid #dfe4e7;
+  border-radius: 5px;
+  background: #f8fafb;
+  text-align: center;
+}
+
+.territory-window-grid strong,
+.territory-window-grid span {
+  display: block;
+}
+
+.territory-window-grid strong {
+  font-size: 1.05rem;
+}
+
+.territory-window-grid span {
+  color: #65717a;
+  font-size: 0.7rem;
+}
+
+.territory-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.territory-metrics span {
+  padding: 5px 6px;
+  border-radius: 4px;
+  background: #f3f5f6;
+}
+
+.territory-metrics strong {
+  display: block;
+}
+
+.territory-latest {
+  margin-top: 7px;
+  color: #4b5760;
+}
+
+.territory-alert {
+  margin-top: 6px;
+  padding: 4px 7px;
+  border-left: 4px solid #8a8a8a;
+  background: #f5f5f5;
+  text-transform: capitalize;
+}
+
+.territory-alert-alta {
+  border-left-color: #7b3294;
+  background: #f7eef9;
+}
+
+.territory-alert-media {
+  border-left-color: #d7191c;
+  background: #fff0f0;
+}
+
+.territory-alert-seguimiento {
+  border-left-color: #f0a029;
+  background: #fff7e9;
+}
+
+.territory-effis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.territory-effis-grid > div {
+  padding: 6px 7px;
+  border: 1px solid #e0d7e8;
+  border-radius: 5px;
+  background: #faf7fc;
+}
+
+.territory-effis-grid strong,
+.territory-effis-grid span {
+  display: block;
+}
+
+.territory-effis-grid span {
+  margin-top: 2px;
+  color: #686071;
+  font-size: 0.7rem;
+}
+
+.territory-actions {
+  padding: 8px 12px 10px;
+}
+
+.territory-actions button {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #4d7892;
+  border-radius: 5px;
+  background: #edf6fb;
+  color: #214e68;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.territory-actions button:hover,
+.territory-actions button:focus-visible {
+  background: #dceff8;
+}
+
+@media (max-width: 760px) {
+  .territory-panel {
+    width: min(320px, 80vw);
+    max-height: 56vh;
+  }
+
+  .territory-panel.is-empty {
+    width: min(270px, 76vw);
+  }
+}
