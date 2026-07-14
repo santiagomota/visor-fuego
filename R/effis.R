@@ -171,7 +171,7 @@ effis_fetch_capabilities <- function(base_url, version = "1.1.1", out_dir = "dat
   resp <- tryCatch(
     httr2::request(base_url) |>
       httr2::req_url_query(SERVICE = "wms", REQUEST = "GetCapabilities", VERSION = version) |>
-      httr2::req_user_agent("visor-fuego/0.6.9") |>
+      httr2::req_user_agent("visor-fuego/0.6.10") |>
       httr2::req_timeout(120) |>
       httr2::req_perform(),
     error = function(e) e
@@ -463,7 +463,7 @@ probe_effis_getmap_row <- function(row, out_dir = "data/raw/effis") {
   # Usamos la URL ya construida para evitar que httr2 re-codifique las comas de BBOX.
   resp <- tryCatch(
     httr2::request(url) |>
-      httr2::req_user_agent("visor-fuego/0.6.9") |>
+      httr2::req_user_agent("visor-fuego/0.6.10") |>
       httr2::req_timeout(120) |>
       httr2::req_perform(),
     error = function(e) e

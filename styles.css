@@ -1,3 +1,50 @@
+/* Diseño panorámico de la página Mapa v0.6.10.
+   En escritorio se elimina la columna reservada al TOC y se aprovecha casi
+   todo el ancho de la ventana. En móvil se conserva el flujo normal. */
+@media (min-width: 992px) {
+  body:has(section#mapa) #quarto-content > main.content {
+    grid-column: screen-start-inset / screen-end-inset;
+  }
+}
+
+body:has(section#mapa) #title-block-header {
+  margin-top: 0.45rem;
+  margin-bottom: 0.2rem;
+}
+
+body:has(section#mapa) #title-block-header h1.title {
+  margin-bottom: 0.1rem;
+  font-size: clamp(1.55rem, 2vw, 2rem);
+}
+
+body:has(section#mapa) #title-block-header .subtitle {
+  margin-top: 0;
+  margin-bottom: 0.15rem;
+  font-size: clamp(0.9rem, 1.15vw, 1.05rem);
+}
+
+body:has(section#mapa) section#mapa > h2 {
+  margin-top: 0.15rem;
+  margin-bottom: 0.35rem;
+  font-size: 1.2rem;
+}
+
+body:has(section#mapa) section#mapa .cell {
+  margin-bottom: 0.5rem;
+}
+
+body:has(section#mapa) .leaflet.html-widget {
+  width: 100% !important;
+  border: 1px solid rgba(55, 65, 75, 0.18);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+body:has(section#mapa) .callout-note {
+  margin-top: 0.65rem;
+}
+
 .quarto-title-block .quarto-title-banner {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -125,15 +172,21 @@
   font-size: 0.78rem;
 }
 
-/* Mapa principal más grande: el widget usa height="84vh" desde index.qmd;
-   esta regla asegura una altura mínima cómoda en pantallas grandes. */
+/* El widget usa height="88vh" desde index.qmd; estas reglas evitan que el
+   mapa quede demasiado bajo en monitores grandes o portátiles panorámicos. */
 .leaflet.html-widget {
-  min-height: 720px;
+  min-height: 760px;
 }
 
 @media (max-height: 850px) {
   .leaflet.html-widget {
-    min-height: 560px;
+    min-height: 600px;
+  }
+}
+
+@media (max-width: 760px) {
+  .leaflet.html-widget {
+    min-height: 620px;
   }
 }
 
@@ -281,7 +334,7 @@
 .territory-panel {
   width: 330px;
   max-width: min(330px, 78vw);
-  max-height: calc(84vh - 80px);
+  max-height: calc(88vh - 80px);
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 8px;

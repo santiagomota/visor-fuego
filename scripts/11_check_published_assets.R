@@ -142,6 +142,27 @@ if (file.exists("docs/index.html")) {
   if (grepl("__TERRITORIAL_DATA__", index_html, fixed = TRUE)) {
     fail("El token __TERRITORIAL_DATA__ no fue sustituido en docs/index.html")
   }
+
+  layout_fragments <- c(
+    "height:88vh",
+    "screen-start-inset / screen-end-inset",
+    "Diseño panorámico de la página Mapa"
+  )
+  missing_layout <- layout_fragments[!vapply(
+    layout_fragments,
+    function(fragment) grepl(fragment, index_html, fixed = TRUE),
+    logical(1)
+  )]
+  if (length(missing_layout) > 0) {
+    fail(paste(
+      "El HTML principal no contiene el diseño panorámico esperado:",
+      paste(missing_layout, collapse = ", ")
+    ))
+  }
+
+  if (grepl('id="TOC"', index_html, fixed = TRUE)) {
+    fail("La página Mapa vuelve a contener un índice lateral y desperdicia ancho útil")
+  }
 }
 
 index_size_mb <- if (file.exists("docs/index.html")) file.info("docs/index.html")$size / 1024^2 else NA_real_

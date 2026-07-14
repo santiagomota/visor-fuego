@@ -4,6 +4,7 @@ subtitle: "AEMET OpenData · NASA FIRMS · EFFIS/Copernicus · GISCO/NUTS"
 format:
   html:
     page-layout: full
+    toc: false
 execute:
   echo: false
   warning: false
@@ -392,40 +393,15 @@ n_alerts_high <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data))
 n_alerts_medium <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "media", na.rm = TRUE) else 0L
 ```
 
-::: {.callout-note collapse="true"}
-## Fuente y actualización
-
-Este visor combina:
-
-- **AEMET OpenData**: riesgo meteorológico de incendios previsto.
-- **NASA FIRMS**: detecciones satelitales recientes de focos activos/thermal anomalies.
-- **EFFIS/Copernicus EMS**: áreas quemadas y diagnóstico WMS europeo.
-- **Eurostat/GISCO NUTS**: límites de CCAA y provincias para resumen territorial.
-
-```{r}
-cat("Capas AEMET:", n_layers)
-if (n_layers > 0) cat(" · Fecha:", last_update, "· Catálogo:", layers_source)
-
-cat("\nFocos NASA FIRMS:", n_firms)
-if (n_firms > 0) cat(" · Catálogo:", firms_source)
-
-cat("\nAlertas operativas:", n_alerts, "· Altas:", n_alerts_high, "· Medias:", n_alerts_medium)
-
-cat("\nEFFIS Burnt Areas:", n_effis_ba)
-if (n_effis_ba > 0) cat(" · Catálogo:", effis_ba_source)
-
-cat("\nEFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") else "desactivado")
-if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
-```
-:::
-
 ## Mapa
 
 ```{r fire-map}
+#| column: screen-inset
+
 base_groups <- c("Base clara", "Satélite")
 overlay_groups <- character()
 
-map <- leaflet(width = "100%", height = "84vh", options = leafletOptions(preferCanvas = TRUE, zoomControl = TRUE)) |>
+map <- leaflet(width = "100%", height = "88vh", options = leafletOptions(preferCanvas = TRUE, zoomControl = TRUE)) |>
   addProviderTiles(providers$CartoDB.Positron, group = "Base clara") |>
   addProviderTiles(providers$Esri.WorldImagery, group = "Satélite") |>
   setView(lng = -3.7, lat = 40.2, zoom = 6)
@@ -1518,6 +1494,35 @@ js <- replace_js_token(js, "__FRESHNESS_CONFIG__", freshness_config_json)
 js <- replace_js_token(js, "__TERRITORIAL_DATA__", territorial_json)
 htmlwidgets::onRender(map, js)
 ```
+
+
+::: {.callout-note collapse="true"}
+## Fuente y actualización
+
+Este visor combina:
+
+- **AEMET OpenData**: riesgo meteorológico de incendios previsto.
+- **NASA FIRMS**: detecciones satelitales recientes de focos activos/thermal anomalies.
+- **EFFIS/Copernicus EMS**: áreas quemadas y diagnóstico WMS europeo.
+- **Eurostat/GISCO NUTS**: límites de CCAA y provincias para resumen territorial.
+
+```{r}
+cat("Capas AEMET:", n_layers)
+if (n_layers > 0) cat(" · Fecha:", last_update, "· Catálogo:", layers_source)
+
+cat("\nFocos NASA FIRMS:", n_firms)
+if (n_firms > 0) cat(" · Catálogo:", firms_source)
+
+cat("\nAlertas operativas:", n_alerts, "· Altas:", n_alerts_high, "· Medias:", n_alerts_medium)
+
+cat("\nEFFIS Burnt Areas:", n_effis_ba)
+if (n_effis_ba > 0) cat(" · Catálogo:", effis_ba_source)
+
+cat("\nEFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") else "desactivado")
+if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
+```
+:::
+
 
 ## Enlaces útiles
 

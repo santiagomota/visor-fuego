@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.6.10 - mapa panorámico
+
+- Desactiva el índice de contenidos en `index.qmd` para recuperar la columna derecha reservada por Quarto.
+- Extiende el contenido del mapa desde `screen-start-inset` hasta `screen-end-inset` en pantallas de escritorio.
+- Aumenta la altura del widget Leaflet de `84vh` a `88vh` y eleva sus alturas mínimas adaptativas.
+- Compacta el bloque de título y el encabezado de la sección Mapa.
+- Mueve el bloque desplegable de fuentes y diagnóstico debajo del mapa para que el visor aparezca antes.
+- Añade un acabado visual discreto al mapa mediante borde, sombra y esquinas redondeadas.
+- Conserva el flujo normal en móvil y limita de forma adaptativa la altura del panel territorial.
+- Añade comprobaciones de publicación para impedir que vuelva a aparecer el TOC lateral o se pierda el diseño panorámico.
+
 ## v0.6.9 - panel territorial interactivo
 
 - Añade un panel lateral al pulsar sobre límites NUTS2 o NUTS3.
