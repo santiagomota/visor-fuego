@@ -610,15 +610,52 @@ function(el, x) {
     if (event && event.name === 'EFFIS Burnt Areas') removeEffisBurntAreas();
   });
 
-  function labelForLayer(layer) {
-    const dia = (layer.forecast_label !== null && layer.forecast_label !== undefined && layer.forecast_label !== '')
+  function capitaliseFirst(value) {
+    const text = String(value || '');
+    return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
+  }
+
+  function parseIsoDateUtc(value) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+    if (!match) return null;
+
+    const date = new Date(Date.UTC(
+      parseInt(match[1], 10),
+      parseInt(match[2], 10) - 1,
+      parseInt(match[3], 10)
+    ));
+
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function formatAemetDate(value) {
+    const date = parseIsoDateUtc(value);
+    if (!date) return String(value || 'Fecha no disponible');
+
+    const formatted = new Intl.DateTimeFormat('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC'
+    }).format(date);
+
+    return capitaliseFirst(formatted);
+  }
+
+  function layerForecastLabel(layer) {
+    return (layer.forecast_label !== null && layer.forecast_label !== undefined && layer.forecast_label !== '')
       ? layer.forecast_label
-      : ((layer.dia === null || layer.dia === undefined || layer.dia === '') ? 'hoy' : ('D+' + layer.dia));
+      : ((layer.dia === null || layer.dia === undefined || layer.dia === '') ? 'Hoy' : ('D+' + layer.dia));
+  }
+
+  function labelForLayer(layer) {
+    const dia = layerForecastLabel(layer);
     const tipo = layer.tipo === 'estimado' ? 'Estimado' : 'Previsto';
     const validDate = layer.valid_date || layer.date || '';
     const issueDate = layer.issue_date || '';
-    const issueTxt = (issueDate && issueDate !== validDate) ? (' · emitido ' + issueDate) : '';
-    return validDate + ' · ' + layer.area_label + ' · ' + tipo + ' · ' + dia + issueTxt;
+    const issueTxt = (issueDate && issueDate !== validDate) ? (' · emitido ' + formatAemetDate(issueDate)) : '';
+    return formatAemetDate(validDate) + ' · ' + layer.area_label + ' · ' + tipo + ' · ' + dia + issueTxt;
   }
 
   function updateLegend(layer) {
@@ -630,9 +667,17 @@ function(el, x) {
       return;
     }
 
+    const validDate = layer.valid_date || layer.date || '';
+    const dia = layerForecastLabel(layer);
+    const tipo = layer.tipo === 'estimado' ? 'Estimado' : 'Previsto';
     let html = '<b>Nivel de peligro AEMET</b>';
+    html += '<div class="fire-legend-context">' +
+      escapeHtml(formatAemetDate(validDate)) + ' · ' + escapeHtml(dia) + '<br>' +
+      escapeHtml(layer.area_label || '') + ' · ' + escapeHtml(tipo) +
+      '</div>';
+
     for (let i = 0; i < layer.legend_labels.length; i++) {
-      html += '<br><span class="swatch" style="background:' + layer.legend_colours[i] + '"></span> ' + layer.legend_labels[i];
+      html += '<br><span class="swatch" style="background:' + escapeHtml(layer.legend_colours[i]) + '"></span> ' + escapeHtml(layer.legend_labels[i]);
     }
     legend.innerHTML = html;
   }

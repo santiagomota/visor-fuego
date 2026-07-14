@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.6: normalización robusta de NASA FIRMS
+## v0.6.7: fecha y día de la semana en AEMET
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,14 +9,12 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.6
+### Cambios principales de v0.6.7
 
-- Corrige la actualización automática cuando una fuente FIRMS devuelve una tabla vacía y otra contiene detecciones.
-- Lee inicialmente los CSV de `VIIRS_SNPP_NRT` y `VIIRS_NOAA20_NRT` como texto y aplica después tipos canónicos.
-- Convierte explícitamente coordenadas, temperaturas, FRP, `scan` y `track` a valores numéricos.
-- Excluye del `bind_rows()` las respuestas sin detecciones.
-- Genera salidas FIRMS vacías con cabeceras estables para que resumen, alertas e histórico puedan continuar.
-- Añade al log el número de detecciones válidas obtenido para cada sensor.
+- Añade el día de la semana y la fecha completa al selector de capas AEMET.
+- Añade una cabecera dinámica a la leyenda con la fecha válida, el horizonte, el área y el tipo de producto.
+- Formatea las fechas en español usando UTC para impedir desplazamientos por la zona horaria del navegador.
+- Conserva la normalización robusta de las respuestas NASA FIRMS introducida en v0.6.6.
 
 Se mantienen las mejoras anteriores:
 

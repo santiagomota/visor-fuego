@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.7 - día de la semana en AEMET
+
+- Añade el día de la semana y la fecha completa en español a las opciones del selector AEMET.
+- Muestra en la leyenda activa la fecha válida, el horizonte, el área y el tipo de producto seleccionado.
+- Interpreta las fechas `YYYY-MM-DD` en UTC para evitar desplazamientos de un día provocados por la zona horaria del navegador.
+- Escapa los textos incorporados a la leyenda antes de generar HTML.
+- Mantiene la actualización dinámica de la cabecera al cambiar de capa AEMET.
+- Amplía el selector para acomodar las fechas completas sin perjudicar la visualización móvil.
+
 ## v0.6.6 - normalización robusta de NASA FIRMS
 
 - Corrige el fallo de `purrr::map_dfr()` al combinar una respuesta FIRMS vacía, con `latitude` inferida como texto, y otra respuesta con detecciones numéricas.
