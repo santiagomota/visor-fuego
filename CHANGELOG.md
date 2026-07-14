@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.6.8 - navegación temporal y actualidad de datos
+
+- Añade botones anterior y siguiente para recorrer los días AEMET dentro de la misma área, tipo de producto y emisión.
+- Incorpora reproducción automática de la secuencia temporal, con pausa y repetición circular de los ocho horizontes.
+- Sincroniza el selector, la leyenda, la posición temporal y los controles al cambiar de capa.
+- Evita resultados asíncronos obsoletos al cambiar rápidamente entre capas GeoJSON.
+- Añade un indicador visible de actualidad para AEMET, NASA FIRMS y EFFIS.
+- Clasifica la actualidad mediante estados verde, ámbar, rojo y no disponible, calculados en el navegador y actualizados cada minuto.
+- Muestra la fecha u hora exacta de cada fuente al situar el cursor sobre el indicador.
+- Amplía los estilos adaptativos del panel para escritorio y dispositivos móviles.
+
 ## v0.6.7 - día de la semana en AEMET
 
 - Añade el día de la semana y la fecha completa en español a las opciones del selector AEMET.

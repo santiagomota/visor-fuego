@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.7: fecha y día de la semana en AEMET
+## v0.6.8: navegación temporal y actualidad de datos
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,18 +9,25 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.7
+### Cambios principales de v0.6.8
 
-- Añade el día de la semana y la fecha completa al selector de capas AEMET.
-- Añade una cabecera dinámica a la leyenda con la fecha válida, el horizonte, el área y el tipo de producto.
-- Formatea las fechas en español usando UTC para impedir desplazamientos por la zona horaria del navegador.
-- Conserva la normalización robusta de las respuestas NASA FIRMS introducida en v0.6.6.
+- Añade botones para avanzar y retroceder entre los días de una misma serie AEMET.
+- Incorpora reproducción automática y pausa de los ocho horizontes temporales.
+- Mantiene sincronizados el selector, la leyenda, la capa del mapa y el indicador de posición.
+- Muestra el día de la semana y la fecha completa en español en el selector y la leyenda AEMET.
+- Añade indicadores de actualidad independientes para AEMET, NASA FIRMS y EFFIS.
+- Actualiza los tiempos relativos cada minuto y muestra la fecha exacta mediante ayuda contextual.
+- Usa estados verde, ámbar, rojo y gris para distinguir datos recientes, con retraso, antiguos o no disponibles.
+  - AEMET: verde si la emisión es de hoy, ámbar si es de ayer y rojo si es anterior.
+  - FIRMS: verde hasta 6 horas, ámbar hasta 24 horas y rojo por encima de 24 horas.
+  - EFFIS: verde hasta 24 horas, ámbar hasta 72 horas y rojo por encima de 72 horas.
 
 Se mantienen las mejoras anteriores:
 
 - Ejecución diaria a las **04:30** y **12:30** con `timezone: Europe/Madrid`.
 - Cambio automático entre horario peninsular de invierno y de verano.
 - Publicación robusta mediante `fetch`, `rebase` y hasta tres reintentos de `push`.
+- Normalización explícita de tipos al combinar las fuentes NASA FIRMS.
 - `data/raw/` permanece ignorado y solo se publican `data/processed`, `assets` y `docs`.
 - Los PNG de AEMET se declaran como recursos Quarto y se copian a `docs/assets/aemet/` durante el render.
 - El workflow utiliza `scripts/99_run_all.R` como único pipeline canónico.

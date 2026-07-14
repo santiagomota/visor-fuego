@@ -41,6 +41,14 @@
   border: 1px solid #555;
 }
 
+.fire-legend-context {
+  margin: 5px 0 3px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(85, 85, 85, 0.35);
+  color: #333;
+  line-height: 1.3;
+}
+
 .fire-panel small {
   display: block;
   margin-top: 6px;
@@ -171,8 +179,8 @@
 }
 
 .fire-panel select {
-  width: 290px;
-  max-width: 42vw;
+  width: 370px;
+  max-width: 72vw;
 }
 
 .fire-panel input[type="range"] {

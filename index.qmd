@@ -291,6 +291,34 @@ effis_ba_config_json <- jsonlite::toJSON(
   null = "null"
 )
 
+latest_layer_value <- function(layers, field) {
+  values <- vapply(layers, function(layer) {
+    value <- layer[[field]] %||% ""
+    if (length(value) == 0 || is.na(value)) "" else as.character(value)
+  }, character(1))
+  values <- values[nzchar(values)]
+  if (length(values) == 0) NA_character_ else max(values)
+}
+
+first_overview_value <- function(data, field) {
+  if (nrow(data) == 0 || !field %in% names(data)) return(NA_character_)
+  value <- data[[field]][1]
+  if (length(value) == 0 || is.na(value) || !nzchar(as.character(value))) NA_character_ else as.character(value)
+}
+
+freshness_config_json <- jsonlite::toJSON(
+  list(
+    aemet_issue_date = latest_layer_value(layers_data, "issue_date"),
+    firms_latest_detection_utc = first_overview_value(overview_data, "ultima_deteccion_utc"),
+    firms_generated_at_utc = first_overview_value(overview_data, "generated_at_utc"),
+    effis_generated_at_utc = as.character(effis_ba_summary$generated_at %||% NA_character_),
+    effis_max_date = as.character(effis_ba_summary$max_date %||% NA_character_)
+  ),
+  auto_unbox = TRUE,
+  null = "null",
+  na = "null"
+)
+
 if (nrow(overview_data) > 0) {
   overview <- overview_data[1, ]
 } else {
@@ -521,6 +549,7 @@ js_template <- r"(
 function(el, x) {
   const layers = __LAYERS_JSON__;
   const effisBurntAreas = __EFFIS_BA_CONFIG__;
+  const freshness = __FRESHNESS_CONFIG__;
   const map = this;
 
   if (map.createPane && !map.getPane('aemetPane')) {
@@ -534,6 +563,10 @@ function(el, x) {
   let effisBaLayer = null;
   let effisBaData = null;
   let effisBaVisible = false;
+  let currentLayerIndex = 0;
+  let currentLayerRequest = 0;
+  let playbackTimer = null;
+  const playbackIntervalMs = 1800;
 
   function escapeHtml(value) {
     return String(value === null || value === undefined ? '' : value)
@@ -682,6 +715,166 @@ function(el, x) {
     legend.innerHTML = html;
   }
 
+  function layerSeriesKey(layer) {
+    if (!layer) return '';
+    return [layer.area || '', layer.tipo || '', layer.issue_date || ''].join('|');
+  }
+
+  function seriesIndices(index) {
+    const layer = layers[index];
+    const key = layerSeriesKey(layer);
+    return layers
+      .map((candidate, candidateIndex) => ({candidate, candidateIndex}))
+      .filter(item => layerSeriesKey(item.candidate) === key)
+      .sort((a, b) => {
+        const dateA = a.candidate.valid_date || a.candidate.date || '';
+        const dateB = b.candidate.valid_date || b.candidate.date || '';
+        if (dateA !== dateB) return dateA.localeCompare(dateB);
+        return Number(a.candidate.forecast_day || a.candidate.dia || 0) - Number(b.candidate.forecast_day || b.candidate.dia || 0);
+      })
+      .map(item => item.candidateIndex);
+  }
+
+  function updateTimelineControls() {
+    const select = document.getElementById('fire-layer-select');
+    const previous = document.getElementById('fire-layer-previous');
+    const next = document.getElementById('fire-layer-next');
+    const position = document.getElementById('fire-layer-position');
+    const sequence = seriesIndices(currentLayerIndex);
+    const sequencePosition = sequence.indexOf(currentLayerIndex);
+
+    if (select) select.value = String(currentLayerIndex);
+    if (previous) previous.disabled = sequencePosition <= 0;
+    if (next) next.disabled = sequencePosition < 0 || sequencePosition >= sequence.length - 1;
+    if (position) position.textContent = sequencePosition >= 0 ? ((sequencePosition + 1) + ' de ' + sequence.length) : '—';
+  }
+
+  function stopPlayback() {
+    if (playbackTimer !== null) {
+      window.clearInterval(playbackTimer);
+      playbackTimer = null;
+    }
+    const button = document.getElementById('fire-layer-play');
+    if (button) {
+      button.innerHTML = '&#9654;';
+      button.title = 'Reproducir la secuencia temporal';
+      button.setAttribute('aria-label', 'Reproducir la secuencia temporal');
+      button.classList.remove('is-playing');
+    }
+  }
+
+  function stepLayer(delta, wrap) {
+    const sequence = seriesIndices(currentLayerIndex);
+    if (sequence.length === 0) return;
+    let position = sequence.indexOf(currentLayerIndex);
+    if (position < 0) position = 0;
+    let target = position + delta;
+    if (wrap) target = (target + sequence.length) % sequence.length;
+    if (target < 0 || target >= sequence.length) return;
+    setLayer(sequence[target]);
+  }
+
+  function togglePlayback() {
+    if (playbackTimer !== null) {
+      stopPlayback();
+      return;
+    }
+
+    const sequence = seriesIndices(currentLayerIndex);
+    if (sequence.length <= 1) return;
+    const button = document.getElementById('fire-layer-play');
+    if (button) {
+      button.innerHTML = '&#10074;&#10074;';
+      button.title = 'Pausar la secuencia temporal';
+      button.setAttribute('aria-label', 'Pausar la secuencia temporal');
+      button.classList.add('is-playing');
+    }
+    playbackTimer = window.setInterval(function() {
+      stepLayer(1, true);
+    }, playbackIntervalMs);
+  }
+
+  function parseUtcTimestamp(value) {
+    let text = String(value || '').trim();
+    if (!text) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) text += 'T00:00:00Z';
+    text = text.replace(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})/, '$1T$2');
+    text = text.replace(/([+-]\d{2})(\d{2})$/, '$1:$2');
+    const date = new Date(text);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function madridDateKey(date) {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(date);
+    const values = {};
+    parts.forEach(part => { if (part.type !== 'literal') values[part.type] = part.value; });
+    return [values.year, values.month, values.day].join('-');
+  }
+
+  function calendarAgeDays(isoDate) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(isoDate || ''))) return null;
+    const today = madridDateKey(new Date());
+    const start = parseIsoDateUtc(isoDate);
+    const end = parseIsoDateUtc(today);
+    if (!start || !end) return null;
+    return Math.floor((end.getTime() - start.getTime()) / 86400000);
+  }
+
+  function relativeAge(date) {
+    if (!date) return 'sin fecha';
+    const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+    if (minutes < 60) return 'hace ' + minutes + ' min';
+    const hours = Math.round(minutes / 60);
+    if (hours < 48) return 'hace ' + hours + ' h';
+    return 'hace ' + Math.round(hours / 24) + ' días';
+  }
+
+  function freshnessRow(source, text, status, title) {
+    return '<div class="freshness-row freshness-' + status + '" title="' + escapeHtml(title || text) + '">' +
+      '<span class="freshness-dot" aria-hidden="true"></span>' +
+      '<span><strong>' + escapeHtml(source) + '</strong> · ' + escapeHtml(text) + '</span>' +
+      '</div>';
+  }
+
+  function updateFreshnessIndicator() {
+    const container = document.getElementById('data-freshness');
+    if (!container) return;
+    let html = '<div class="freshness-title">Actualidad de datos</div>';
+
+    const aemetDays = calendarAgeDays(freshness && freshness.aemet_issue_date);
+    if (aemetDays === null) {
+      html += freshnessRow('AEMET', 'sin fecha de emisión', 'unavailable');
+    } else if (aemetDays <= 0) {
+      html += freshnessRow('AEMET', 'emitido hoy', 'fresh', formatAemetDate(freshness.aemet_issue_date));
+    } else if (aemetDays === 1) {
+      html += freshnessRow('AEMET', 'emitido ayer', 'warning', formatAemetDate(freshness.aemet_issue_date));
+    } else {
+      html += freshnessRow('AEMET', 'emitido hace ' + aemetDays + ' días', 'stale', formatAemetDate(freshness.aemet_issue_date));
+    }
+
+    const firmsDate = parseUtcTimestamp(freshness && freshness.firms_latest_detection_utc);
+    if (!firmsDate) {
+      html += freshnessRow('FIRMS', 'sin detecciones disponibles', 'unavailable');
+    } else {
+      const firmsHours = Math.max(0, (Date.now() - firmsDate.getTime()) / 3600000);
+      const firmsStatus = firmsHours <= 6 ? 'fresh' : (firmsHours <= 24 ? 'warning' : 'stale');
+      html += freshnessRow('FIRMS', 'última detección ' + relativeAge(firmsDate), firmsStatus, firmsDate.toLocaleString('es-ES', {timeZone: 'Europe/Madrid'}));
+    }
+
+    const effisDate = parseUtcTimestamp(freshness && freshness.effis_generated_at_utc);
+    if (!effisDate) {
+      html += freshnessRow('EFFIS', 'sin actualización disponible', 'unavailable');
+    } else {
+      const effisHours = Math.max(0, (Date.now() - effisDate.getTime()) / 3600000);
+      const effisStatus = effisHours <= 24 ? 'fresh' : (effisHours <= 72 ? 'warning' : 'stale');
+      html += freshnessRow('EFFIS', 'actualizado ' + relativeAge(effisDate), effisStatus, effisDate.toLocaleString('es-ES', {timeZone: 'Europe/Madrid'}));
+    }
+
+    container.innerHTML = html;
+  }
+
   function colourForRisk(v, layer) {
     if (v === null || v === undefined || v === '') return '#888888';
     const n = parseInt(v);
@@ -716,12 +909,18 @@ function(el, x) {
   }
 
   function setLayer(index) {
+    const parsedIndex = parseInt(index, 10);
+    if (!Number.isInteger(parsedIndex) || parsedIndex < 0 || parsedIndex >= layers.length) return;
+    currentLayerIndex = parsedIndex;
+    currentLayerRequest += 1;
+    const requestId = currentLayerRequest;
+
     if (currentOverlay) {
       map.removeLayer(currentOverlay);
       currentOverlay = null;
     }
 
-    const layer = layers[index];
+    const layer = layers[currentLayerIndex];
     if (!layer) {
       updateLegend(null);
       return;
@@ -731,6 +930,7 @@ function(el, x) {
       fetch(layer.url)
         .then(response => response.json())
         .then(data => {
+          if (requestId !== currentLayerRequest) return;
           currentOverlay = L.geoJSON(data, {
             pane: 'aemetPane',
             style: function(feature) {
@@ -752,6 +952,10 @@ function(el, x) {
             try { map.fitBounds(layer.bounds); } catch(e2) {}
           }
           updateLegend(layer);
+          updateTimelineControls();
+        })
+        .catch(error => {
+          if (requestId === currentLayerRequest) console.error('No se pudo cargar la capa AEMET:', error);
         });
     } else {
       currentOverlay = L.imageOverlay(layer.url, layer.bounds, {
@@ -761,6 +965,7 @@ function(el, x) {
       }).addTo(map);
       try { map.fitBounds(layer.bounds); } catch(e) {}
       updateLegend(layer);
+      updateTimelineControls();
     }
   }
 
@@ -781,8 +986,15 @@ function(el, x) {
       '<b>Visor Fuego</b>' +
       '<label>Capa AEMET</label>' +
       '<select id="fire-layer-select">' + options + '</select>' +
+      '<div class="fire-timeline" role="group" aria-label="Navegación temporal AEMET">' +
+        '<button id="fire-layer-previous" type="button" title="Día anterior" aria-label="Día anterior">&#9664;</button>' +
+        '<button id="fire-layer-play" type="button" title="Reproducir la secuencia temporal" aria-label="Reproducir la secuencia temporal">&#9654;</button>' +
+        '<button id="fire-layer-next" type="button" title="Día siguiente" aria-label="Día siguiente">&#9654;</button>' +
+        '<span id="fire-layer-position" class="fire-layer-position">—</span>' +
+      '</div>' +
       '<label>Opacidad AEMET</label>' +
       '<input id="fire-opacity" type="range" min="0" max="1" step="0.05" value="0.68" />' +
+      '<div id="data-freshness" class="data-freshness" aria-live="polite"></div>' +
       '<small>Copernicus, FIRMS y límites se activan desde el control de capas de Leaflet.</small>';
 
     L.DomEvent.disableClickPropagation(div);
@@ -804,10 +1016,30 @@ function(el, x) {
 
     const select = document.getElementById('fire-layer-select');
     const opacity = document.getElementById('fire-opacity');
+    const previous = document.getElementById('fire-layer-previous');
+    const play = document.getElementById('fire-layer-play');
+    const next = document.getElementById('fire-layer-next');
 
     if (select) {
       select.addEventListener('change', function(e) {
-        setLayer(parseInt(e.target.value));
+        stopPlayback();
+        setLayer(parseInt(e.target.value, 10));
+      });
+    }
+
+    if (previous) {
+      previous.addEventListener('click', function() {
+        stopPlayback();
+        stepLayer(-1, false);
+      });
+    }
+
+    if (play) play.addEventListener('click', togglePlayback);
+
+    if (next) {
+      next.addEventListener('click', function() {
+        stopPlayback();
+        stepLayer(1, false);
       });
     }
 
@@ -818,6 +1050,9 @@ function(el, x) {
       });
     }
   }
+
+  updateFreshnessIndicator();
+  window.setInterval(updateFreshnessIndicator, 60000);
 }
 )"
 
@@ -829,6 +1064,7 @@ replace_js_token <- function(text, token, value) {
 
 js <- replace_js_token(js_template, "__LAYERS_JSON__", layers_json)
 js <- replace_js_token(js, "__EFFIS_BA_CONFIG__", effis_ba_config_json)
+js <- replace_js_token(js, "__FRESHNESS_CONFIG__", freshness_config_json)
 htmlwidgets::onRender(map, js)
 ```
 
