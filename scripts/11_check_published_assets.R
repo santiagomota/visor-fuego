@@ -143,21 +143,58 @@ if (file.exists("docs/index.html")) {
     fail("El token __TERRITORIAL_DATA__ no fue sustituido en docs/index.html")
   }
 
-  layout_fragments <- c(
-    "height:88vh",
-    "screen-start-inset / screen-end-inset",
-    "Diseño panorámico de la página Mapa"
-  )
-  missing_layout <- layout_fragments[!vapply(
-    layout_fragments,
-    function(fragment) grepl(fragment, index_html, fixed = TRUE),
-    logical(1)
-  )]
-  if (length(missing_layout) > 0) {
-    fail(paste(
-      "El HTML principal no contiene el diseño panorámico esperado:",
-      paste(missing_layout, collapse = ", ")
-    ))
+  # Quarto puede dejar el CSS personalizado embebido en el HTML o
+  # compilarlo/minificarlo dentro de una hoja enlazada. La validación debe
+  # aceptar ambos resultados y no depender de comentarios ni espacios.
+  css_tags <- regmatches(
+    index_html,
+    gregexpr(
+      "<link[^>]+href=[\"'][^\"']+\\.css(?:\\?[^\"']*)?[\"']",
+      index_html,
+      perl = TRUE,
+      ignore.case = TRUE
+    )
+  )[[1]]
+
+  css_hrefs <- if (length(css_tags) > 0 && !identical(css_tags, character(0))) {
+    sub(".*href=[\"']([^\"']+)[\"'].*", "\\1", css_tags, perl = TRUE)
+  } else {
+    character()
+  }
+
+  css_hrefs <- sub("[?#].*$", "", css_hrefs)
+  css_hrefs <- css_hrefs[!grepl("^(https?:)?//", css_hrefs, ignore.case = TRUE)]
+  css_paths <- unique(file.path("docs", sub("^\\./", "", css_hrefs)))
+  css_paths <- css_paths[file.exists(css_paths)]
+
+  published_css <- if (length(css_paths) > 0) {
+    paste(vapply(
+      css_paths,
+      function(path) paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n"),
+      character(1)
+    ), collapse = "\n")
+  } else {
+    ""
+  }
+
+  layout_text <- paste(index_html, published_css, sep = "\n")
+  layout_compact <- gsub("[[:space:]]+", "", layout_text)
+
+  if (!grepl("page-layout-full", index_html, fixed = TRUE)) {
+    fail("La página Mapa no se ha publicado con page-layout: full")
+  }
+  if (!grepl("height:88vh", layout_compact, fixed = TRUE)) {
+    fail("El mapa publicado no conserva la altura panorámica de 88vh")
+  }
+  if (!grepl("body:has(section#mapa)", layout_compact, fixed = TRUE)) {
+    fail("No se encuentra el selector CSS panorámico de la página Mapa")
+  }
+  if (!grepl(
+    "grid-column:screen-start-inset/screen-end-inset",
+    layout_compact,
+    fixed = TRUE
+  )) {
+    fail("No se encuentra la regla CSS que amplía el mapa a todo el ancho útil")
   }
 
   if (grepl('id="TOC"', index_html, fixed = TRUE)) {
