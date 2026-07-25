@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -39,10 +42,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a547dd1b4798262c927e2e52fa668cb1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6ac2aec46ad7f46b16024ee4409aa65c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -170,19 +173,19 @@ ul.task-list li input[type="checkbox"] {
 <div class="grid">
 <div class="g-col-12 g-col-md-3">
 <p><strong>Áreas quemadas</strong><br>
-459</p>
+509</p>
 </div>
 <div class="g-col-12 g-col-md-3">
 <p><strong>Superficie total estimada</strong><br>
-162.893 ha</p>
+243.905 ha</p>
 </div>
 <div class="g-col-12 g-col-md-3">
 <p><strong>Fecha más reciente</strong><br>
-2026-07-21</p>
+2026-07-24</p>
 </div>
 <div class="g-col-12 g-col-md-3">
 <p><strong>Última generación</strong><br>
-2026-07-22T10:49:46+0000</p>
+2026-07-25 03:53:30</p>
 </div>
 </div>
 </section>
@@ -193,14 +196,14 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 23%">
+<col style="width: 24%">
 <col style="width: 9%">
 <col style="width: 9%">
 <col style="width: 9%">
-<col style="width: 11%">
 <col style="width: 11%">
 <col style="width: 7%">
-<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 10%">
 <col style="width: 9%">
 </colgroup>
 <thead>
@@ -210,7 +213,7 @@ ul.task-list li input[type="checkbox"] {
 <th style="text-align: left;">min_date</th>
 <th style="text-align: left;">max_date</th>
 <th style="text-align: right;">total_area_ha</th>
-<th style="text-align: left;">bbox</th>
+<th style="text-align: right;">bbox</th>
 <th style="text-align: right;">max_days</th>
 <th style="text-align: right;">min_area_ha</th>
 <th style="text-align: right;">simplify_m</th>
@@ -219,11 +222,11 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Copernicus/EFFIS Burnt Areas</td>
-<td style="text-align: right;">459</td>
-<td style="text-align: left;">2026-04-23</td>
-<td style="text-align: left;">2026-07-21</td>
-<td style="text-align: right;">162893</td>
-<td style="text-align: left;">-19,27,5,44.6</td>
+<td style="text-align: right;">509</td>
+<td style="text-align: left;">2026-04-26</td>
+<td style="text-align: left;">2026-07-24</td>
+<td style="text-align: right;">243905</td>
+<td style="text-align: right;">-1927545</td>
 <td style="text-align: right;">90</td>
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">100</td>
@@ -248,13 +251,13 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">data/processed/effis_burnt_areas_summary.csv</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">NA</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: right;">0.3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">assets/effis_ba/effis_burnt_areas.geojson</td>
 <td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">442.4</td>
+<td style="text-align: right;">535.2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">assets/effis_ba/summary.json</td>
