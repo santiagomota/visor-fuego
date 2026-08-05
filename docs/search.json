@@ -4,28 +4,28 @@
     "href": "copernicus.html",
     "title": "Copernicus / EFFIS",
     "section": "",
-    "text": "Áreas quemadas\n577\n\n\nSuperficie total estimada\n371.894 ha\n\n\nFecha más reciente\n2026-08-02\n\n\nÚltima generación\n2026-08-04T03:53:51+0000"
+    "text": "Áreas quemadas\n607\n\n\nSuperficie total estimada\n372.948 ha\n\n\nFecha más reciente\n2026-08-03\n\n\nÚltima generación\n2026-08-05 03:52:16"
   },
   {
     "objectID": "copernicus.html#estado",
     "href": "copernicus.html#estado",
     "title": "Copernicus / EFFIS",
     "section": "",
-    "text": "Áreas quemadas\n577\n\n\nSuperficie total estimada\n371.894 ha\n\n\nFecha más reciente\n2026-08-02\n\n\nÚltima generación\n2026-08-04T03:53:51+0000"
+    "text": "Áreas quemadas\n607\n\n\nSuperficie total estimada\n372.948 ha\n\n\nFecha más reciente\n2026-08-03\n\n\nÚltima generación\n2026-08-05 03:52:16"
   },
   {
     "objectID": "copernicus.html#fuente",
     "href": "copernicus.html#fuente",
     "title": "Copernicus / EFFIS",
     "section": "Fuente",
-    "text": "Fuente\nEsta página resume la integración de Copernicus/EFFIS Burnt Areas. En el mapa principal, la geometría se descarga únicamente cuando el usuario activa la capa, evitando incrustar todo el GeoJSON dentro del HTML.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsource\nn_features\nmin_date\nmax_date\ntotal_area_ha\nbbox\nmax_days\nmin_area_ha\nsimplify_m\n\n\n\n\nCopernicus/EFFIS Burnt Areas\n577\n2026-05-07\n2026-08-02\n371894\n-19,27,5,44.6\n90\n5\n100"
+    "text": "Fuente\nEsta página resume la integración de Copernicus/EFFIS Burnt Areas. En el mapa principal, la geometría se descarga únicamente cuando el usuario activa la capa, evitando incrustar todo el GeoJSON dentro del HTML.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsource\nn_features\nmin_date\nmax_date\ntotal_area_ha\nbbox\nmax_days\nmin_area_ha\nsimplify_m\n\n\n\n\nCopernicus/EFFIS Burnt Areas\n607\n2026-05-07\n2026-08-03\n372948\n-1927545\n90\n5\n100"
   },
   {
     "objectID": "copernicus.html#ficheros-publicados",
     "href": "copernicus.html#ficheros-publicados",
     "title": "Copernicus / EFFIS",
     "section": "Ficheros publicados",
-    "text": "Ficheros publicados\n\n\n\n\n\nfichero\nexiste\nsize_kb\n\n\n\n\ndata/processed/effis_burnt_areas_summary.csv\nFALSE\nNA\n\n\nassets/effis_ba/effis_burnt_areas.geojson\nTRUE\n788.7\n\n\nassets/effis_ba/summary.json\nTRUE\n0.4"
+    "text": "Ficheros publicados\n\n\n\n\n\nfichero\nexiste\nsize_kb\n\n\n\n\ndata/processed/effis_burnt_areas_summary.csv\nTRUE\n0.3\n\n\nassets/effis_ba/effis_burnt_areas.geojson\nTRUE\n835.7\n\n\nassets/effis_ba/summary.json\nTRUE\n0.4"
   },
   {
     "objectID": "copernicus.html#nota-metodológica",
@@ -39,21 +39,21 @@
     "href": "report.html",
     "title": "Informe",
     "section": "",
-    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n306\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n73\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n577\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
+    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\n\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n607\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "report.html#informe-de-generación",
     "href": "report.html#informe-de-generación",
     "title": "Informe",
     "section": "",
-    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n306\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n73\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n577\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
+    "text": "El informe resume los productos realmente publicados por el visor después de la limpieza de capas antiguas. Para AEMET se muestran únicamente las capas de la última emisión detectada.\n\n\n\n\n\n\n\n\n\n\n\nfuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n607\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "report.html#control-de-fechas-aemet",
     "href": "report.html#control-de-fechas-aemet",
     "title": "Informe",
     "section": "Control de fechas AEMET",
-    "text": "Control de fechas AEMET\n\n\n\n\n\n\n\n\n\ncampo\nvalor\n\n\n\n\nÚltima emisión\n2026-08-03\n\n\nPrimera fecha válida\n2026-08-03\n\n\nÚltima fecha válida\n2026-08-10\n\n\nRegla\nD00 = Día 1 = fecha del fichero; D01 = fecha + 1; sin offset +1 adicional\n\n\n\n\n\n\n\n\nFechas AEMET por área y horizonte\n\n\n\n\n\n\n\n\n\n\narea_label\nissue_date\nvalid_date\nforecast_day\nforecast_label\ncapas\n\n\n\n\nCanarias\n2026-08-03\n2026-08-03\n1\nDía 1\n1\n\n\nCanarias\n2026-08-03\n2026-08-04\n2\nDía 2\n1\n\n\nCanarias\n2026-08-03\n2026-08-05\n3\nDía 3\n1\n\n\nCanarias\n2026-08-03\n2026-08-06\n4\nDía 4\n1\n\n\nCanarias\n2026-08-03\n2026-08-07\n5\nDía 5\n1\n\n\nCanarias\n2026-08-03\n2026-08-08\n6\nDía 6\n1\n\n\nCanarias\n2026-08-03\n2026-08-09\n7\nDía 7\n1\n\n\nCanarias\n2026-08-03\n2026-08-10\n8\nDía 8\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-03\n1\nDía 1\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-04\n2\nDía 2\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-05\n3\nDía 3\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-06\n4\nDía 4\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-07\n5\nDía 5\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-08\n6\nDía 6\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-09\n7\nDía 7\n1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-10\n8\nDía 8\n1"
+    "text": "Control de fechas AEMET\n\n\n\n\n\n\n\n\n\ncampo\nvalor\n\n\n\n\nÚltima emisión\n2026-08-04\n\n\nPrimera fecha válida\n2026-08-04\n\n\nÚltima fecha válida\n2026-08-11\n\n\nRegla\nD00 = Día 1 = fecha del fichero; D01 = fecha + 1; sin offset +1 adicional\n\n\n\n\n\n\n\n\nFechas AEMET por área y horizonte\n\n\n\n\n\n\n\n\n\n\narea_label\nissue_date\nvalid_date\nforecast_day\nforecast_label\ncapas\n\n\n\n\nCanarias\n2026-08-04\n2026-08-04\n1\nDía 1\n1\n\n\nCanarias\n2026-08-04\n2026-08-05\n2\nDía 2\n1\n\n\nCanarias\n2026-08-04\n2026-08-06\n3\nDía 3\n1\n\n\nCanarias\n2026-08-04\n2026-08-07\n4\nDía 4\n1\n\n\nCanarias\n2026-08-04\n2026-08-08\n5\nDía 5\n1\n\n\nCanarias\n2026-08-04\n2026-08-09\n6\nDía 6\n1\n\n\nCanarias\n2026-08-04\n2026-08-10\n7\nDía 7\n1\n\n\nCanarias\n2026-08-04\n2026-08-11\n8\nDía 8\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-04\n1\nDía 1\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-05\n2\nDía 2\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-06\n3\nDía 3\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-07\n4\nDía 4\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-08\n5\nDía 5\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-09\n6\nDía 6\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-10\n7\nDía 7\n1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-11\n8\nDía 8\n1"
   },
   {
     "objectID": "report.html#comprobación-de-arrastre-de-capas-antiguas",
@@ -67,14 +67,14 @@
     "href": "report.html#firms",
     "title": "Informe",
     "section": "FIRMS",
-    "text": "FIRMS\n\n\n\nDetecciones FIRMS por satellite\n\n\nsatellite\ndetecciones\n\n\n\n\nN20\n287\n\n\nN\n19"
+    "text": "FIRMS\n\n\nNo hay archivo FIRMS o no hay detecciones."
   },
   {
     "objectID": "report.html#alertas-operativas",
     "href": "report.html#alertas-operativas",
     "title": "Informe",
     "section": "Alertas operativas",
-    "text": "Alertas operativas\n\n\n\nAlertas publicadas\n\n\ncluster_id\n\n\n\n\nALERT-20260804-001\n\n\nALERT-20260804-002\n\n\nALERT-20260804-003\n\n\nALERT-20260804-004\n\n\nALERT-20260804-005\n\n\nALERT-20260804-006\n\n\nALERT-20260804-007\n\n\nALERT-20260804-008\n\n\nALERT-20260804-009\n\n\nALERT-20260804-010\n\n\nALERT-20260804-011\n\n\nALERT-20260804-012\n\n\nALERT-20260804-013\n\n\nALERT-20260804-014\n\n\nALERT-20260804-015\n\n\nALERT-20260804-016\n\n\nALERT-20260804-017\n\n\nALERT-20260804-018\n\n\nALERT-20260804-019\n\n\nALERT-20260804-020\n\n\nALERT-20260804-021\n\n\nALERT-20260804-022\n\n\nALERT-20260804-023\n\n\nALERT-20260804-024\n\n\nALERT-20260804-025\n\n\nALERT-20260804-026\n\n\nALERT-20260804-027\n\n\nALERT-20260804-028\n\n\nALERT-20260804-029\n\n\nALERT-20260804-030"
+    "text": "Alertas operativas\n\n\nNo hay alertas operativas publicadas."
   },
   {
     "objectID": "report.html#effis",
@@ -88,14 +88,14 @@
     "href": "index.html",
     "title": "Mapa de riesgo de incendios",
     "section": "",
-    "text": "NotaFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: áreas quemadas y diagnóstico WMS europeo.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-08-04 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 306\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 73 · Altas: 2 · Medias: 22\n\n\n\nEFFIS Burnt Areas: 577\n\n\n · Catálogo: assets/effis_ba/summary.json\n\n\n\nEFFIS WMS: desactivado"
+    "text": "NotaFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: áreas quemadas y diagnóstico WMS europeo.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-08-05 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 0\n\n\n\nAlertas operativas: 0 · Altas: 0 · Medias: 0\n\n\n\nEFFIS Burnt Areas: 607\n\n\n · Catálogo: assets/effis_ba/summary.json\n\n\n\nEFFIS WMS: desactivado"
   },
   {
     "objectID": "index.html#mapa",
     "href": "index.html#mapa",
     "title": "Mapa de riesgo de incendios",
     "section": "",
-    "text": "NotaFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: áreas quemadas y diagnóstico WMS europeo.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-08-04 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 306\n\n\n · Catálogo: data/processed/firms_active_fires.csv\n\n\n\nAlertas operativas: 73 · Altas: 2 · Medias: 22\n\n\n\nEFFIS Burnt Areas: 577\n\n\n · Catálogo: assets/effis_ba/summary.json\n\n\n\nEFFIS WMS: desactivado"
+    "text": "NotaFuente y actualización\n\n\n\n\n\nEste visor combina:\n\nAEMET OpenData: riesgo meteorológico de incendios previsto.\nNASA FIRMS: detecciones satelitales recientes de focos activos/thermal anomalies.\nEFFIS/Copernicus EMS: áreas quemadas y diagnóstico WMS europeo.\nEurostat/GISCO NUTS: límites de CCAA y provincias para resumen territorial.\n\n\n\nCapas AEMET: 16\n\n\n · Fecha: 2026-08-05 · Catálogo: data/processed/layers.json\n\n\n\nFocos NASA FIRMS: 0\n\n\n\nAlertas operativas: 0 · Altas: 0 · Medias: 0\n\n\n\nEFFIS Burnt Areas: 607\n\n\n · Catálogo: assets/effis_ba/summary.json\n\n\n\nEFFIS WMS: desactivado"
   },
   {
     "objectID": "index.html#enlaces-útiles",
@@ -109,28 +109,28 @@
     "href": "summary.html",
     "title": "Resumen operativo",
     "section": "",
-    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n306\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n73\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n577\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
+    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n607\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "summary.html#estado-general",
     "href": "summary.html#estado-general",
     "title": "Resumen operativo",
     "section": "",
-    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nOK\n306\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nOK\n73\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n577\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
+    "text": "fuente\nestado\nfilas\narchivo\n\n\n\n\nAEMET\nOK\n16\ndata/processed/layers.csv\n\n\nFIRMS\nSin detecciones/archivo\n0\ndata/processed/firms_active_fires.csv\n\n\nAlertas\nSin alertas/archivo\n0\ndata/processed/operational_alerts.csv\n\n\nEFFIS\nOK\n607\nassets/effis_ba/summary.json\n\n\nHistórico\nOK\n1\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "summary.html#aemet",
     "href": "summary.html#aemet",
     "title": "Resumen operativo",
     "section": "AEMET",
-    "text": "AEMET\nEsta página usa la misma convención que el mapa principal: D00 se interpreta como Día 1 de la fecha del fichero AEMET, sin desplazamiento adicional de un día. Si hay varias emisiones en disco, solo se resume la última emisión presente en el catálogo.\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nCapas AEMET en catálogo\n16\n\n\nCapas AEMET de última emisión\n16\n\n\nÚltima emisión\n2026-08-03\n\n\nPrimera fecha válida\n2026-08-03\n\n\nÚltima fecha válida\n2026-08-10\n\n\nÁreas disponibles\nCanarias, Península y Baleares\n\n\n\n\n\n\n\n\nCapas AEMET publicadas\n\n\n\n\n\n\n\n\n\n\narea\nfecha_emision\nfecha_valida\nhorizonte\ndia\ncapa\n\n\n\n\nCanarias\n2026-08-03\n2026-08-03\nDía 1\n1\naemet_2026_08_03_c_previsto_d1_aemet_incendios_20260803_c_previsto_d1\n\n\nCanarias\n2026-08-03\n2026-08-04\nDía 2\n2\naemet_2026_08_04_c_previsto_d2_aemet_incendios_20260804_c_previsto_d2\n\n\nCanarias\n2026-08-03\n2026-08-05\nDía 3\n3\naemet_2026_08_05_c_previsto_d3_aemet_incendios_20260805_c_previsto_d3\n\n\nCanarias\n2026-08-03\n2026-08-06\nDía 4\n4\naemet_2026_08_06_c_previsto_d4_aemet_incendios_20260806_c_previsto_d4\n\n\nCanarias\n2026-08-03\n2026-08-07\nDía 5\n5\naemet_2026_08_07_c_previsto_d5_aemet_incendios_20260807_c_previsto_d5\n\n\nCanarias\n2026-08-03\n2026-08-08\nDía 6\n6\naemet_2026_08_08_c_previsto_d6_aemet_incendios_20260808_c_previsto_d6\n\n\nCanarias\n2026-08-03\n2026-08-09\nDía 7\n7\naemet_2026_08_09_c_previsto_d7_aemet_incendios_20260809_c_previsto_d7\n\n\nCanarias\n2026-08-03\n2026-08-10\nDía 8\n8\naemet_2026_08_10_c_previsto_d8_aemet_incendios_20260810_c_previsto_d8\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-03\nDía 1\n1\naemet_2026_08_03_p_previsto_d1_aemet_incendios_20260803_p_previsto_d1\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-04\nDía 2\n2\naemet_2026_08_04_p_previsto_d2_aemet_incendios_20260804_p_previsto_d2\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-05\nDía 3\n3\naemet_2026_08_05_p_previsto_d3_aemet_incendios_20260805_p_previsto_d3\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-06\nDía 4\n4\naemet_2026_08_06_p_previsto_d4_aemet_incendios_20260806_p_previsto_d4\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-07\nDía 5\n5\naemet_2026_08_07_p_previsto_d5_aemet_incendios_20260807_p_previsto_d5\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-08\nDía 6\n6\naemet_2026_08_08_p_previsto_d6_aemet_incendios_20260808_p_previsto_d6\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-09\nDía 7\n7\naemet_2026_08_09_p_previsto_d7_aemet_incendios_20260809_p_previsto_d7\n\n\nPenínsula y Baleares\n2026-08-03\n2026-08-10\nDía 8\n8\naemet_2026_08_10_p_previsto_d8_aemet_incendios_20260810_p_previsto_d8"
+    "text": "AEMET\nEsta página usa la misma convención que el mapa principal: D00 se interpreta como Día 1 de la fecha del fichero AEMET, sin desplazamiento adicional de un día. Si hay varias emisiones en disco, solo se resume la última emisión presente en el catálogo.\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nCapas AEMET en catálogo\n16\n\n\nCapas AEMET de última emisión\n16\n\n\nÚltima emisión\n2026-08-04\n\n\nPrimera fecha válida\n2026-08-04\n\n\nÚltima fecha válida\n2026-08-11\n\n\nÁreas disponibles\nCanarias, Península y Baleares\n\n\n\n\n\n\n\n\nCapas AEMET publicadas\n\n\n\n\n\n\n\n\n\n\narea\nfecha_emision\nfecha_valida\nhorizonte\ndia\ncapa\n\n\n\n\nCanarias\n2026-08-04\n2026-08-04\nDía 1\n1\naemet_2026_08_04_c_previsto_d1_aemet_incendios_20260804_c_previsto_d1\n\n\nCanarias\n2026-08-04\n2026-08-05\nDía 2\n2\naemet_2026_08_05_c_previsto_d2_aemet_incendios_20260805_c_previsto_d2\n\n\nCanarias\n2026-08-04\n2026-08-06\nDía 3\n3\naemet_2026_08_06_c_previsto_d3_aemet_incendios_20260806_c_previsto_d3\n\n\nCanarias\n2026-08-04\n2026-08-07\nDía 4\n4\naemet_2026_08_07_c_previsto_d4_aemet_incendios_20260807_c_previsto_d4\n\n\nCanarias\n2026-08-04\n2026-08-08\nDía 5\n5\naemet_2026_08_08_c_previsto_d5_aemet_incendios_20260808_c_previsto_d5\n\n\nCanarias\n2026-08-04\n2026-08-09\nDía 6\n6\naemet_2026_08_09_c_previsto_d6_aemet_incendios_20260809_c_previsto_d6\n\n\nCanarias\n2026-08-04\n2026-08-10\nDía 7\n7\naemet_2026_08_10_c_previsto_d7_aemet_incendios_20260810_c_previsto_d7\n\n\nCanarias\n2026-08-04\n2026-08-11\nDía 8\n8\naemet_2026_08_11_c_previsto_d8_aemet_incendios_20260811_c_previsto_d8\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-04\nDía 1\n1\naemet_2026_08_04_p_previsto_d1_aemet_incendios_20260804_p_previsto_d1\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-05\nDía 2\n2\naemet_2026_08_05_p_previsto_d2_aemet_incendios_20260805_p_previsto_d2\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-06\nDía 3\n3\naemet_2026_08_06_p_previsto_d3_aemet_incendios_20260806_p_previsto_d3\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-07\nDía 4\n4\naemet_2026_08_07_p_previsto_d4_aemet_incendios_20260807_p_previsto_d4\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-08\nDía 5\n5\naemet_2026_08_08_p_previsto_d5_aemet_incendios_20260808_p_previsto_d5\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-09\nDía 6\n6\naemet_2026_08_09_p_previsto_d6_aemet_incendios_20260809_p_previsto_d6\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-10\nDía 7\n7\naemet_2026_08_10_p_previsto_d7_aemet_incendios_20260810_p_previsto_d7\n\n\nPenínsula y Baleares\n2026-08-04\n2026-08-11\nDía 8\n8\naemet_2026_08_11_p_previsto_d8_aemet_incendios_20260811_p_previsto_d8"
   },
   {
     "objectID": "summary.html#firms-y-alertas",
     "href": "summary.html#firms-y-alertas",
     "title": "Resumen operativo",
     "section": "FIRMS y alertas",
-    "text": "FIRMS y alertas\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nDetecciones FIRMS\n306\n\n\nAlertas operativas\n73\n\n\n\n\n\n\n\n\nPrimeras alertas operativas\n\n\ncluster_id\n\n\n\n\nALERT-20260804-001\n\n\nALERT-20260804-002\n\n\nALERT-20260804-003\n\n\nALERT-20260804-004\n\n\nALERT-20260804-005\n\n\nALERT-20260804-006\n\n\nALERT-20260804-007\n\n\nALERT-20260804-008\n\n\nALERT-20260804-009\n\n\nALERT-20260804-010\n\n\nALERT-20260804-011\n\n\nALERT-20260804-012\n\n\nALERT-20260804-013\n\n\nALERT-20260804-014\n\n\nALERT-20260804-015\n\n\nALERT-20260804-016\n\n\nALERT-20260804-017\n\n\nALERT-20260804-018\n\n\nALERT-20260804-019\n\n\nALERT-20260804-020"
+    "text": "FIRMS y alertas\n\n\n\n\n\nindicador\nvalor\n\n\n\n\nDetecciones FIRMS\n0\n\n\nAlertas operativas\n0\n\n\n\n\n\n\n\nNo hay alertas operativas en el último procesamiento."
   },
   {
     "objectID": "summary.html#effis",
@@ -144,28 +144,28 @@
     "href": "history.html",
     "title": "Evolución",
     "section": "",
-    "text": "indicador\nvalor\n\n\n\n\nRegistros\n1\n\n\nPrimera fecha\n2026-08-04\n\n\nÚltima fecha\n2026-08-04\n\n\nArchivo\ndata/processed/dashboard_history.csv"
+    "text": "indicador\nvalor\n\n\n\n\nRegistros\n1\n\n\nPrimera fecha\n2026-08-05\n\n\nÚltima fecha\n2026-08-05\n\n\nArchivo\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "history.html#histórico-del-visor",
     "href": "history.html#histórico-del-visor",
     "title": "Evolución",
     "section": "",
-    "text": "indicador\nvalor\n\n\n\n\nRegistros\n1\n\n\nPrimera fecha\n2026-08-04\n\n\nÚltima fecha\n2026-08-04\n\n\nArchivo\ndata/processed/dashboard_history.csv"
+    "text": "indicador\nvalor\n\n\n\n\nRegistros\n1\n\n\nPrimera fecha\n2026-08-05\n\n\nÚltima fecha\n2026-08-05\n\n\nArchivo\ndata/processed/dashboard_history.csv"
   },
   {
     "objectID": "history.html#últimos-registros",
     "href": "history.html#últimos-registros",
     "title": "Evolución",
     "section": "Últimos registros",
-    "text": "Últimos registros\n\n\n\nÚltimos registros del histórico\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsnapshot_date\ngenerated_at_utc\naemet_date\nn_aemet_layers\nn_firms\nn_firms_6h\nn_firms_24h\nfrp_total_mw\nultima_deteccion_utc\nn_ccaa_con_focos\nn_provincias_con_focos\nn_alertas\nn_alertas_altas\nn_alertas_medias\nn_alertas_seguimiento\nmax_alert_score\ntop_provincia\ntop_provincia_focos\ntop_ccaa\ntop_ccaa_focos\n\n\n\n\n2026-08-04\n2026-08-04 11:38:24\n2026-08-03,2026-08-04,2026-08-05,2026-08-06,2026-08-07,2026-08-08,2026-08-09,2026-08-10\n16\n306\n0\n190\n6812.8\n2026-08-04 02:26:00\n12\n19\n73\n2\n22\n32\n154.3\nBadajoz\n10\nExtremadura\n11"
+    "text": "Últimos registros\n\n\n\nÚltimos registros del histórico\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsnapshot_date\ngenerated_at_utc\naemet_date\nn_aemet_layers\nn_firms\nn_firms_6h\nn_firms_24h\nfrp_total_mw\nultima_deteccion_utc\nn_ccaa_con_focos\nn_provincias_con_focos\nn_alertas\nn_alertas_altas\nn_alertas_medias\nn_alertas_seguimiento\nmax_alert_score\ntop_provincia\ntop_provincia_focos\ntop_ccaa\ntop_ccaa_focos\n\n\n\n\n2026-08-05\n2026-08-05 03:52:17\n2026-08-04,2026-08-05,2026-08-06,2026-08-07,2026-08-08,2026-08-09,2026-08-10,2026-08-11\n16\n0\n0\n0\n0\nNA\n0\n0\n0\n0\n0\n0\nNA\nNA\nNA\nNA\nNA"
   },
   {
     "objectID": "history.html#métricas-principales",
     "href": "history.html#métricas-principales",
     "title": "Evolución",
     "section": "Métricas principales",
-    "text": "Métricas principales\n\n\n\nÚltimo valor de métricas numéricas\n\n\nmetrica\nultimo_valor\n\n\n\n\nn_aemet_layers\n16.0\n\n\nn_firms\n306.0\n\n\nn_firms_6h\n0.0\n\n\nn_firms_24h\n190.0\n\n\nfrp_total_mw\n6812.8\n\n\nn_ccaa_con_focos\n12.0\n\n\nn_provincias_con_focos\n19.0\n\n\nn_alertas\n73.0"
+    "text": "Métricas principales\n\n\n\nÚltimo valor de métricas numéricas\n\n\nmetrica\nultimo_valor\n\n\n\n\nn_aemet_layers\n16\n\n\nn_firms\n0\n\n\nn_firms_6h\n0\n\n\nn_firms_24h\n0\n\n\nfrp_total_mw\n0\n\n\nn_ccaa_con_focos\n0\n\n\nn_provincias_con_focos\n0\n\n\nn_alertas\n0"
   },
   {
     "objectID": "history.html#gráficos-de-evolución",
