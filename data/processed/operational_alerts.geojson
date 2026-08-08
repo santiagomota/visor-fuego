@@ -5,46 +5,92 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-6.6953, 37.471]
+        "coordinates": [-6.6663, 37.4832]
       },
       "properties": {
         "cluster_id": "ALERT-20260808-001",
         "alerta_operativa": "alta",
-        "score": 363.9,
-        "n_focos": 127,
+        "score": 1034.5,
+        "n_focos": 385,
         "n_ultimas_6h": 0,
-        "n_ultimas_24h": 110,
-        "frp_total_mw": 4790.5,
+        "n_ultimas_24h": 316,
+        "frp_total_mw": 6261,
         "frp_max_mw": 176.1,
-        "edad_min_h": 12,
-        "ultima_deteccion_utc": "2026-08-07 14:29:00",
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-001<\/strong><br>Nivel: alta<br>Focos: 127<br>Últimas 6 h: 0<br>FRP total: 4790.5 MW<br>Última detección UTC: 2026-08-07 14:29:00"
+        "popup_label": "<strong>ALERT-20260808-001<\/strong><br>Nivel: alta<br>Focos: 385<br>Últimas 6 h: 0<br>FRP total: 6261 MW<br>Última detección UTC: 2026-08-08 02:49:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-7.4872, 40.5676]
+        "coordinates": [-7.488, 40.5965]
       },
       "properties": {
         "cluster_id": "ALERT-20260808-002",
         "alerta_operativa": "alta",
-        "score": 145.5,
-        "n_focos": 43,
+        "score": 223.6,
+        "n_focos": 69,
         "n_ultimas_6h": 0,
-        "n_ultimas_24h": 43,
-        "frp_total_mw": 3871.4,
+        "n_ultimas_24h": 69,
+        "frp_total_mw": 4045.3,
         "frp_max_mw": 304.3,
-        "edad_min_h": 12,
-        "ultima_deteccion_utc": "2026-08-07 14:31:00",
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-002<\/strong><br>Nivel: alta<br>Focos: 43<br>Últimas 6 h: 0<br>FRP total: 3871.4 MW<br>Última detección UTC: 2026-08-07 14:31:00"
+        "popup_label": "<strong>ALERT-20260808-002<\/strong><br>Nivel: alta<br>Focos: 69<br>Últimas 6 h: 0<br>FRP total: 4045.3 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [3.2291, 32.9434]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-003",
+        "alerta_operativa": "alta",
+        "score": 134.2,
+        "n_focos": 46,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 38,
+        "frp_total_mw": 445.5,
+        "frp_max_mw": 32.5,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-003<\/strong><br>Nivel: alta<br>Focos: 46<br>Últimas 6 h: 0<br>FRP total: 445.5 MW<br>Última detección UTC: 2026-08-08 02:32:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.0386, 40.4365]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-004",
+        "alerta_operativa": "alta",
+        "score": 64.9,
+        "n_focos": 18,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 18,
+        "frp_total_mw": 231.7,
+        "frp_max_mw": 29.6,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-004<\/strong><br>Nivel: alta<br>Focos: 18<br>Últimas 6 h: 0<br>FRP total: 231.7 MW<br>Última detección UTC: 2026-08-08 02:47:00"
       }
     },
     {
@@ -54,7 +100,7 @@
         "coordinates": [-6.5978, 43.4408]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-003",
+        "cluster_id": "ALERT-20260808-005",
         "alerta_operativa": "alta",
         "score": 58.6,
         "n_focos": 16,
@@ -62,12 +108,12 @@
         "n_ultimas_24h": 16,
         "frp_total_mw": 203.5,
         "frp_max_mw": 27.7,
-        "edad_min_h": 12,
+        "edad_min_h": 18.7,
         "ultima_deteccion_utc": "2026-08-07 14:31:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-003<\/strong><br>Nivel: alta<br>Focos: 16<br>Últimas 6 h: 0<br>FRP total: 203.5 MW<br>Última detección UTC: 2026-08-07 14:31:00"
+        "popup_label": "<strong>ALERT-20260808-005<\/strong><br>Nivel: alta<br>Focos: 16<br>Últimas 6 h: 0<br>FRP total: 203.5 MW<br>Última detección UTC: 2026-08-07 14:31:00"
       }
     },
     {
@@ -77,7 +123,7 @@
         "coordinates": [-7.9401, 38.6087]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-004",
+        "cluster_id": "ALERT-20260808-006",
         "alerta_operativa": "alta",
         "score": 19.2,
         "n_focos": 3,
@@ -85,81 +131,242 @@
         "n_ultimas_24h": 3,
         "frp_total_mw": 161.9,
         "frp_max_mw": 78.4,
-        "edad_min_h": 12,
+        "edad_min_h": 18.7,
         "ultima_deteccion_utc": "2026-08-07 14:29:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-004<\/strong><br>Nivel: alta<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 161.9 MW<br>Última detección UTC: 2026-08-07 14:29:00"
+        "popup_label": "<strong>ALERT-20260808-006<\/strong><br>Nivel: alta<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 161.9 MW<br>Última detección UTC: 2026-08-07 14:29:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-5.7463, 43.5323]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-005",
-        "alerta_operativa": "media",
-        "score": 40.7,
-        "n_focos": 14,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 10,
-        "frp_total_mw": 27.6,
-        "frp_max_mw": 3.8,
-        "edad_min_h": 13.7,
-        "ultima_deteccion_utc": "2026-08-07 12:51:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-005<\/strong><br>Nivel: media<br>Focos: 14<br>Últimas 6 h: 0<br>FRP total: 27.6 MW<br>Última detección UTC: 2026-08-07 12:51:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-0.2573, 35.8052]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-006",
-        "alerta_operativa": "media",
-        "score": 36.2,
-        "n_focos": 13,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 8,
-        "frp_total_mw": 36.3,
-        "frp_max_mw": 6.2,
-        "edad_min_h": 14,
-        "ultima_deteccion_utc": "2026-08-07 12:29:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-006<\/strong><br>Nivel: media<br>Focos: 13<br>Últimas 6 h: 0<br>FRP total: 36.3 MW<br>Última detección UTC: 2026-08-07 12:29:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-0.516, 28.1993]
+        "coordinates": [4.8848, 43.4419]
       },
       "properties": {
         "cluster_id": "ALERT-20260808-007",
         "alerta_operativa": "media",
-        "score": 27.9,
-        "n_focos": 8,
+        "score": 82.1,
+        "n_focos": 29,
         "n_ultimas_6h": 0,
-        "n_ultimas_24h": 6,
-        "frp_total_mw": 49.8,
-        "frp_max_mw": 28.2,
-        "edad_min_h": 12.4,
-        "ultima_deteccion_utc": "2026-08-07 14:08:00",
+        "n_ultimas_24h": 22,
+        "frp_total_mw": 93.3,
+        "frp_max_mw": 11,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-007<\/strong><br>Nivel: media<br>Focos: 8<br>Últimas 6 h: 0<br>FRP total: 49.8 MW<br>Última detección UTC: 2026-08-07 14:08:00"
+        "popup_label": "<strong>ALERT-20260808-007<\/strong><br>Nivel: media<br>Focos: 29<br>Últimas 6 h: 0<br>FRP total: 93.3 MW<br>Última detección UTC: 2026-08-08 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [3.9868, 32.2768]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-008",
+        "alerta_operativa": "media",
+        "score": 61.4,
+        "n_focos": 22,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 15,
+        "frp_total_mw": 109.8,
+        "frp_max_mw": 29.7,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-008<\/strong><br>Nivel: media<br>Focos: 22<br>Últimas 6 h: 0<br>FRP total: 109.8 MW<br>Última detección UTC: 2026-08-08 02:32:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [3.1526, 36.6537]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-009",
+        "alerta_operativa": "media",
+        "score": 50.1,
+        "n_focos": 21,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 11,
+        "frp_total_mw": 33.8,
+        "frp_max_mw": 2.6,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-009<\/strong><br>Nivel: media<br>Focos: 21<br>Últimas 6 h: 0<br>FRP total: 33.8 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [3.3361, 33.1308]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-010",
+        "alerta_operativa": "media",
+        "score": 48.8,
+        "n_focos": 16,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 13,
+        "frp_total_mw": 29.5,
+        "frp_max_mw": 4.2,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-010<\/strong><br>Nivel: media<br>Focos: 16<br>Últimas 6 h: 0<br>FRP total: 29.5 MW<br>Última detección UTC: 2026-08-08 02:32:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-5.7526, 43.532]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-011",
+        "alerta_operativa": "media",
+        "score": 48.5,
+        "n_focos": 21,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 10,
+        "frp_total_mw": 42.2,
+        "frp_max_mw": 3.8,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-011<\/strong><br>Nivel: media<br>Focos: 21<br>Últimas 6 h: 0<br>FRP total: 42.2 MW<br>Última detección UTC: 2026-08-08 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.2464, 42.9365]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-012",
+        "alerta_operativa": "media",
+        "score": 43.7,
+        "n_focos": 12,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 12,
+        "frp_total_mw": 46,
+        "frp_max_mw": 10,
+        "edad_min_h": 6.8,
+        "ultima_deteccion_utc": "2026-08-08 02:28:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-012<\/strong><br>Nivel: media<br>Focos: 12<br>Últimas 6 h: 0<br>FRP total: 46 MW<br>Última detección UTC: 2026-08-08 02:28:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.0388, 40.2631]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-013",
+        "alerta_operativa": "media",
+        "score": 42.8,
+        "n_focos": 12,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 12,
+        "frp_total_mw": 29.4,
+        "frp_max_mw": 4.2,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-013<\/strong><br>Nivel: media<br>Focos: 12<br>Últimas 6 h: 0<br>FRP total: 29.4 MW<br>Última detección UTC: 2026-08-08 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.5167, 28.1995]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-014",
+        "alerta_operativa": "media",
+        "score": 42.4,
+        "n_focos": 14,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 10,
+        "frp_total_mw": 64.8,
+        "frp_max_mw": 28.2,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:51:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-014<\/strong><br>Nivel: media<br>Focos: 14<br>Últimas 6 h: 0<br>FRP total: 64.8 MW<br>Última detección UTC: 2026-08-08 02:51:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [3.7484, 36.1795]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-015",
+        "alerta_operativa": "media",
+        "score": 29.8,
+        "n_focos": 10,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 7,
+        "frp_total_mw": 17.2,
+        "frp_max_mw": 2.3,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-015<\/strong><br>Nivel: media<br>Focos: 10<br>Últimas 6 h: 0<br>FRP total: 17.2 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.257, 35.8023]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-016",
+        "alerta_operativa": "media",
+        "score": 28.4,
+        "n_focos": 15,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 3,
+        "frp_total_mw": 39.9,
+        "frp_max_mw": 6.2,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-016<\/strong><br>Nivel: media<br>Focos: 15<br>Últimas 6 h: 0<br>FRP total: 39.9 MW<br>Última detección UTC: 2026-08-08 02:32:00"
       }
     },
     {
@@ -169,7 +376,7 @@
         "coordinates": [-1.1476, 34.7568]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-008",
+        "cluster_id": "ALERT-20260808-017",
         "alerta_operativa": "media",
         "score": 27.1,
         "n_focos": 6,
@@ -177,104 +384,35 @@
         "n_ultimas_24h": 6,
         "frp_total_mw": 91.8,
         "frp_max_mw": 28.6,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.5,
         "ultima_deteccion_utc": "2026-08-07 12:46:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-008<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 91.8 MW<br>Última detección UTC: 2026-08-07 12:46:00"
+        "popup_label": "<strong>ALERT-20260808-017<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 91.8 MW<br>Última detección UTC: 2026-08-07 12:46:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-1.5642, 35.1721]
+        "coordinates": [3.1681, 32.5551]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-009",
+        "cluster_id": "ALERT-20260808-018",
         "alerta_operativa": "media",
-        "score": 24.5,
-        "n_focos": 6,
+        "score": 26.7,
+        "n_focos": 7,
         "n_ultimas_6h": 0,
-        "n_ultimas_24h": 6,
-        "frp_total_mw": 24.6,
-        "frp_max_mw": 7.2,
-        "edad_min_h": 12.3,
-        "ultima_deteccion_utc": "2026-08-07 14:10:00",
+        "n_ultimas_24h": 7,
+        "frp_total_mw": 16.6,
+        "frp_max_mw": 3.6,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-009<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 24.6 MW<br>Última detección UTC: 2026-08-07 14:10:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-0.2497, 42.9368]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-010",
-        "alerta_operativa": "media",
-        "score": 22.1,
-        "n_focos": 5,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 5,
-        "frp_total_mw": 34.3,
-        "frp_max_mw": 10,
-        "edad_min_h": 13.7,
-        "ultima_deteccion_utc": "2026-08-07 12:49:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-010<\/strong><br>Nivel: media<br>Focos: 5<br>Últimas 6 h: 0<br>FRP total: 34.3 MW<br>Última detección UTC: 2026-08-07 12:49:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [3.1466, 36.6647]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-011",
-        "alerta_operativa": "media",
-        "score": 20.9,
-        "n_focos": 11,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 2,
-        "frp_total_mw": 18.2,
-        "frp_max_mw": 2.6,
-        "edad_min_h": 14,
-        "ultima_deteccion_utc": "2026-08-07 12:29:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-011<\/strong><br>Nivel: media<br>Focos: 11<br>Últimas 6 h: 0<br>FRP total: 18.2 MW<br>Última detección UTC: 2026-08-07 12:29:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [4.8808, 43.4393]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-012",
-        "alerta_operativa": "media",
-        "score": 20.7,
-        "n_focos": 8,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 3,
-        "frp_total_mw": 27.9,
-        "frp_max_mw": 7.9,
-        "edad_min_h": 14,
-        "ultima_deteccion_utc": "2026-08-07 12:32:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-012<\/strong><br>Nivel: media<br>Focos: 8<br>Últimas 6 h: 0<br>FRP total: 27.9 MW<br>Última detección UTC: 2026-08-07 12:32:00"
+        "popup_label": "<strong>ALERT-20260808-018<\/strong><br>Nivel: media<br>Focos: 7<br>Últimas 6 h: 0<br>FRP total: 16.6 MW<br>Última detección UTC: 2026-08-08 02:32:00"
       }
     },
     {
@@ -284,66 +422,158 @@
         "coordinates": [-3.4741, 40.2451]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-013",
+        "cluster_id": "ALERT-20260808-019",
         "alerta_operativa": "media",
-        "score": 19.7,
+        "score": 25.5,
+        "n_focos": 9,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 5,
+        "frp_total_mw": 24.7,
+        "frp_max_mw": 3.8,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-019<\/strong><br>Nivel: media<br>Focos: 9<br>Últimas 6 h: 0<br>FRP total: 24.7 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.877, 36.5966]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-020",
+        "alerta_operativa": "media",
+        "score": 24.8,
+        "n_focos": 8,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 6,
+        "frp_total_mw": 9.9,
+        "frp_max_mw": 2.2,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-020<\/strong><br>Nivel: media<br>Focos: 8<br>Últimas 6 h: 0<br>FRP total: 9.9 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.5642, 35.1721]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-021",
+        "alerta_operativa": "media",
+        "score": 24.5,
         "n_focos": 6,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 6,
+        "frp_total_mw": 24.6,
+        "frp_max_mw": 7.2,
+        "edad_min_h": 19.1,
+        "ultima_deteccion_utc": "2026-08-07 14:10:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-021<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 24.6 MW<br>Última detección UTC: 2026-08-07 14:10:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [1.2405, 36.1275]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-022",
+        "alerta_operativa": "media",
+        "score": 22.6,
+        "n_focos": 7,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 5,
+        "frp_total_mw": 15.4,
+        "frp_max_mw": 2.9,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-022<\/strong><br>Nivel: media<br>Focos: 7<br>Últimas 6 h: 0<br>FRP total: 15.4 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-5.7752, 41.5429]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-023",
+        "alerta_operativa": "media",
+        "score": 19.6,
+        "n_focos": 4,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 4,
+        "frp_total_mw": 44.6,
+        "frp_max_mw": 41.9,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-023<\/strong><br>Nivel: media<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 44.6 MW<br>Última detección UTC: 2026-08-08 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-6.495, 37.4206]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-024",
+        "alerta_operativa": "media",
+        "score": 18,
+        "n_focos": 6,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 3,
+        "frp_total_mw": 19,
+        "frp_max_mw": 5.9,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-024<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 19 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-4.0495, 38.6645]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-025",
+        "alerta_operativa": "media",
+        "score": 17.7,
+        "n_focos": 4,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 4,
         "frp_total_mw": 15.9,
-        "frp_max_mw": 3.8,
-        "edad_min_h": 12.3,
-        "ultima_deteccion_utc": "2026-08-07 14:12:00",
+        "frp_max_mw": 6.2,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-013<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 15.9 MW<br>Última detección UTC: 2026-08-07 14:12:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [3.9873, 32.2766]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-014",
-        "alerta_operativa": "media",
-        "score": 18.3,
-        "n_focos": 8,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 62.5,
-        "frp_max_mw": 29.7,
-        "edad_min_h": 14.1,
-        "ultima_deteccion_utc": "2026-08-07 12:27:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-014<\/strong><br>Nivel: media<br>Focos: 8<br>Últimas 6 h: 0<br>FRP total: 62.5 MW<br>Última detección UTC: 2026-08-07 12:27:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [3.2292, 32.9492]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-015",
-        "alerta_operativa": "media",
-        "score": 17.5,
-        "n_focos": 8,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 2,
-        "frp_total_mw": 14.4,
-        "frp_max_mw": 3.4,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-015<\/strong><br>Nivel: media<br>Focos: 8<br>Últimas 6 h: 0<br>FRP total: 14.4 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-025<\/strong><br>Nivel: media<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 15.9 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
@@ -353,7 +583,7 @@
         "coordinates": [-5.7285, 38.2493]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-016",
+        "cluster_id": "ALERT-20260808-026",
         "alerta_operativa": "media",
         "score": 17.4,
         "n_focos": 3,
@@ -361,12 +591,12 @@
         "n_ultimas_24h": 3,
         "frp_total_mw": 67.3,
         "frp_max_mw": 49.4,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-016<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 67.3 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-026<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 67.3 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -376,7 +606,7 @@
         "coordinates": [-5.573, 38.6357]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-017",
+        "cluster_id": "ALERT-20260808-027",
         "alerta_operativa": "media",
         "score": 17.3,
         "n_focos": 3,
@@ -384,81 +614,219 @@
         "n_ultimas_24h": 3,
         "frp_total_mw": 61.4,
         "frp_max_mw": 52.8,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-017<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 61.4 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-027<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 61.4 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-4.0478, 38.6638]
+        "coordinates": [4.476, 35.7082]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-018",
+        "cluster_id": "ALERT-20260808-028",
         "alerta_operativa": "media",
-        "score": 14.4,
-        "n_focos": 3,
+        "score": 17.3,
+        "n_focos": 6,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 3,
-        "frp_total_mw": 14.1,
-        "frp_max_mw": 6.2,
-        "edad_min_h": 12.3,
-        "ultima_deteccion_utc": "2026-08-07 14:10:00",
+        "frp_total_mw": 12.9,
+        "frp_max_mw": 3,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-018<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 14.1 MW<br>Última detección UTC: 2026-08-07 14:10:00"
+        "popup_label": "<strong>ALERT-20260808-028<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 12.9 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-5.228, 38.7218]
+        "coordinates": [-0.9392, 35.5669]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-019",
+        "cluster_id": "ALERT-20260808-029",
+        "alerta_operativa": "media",
+        "score": 17.1,
+        "n_focos": 5,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 4,
+        "frp_total_mw": 6.9,
+        "frp_max_mw": 1.9,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-029<\/strong><br>Nivel: media<br>Focos: 5<br>Últimas 6 h: 0<br>FRP total: 6.9 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [3.1809, 32.7473]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-030",
+        "alerta_operativa": "media",
+        "score": 16.6,
+        "n_focos": 4,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 4,
+        "frp_total_mw": 8.9,
+        "frp_max_mw": 2.7,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-030<\/strong><br>Nivel: media<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 8.9 MW<br>Última detección UTC: 2026-08-08 02:32:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [4.0051, 32.4022]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-031",
+        "alerta_operativa": "media",
+        "score": 14.8,
+        "n_focos": 4,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 3,
+        "frp_total_mw": 10.2,
+        "frp_max_mw": 3.8,
+        "edad_min_h": 8.1,
+        "ultima_deteccion_utc": "2026-08-08 01:09:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-031<\/strong><br>Nivel: media<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 10.2 MW<br>Última detección UTC: 2026-08-08 01:09:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.8388, 43.4133]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-032",
+        "alerta_operativa": "media",
+        "score": 14.2,
+        "n_focos": 4,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 3,
+        "frp_total_mw": 7,
+        "frp_max_mw": 3,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-032<\/strong><br>Nivel: media<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 7 MW<br>Última detección UTC: 2026-08-08 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [4.447, 35.8787]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-033",
+        "alerta_operativa": "media",
+        "score": 14,
+        "n_focos": 5,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 2,
+        "frp_total_mw": 11,
+        "frp_max_mw": 3.1,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-033<\/strong><br>Nivel: media<br>Focos: 5<br>Últimas 6 h: 0<br>FRP total: 11 MW<br>Última detección UTC: 2026-08-08 02:30:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.7444, 39.9374]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-034",
+        "alerta_operativa": "media",
+        "score": 14,
+        "n_focos": 6,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 2,
+        "frp_total_mw": 6.4,
+        "frp_max_mw": 1.5,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-034<\/strong><br>Nivel: media<br>Focos: 6<br>Últimas 6 h: 0<br>FRP total: 6.4 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-0.5437, 38.3766]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-035",
         "alerta_operativa": "media",
         "score": 13.5,
-        "n_focos": 3,
+        "n_focos": 4,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 3,
-        "frp_total_mw": 8.5,
-        "frp_max_mw": 3.3,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "frp_total_mw": 4.7,
+        "frp_max_mw": 1.5,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-019<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 8.5 MW<br>Última detección UTC: 2026-08-07 03:08:00"
+        "popup_label": "<strong>ALERT-20260808-035<\/strong><br>Nivel: media<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 4.7 MW<br>Última detección UTC: 2026-08-08 02:49:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [3.3181, 33.1274]
+        "coordinates": [-1.3434, 35.3115]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-020",
+        "cluster_id": "ALERT-20260808-036",
         "alerta_operativa": "media",
-        "score": 13.3,
-        "n_focos": 3,
+        "score": 12.6,
+        "n_focos": 5,
         "n_ultimas_6h": 0,
-        "n_ultimas_24h": 3,
-        "frp_total_mw": 7.5,
-        "frp_max_mw": 4.2,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
-        "sensores": "VIIRS_SNPP_NRT",
-        "satellites": "N",
+        "n_ultimas_24h": 2,
+        "frp_total_mw": 5.1,
+        "frp_max_mw": 1.3,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-020<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 7.5 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-036<\/strong><br>Nivel: media<br>Focos: 5<br>Últimas 6 h: 0<br>FRP total: 5.1 MW<br>Última detección UTC: 2026-08-08 02:49:00"
       }
     },
     {
@@ -468,7 +836,7 @@
         "coordinates": [-8.1935, 41.2136]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-021",
+        "cluster_id": "ALERT-20260808-037",
         "alerta_operativa": "media",
         "score": 12.5,
         "n_focos": 2,
@@ -476,35 +844,35 @@
         "n_ultimas_24h": 2,
         "frp_total_mw": 25.2,
         "frp_max_mw": 14.7,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-021<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 25.2 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-037<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 25.2 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-7.726, 32.8894]
+        "coordinates": [2.9286, 36.1391]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-022",
+        "cluster_id": "ALERT-20260808-038",
         "alerta_operativa": "media",
-        "score": 12.5,
-        "n_focos": 3,
+        "score": 12.4,
+        "n_focos": 5,
         "n_ultimas_6h": 0,
-        "n_ultimas_24h": 3,
-        "frp_total_mw": 4.8,
-        "frp_max_mw": 2.1,
-        "edad_min_h": 23.3,
-        "ultima_deteccion_utc": "2026-08-07 03:10:00",
+        "n_ultimas_24h": 2,
+        "frp_total_mw": 4.4,
+        "frp_max_mw": 1.3,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-022<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 4.8 MW<br>Última detección UTC: 2026-08-07 03:10:00"
+        "popup_label": "<strong>ALERT-20260808-038<\/strong><br>Nivel: media<br>Focos: 5<br>Últimas 6 h: 0<br>FRP total: 4.4 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
@@ -514,7 +882,7 @@
         "coordinates": [-6.7347, 37.2487]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-023",
+        "cluster_id": "ALERT-20260808-039",
         "alerta_operativa": "media",
         "score": 12.1,
         "n_focos": 3,
@@ -522,58 +890,81 @@
         "n_ultimas_24h": 2,
         "frp_total_mw": 11.8,
         "frp_max_mw": 7.5,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-023<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 11.8 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-039<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 11.8 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-6.4949, 37.4211]
+        "coordinates": [0.9895, 43.187]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-024",
+        "cluster_id": "ALERT-20260808-040",
         "alerta_operativa": "media",
-        "score": 11.9,
+        "score": 11.5,
         "n_focos": 3,
         "n_ultimas_6h": 0,
-        "n_ultimas_24h": 2,
-        "frp_total_mw": 10.4,
-        "frp_max_mw": 5.9,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "n_ultimas_24h": 3,
+        "frp_total_mw": 2.5,
+        "frp_max_mw": 0.9,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-024<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 10.4 MW<br>Última detección UTC: 2026-08-07 03:08:00"
+        "popup_label": "<strong>ALERT-20260808-040<\/strong><br>Nivel: media<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 2.5 MW<br>Última detección UTC: 2026-08-08 02:47:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-3.7447, 39.9378]
+        "coordinates": [0.2974, 28.379]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-025",
+        "cluster_id": "ALERT-20260808-041",
         "alerta_operativa": "media",
-        "score": 11.2,
-        "n_focos": 4,
+        "score": 11.3,
+        "n_focos": 2,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 2,
-        "frp_total_mw": 4,
-        "frp_max_mw": 1.5,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "frp_total_mw": 13.5,
+        "frp_max_mw": 9.8,
+        "edad_min_h": 8,
+        "ultima_deteccion_utc": "2026-08-08 01:11:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-025<\/strong><br>Nivel: media<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 4 MW<br>Última detección UTC: 2026-08-07 03:08:00"
+        "popup_label": "<strong>ALERT-20260808-041<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 13.5 MW<br>Última detección UTC: 2026-08-08 01:11:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.0941, 40.8581]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-042",
+        "alerta_operativa": "media",
+        "score": 11.3,
+        "n_focos": 2,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 2,
+        "frp_total_mw": 13.3,
+        "frp_max_mw": 10,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-042<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 13.3 MW<br>Última detección UTC: 2026-08-08 02:47:00"
       }
     },
     {
@@ -583,7 +974,7 @@
         "coordinates": [1.4761, 44.0101]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-026",
+        "cluster_id": "ALERT-20260808-043",
         "alerta_operativa": "media",
         "score": 11,
         "n_focos": 2,
@@ -591,12 +982,35 @@
         "n_ultimas_24h": 2,
         "frp_total_mw": 11.3,
         "frp_max_mw": 6.6,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-026<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 11.3 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-043<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 11.3 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-15.4854, 27.8124]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-044",
+        "alerta_operativa": "media",
+        "score": 11,
+        "n_focos": 2,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 2,
+        "frp_total_mw": 11.2,
+        "frp_max_mw": 6,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:51:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-044<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 11.2 MW<br>Última detección UTC: 2026-08-08 02:51:00"
       }
     },
     {
@@ -606,7 +1020,7 @@
         "coordinates": [-0.6522, 44.1034]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-027",
+        "cluster_id": "ALERT-20260808-045",
         "alerta_operativa": "media",
         "score": 10.4,
         "n_focos": 2,
@@ -614,12 +1028,12 @@
         "n_ultimas_24h": 2,
         "frp_total_mw": 8.2,
         "frp_max_mw": 4.1,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-027<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 8.2 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-045<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 8.2 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -629,7 +1043,7 @@
         "coordinates": [-7.8065, 31.3581]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-028",
+        "cluster_id": "ALERT-20260808-046",
         "alerta_operativa": "media",
         "score": 10.1,
         "n_focos": 2,
@@ -637,12 +1051,12 @@
         "n_ultimas_24h": 2,
         "frp_total_mw": 6.6,
         "frp_max_mw": 3.3,
-        "edad_min_h": 12.3,
+        "edad_min_h": 19.1,
         "ultima_deteccion_utc": "2026-08-07 14:10:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-028<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 6.6 MW<br>Última detección UTC: 2026-08-07 14:10:00"
+        "popup_label": "<strong>ALERT-20260808-046<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 6.6 MW<br>Última detección UTC: 2026-08-07 14:10:00"
       }
     },
     {
@@ -652,7 +1066,7 @@
         "coordinates": [-0.9217, 35.0698]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-029",
+        "cluster_id": "ALERT-20260808-047",
         "alerta_operativa": "media",
         "score": 10,
         "n_focos": 2,
@@ -660,173 +1074,58 @@
         "n_ultimas_24h": 2,
         "frp_total_mw": 6.5,
         "frp_max_mw": 3.9,
-        "edad_min_h": 12.3,
+        "edad_min_h": 19.1,
         "ultima_deteccion_utc": "2026-08-07 14:10:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-029<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 6.5 MW<br>Última detección UTC: 2026-08-07 14:10:00"
+        "popup_label": "<strong>ALERT-20260808-047<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 6.5 MW<br>Última detección UTC: 2026-08-07 14:10:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-3.7968, 37.2131]
+        "coordinates": [1.3369, 35.3371]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-030",
+        "cluster_id": "ALERT-20260808-048",
         "alerta_operativa": "media",
-        "score": 8.9,
+        "score": 9.9,
         "n_focos": 2,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 2,
-        "frp_total_mw": 3.3,
-        "frp_max_mw": 2,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "frp_total_mw": 6.2,
+        "frp_max_mw": 5.6,
+        "edad_min_h": 8.1,
+        "ultima_deteccion_utc": "2026-08-08 01:09:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-030<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 3.3 MW<br>Última detección UTC: 2026-08-07 03:08:00"
+        "popup_label": "<strong>ALERT-20260808-048<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 6.2 MW<br>Última detección UTC: 2026-08-08 01:09:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-4.7424, 41.5189]
+        "coordinates": [-7.5344, 33.0565]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-031",
+        "cluster_id": "ALERT-20260808-049",
         "alerta_operativa": "media",
-        "score": 8.3,
+        "score": 8.4,
         "n_focos": 2,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 2,
-        "frp_total_mw": 2.2,
-        "frp_max_mw": 1.6,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "frp_total_mw": 2.4,
+        "frp_max_mw": 1.3,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:51:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-031<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 2.2 MW<br>Última detección UTC: 2026-08-07 03:08:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-8.9058, 39.6864]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-032",
-        "alerta_operativa": "media",
-        "score": 8.3,
-        "n_focos": 2,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 2,
-        "frp_total_mw": 2.1,
-        "frp_max_mw": 1.2,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-032<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 2.1 MW<br>Última detección UTC: 2026-08-07 03:08:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-5.8069, 41.5408]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-033",
-        "alerta_operativa": "seguimiento",
-        "score": 10.5,
-        "n_focos": 1,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 41.9,
-        "frp_max_mw": 41.9,
-        "edad_min_h": 13.7,
-        "ultima_deteccion_utc": "2026-08-07 12:49:00",
-        "sensores": "VIIRS_NOAA20_NRT",
-        "satellites": "N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-033<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 41.9 MW<br>Última detección UTC: 2026-08-07 12:49:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [4.4463, 35.8789]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-034",
-        "alerta_operativa": "seguimiento",
-        "score": 8.9,
-        "n_focos": 3,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 5.9,
-        "frp_max_mw": 2.7,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-034<\/strong><br>Nivel: seguimiento<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 5.9 MW<br>Última detección UTC: 2026-08-07 02:49:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-2.8288, 43.2165]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-035",
-        "alerta_operativa": "seguimiento",
-        "score": 8.7,
-        "n_focos": 4,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 2.9,
-        "frp_max_mw": 0.9,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:47:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-035<\/strong><br>Nivel: seguimiento<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 2.9 MW<br>Última detección UTC: 2026-08-07 02:47:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-6.3473, 39.4938]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-036",
-        "alerta_operativa": "seguimiento",
-        "score": 8.6,
-        "n_focos": 3,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 5,
-        "frp_max_mw": 1.9,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-036<\/strong><br>Nivel: seguimiento<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 5 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-049<\/strong><br>Nivel: media<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 2.4 MW<br>Última detección UTC: 2026-08-08 02:51:00"
       }
     },
     {
@@ -836,7 +1135,7 @@
         "coordinates": [-5.9868, 40.086]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-037",
+        "cluster_id": "ALERT-20260808-050",
         "alerta_operativa": "seguimiento",
         "score": 8,
         "n_focos": 1,
@@ -844,173 +1143,127 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 11,
         "frp_max_mw": 11,
-        "edad_min_h": 12.3,
+        "edad_min_h": 19,
         "ultima_deteccion_utc": "2026-08-07 14:12:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-037<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 11 MW<br>Última detección UTC: 2026-08-07 14:12:00"
+        "popup_label": "<strong>ALERT-20260808-050<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 11 MW<br>Última detección UTC: 2026-08-07 14:12:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-1.3438, 35.3109]
+        "coordinates": [-8.9065, 39.6865]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-038",
+        "cluster_id": "ALERT-20260808-051",
         "alerta_operativa": "seguimiento",
         "score": 7.9,
         "n_focos": 3,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
         "frp_total_mw": 3.2,
-        "frp_max_mw": 1.3,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
+        "frp_max_mw": 1.2,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-038<\/strong><br>Nivel: seguimiento<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 3.2 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-051<\/strong><br>Nivel: seguimiento<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 3.2 MW<br>Última detección UTC: 2026-08-08 02:49:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [2.9281, 36.1395]
+        "coordinates": [-1.9049, 36.9675]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-039",
+        "cluster_id": "ALERT-20260808-052",
         "alerta_operativa": "seguimiento",
-        "score": 7.8,
-        "n_focos": 3,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 3.1,
-        "frp_max_mw": 1.3,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-039<\/strong><br>Nivel: seguimiento<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 3.1 MW<br>Última detección UTC: 2026-08-07 02:49:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [2.8778, 36.5955]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-040",
-        "alerta_operativa": "seguimiento",
-        "score": 7.7,
-        "n_focos": 3,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 2.9,
-        "frp_max_mw": 1.3,
-        "edad_min_h": 14,
-        "ultima_deteccion_utc": "2026-08-07 12:29:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-040<\/strong><br>Nivel: seguimiento<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 2.9 MW<br>Última detección UTC: 2026-08-07 12:29:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-6.7699, 42.5532]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-041",
-        "alerta_operativa": "seguimiento",
-        "score": 7.6,
-        "n_focos": 3,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 2.6,
-        "frp_max_mw": 1,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:47:00",
-        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
-        "satellites": "N, N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-041<\/strong><br>Nivel: seguimiento<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 2.6 MW<br>Última detección UTC: 2026-08-07 02:47:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [1.2412, 36.1275]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-042",
-        "alerta_operativa": "seguimiento",
-        "score": 7.4,
+        "score": 7.5,
         "n_focos": 2,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 4.5,
+        "frp_total_mw": 4.9,
         "frp_max_mw": 2.6,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-042<\/strong><br>Nivel: seguimiento<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 4.5 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-052<\/strong><br>Nivel: seguimiento<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 4.9 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-6.8967, 37.182]
+        "coordinates": [-9.0101, 38.9214]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-043",
+        "cluster_id": "ALERT-20260808-053",
         "alerta_operativa": "seguimiento",
-        "score": 7.1,
+        "score": 6.9,
         "n_focos": 2,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 3.7,
-        "frp_max_mw": 2.5,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
-        "sensores": "VIIRS_NOAA20_NRT",
-        "satellites": "N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-043<\/strong><br>Nivel: seguimiento<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 3.7 MW<br>Última detección UTC: 2026-08-07 03:08:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [1.3175, 35.3315]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-044",
-        "alerta_operativa": "seguimiento",
-        "score": 6.8,
-        "n_focos": 1,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 5.6,
-        "frp_max_mw": 5.6,
-        "edad_min_h": 14,
-        "ultima_deteccion_utc": "2026-08-07 12:29:00",
+        "frp_total_mw": 3.3,
+        "frp_max_mw": 2,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-044<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 5.6 MW<br>Última detección UTC: 2026-08-07 12:29:00"
+        "popup_label": "<strong>ALERT-20260808-053<\/strong><br>Nivel: seguimiento<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 3.3 MW<br>Última detección UTC: 2026-08-08 02:30:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.5383, 35.7853]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-054",
+        "alerta_operativa": "seguimiento",
+        "score": 6.6,
+        "n_focos": 2,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 2.7,
+        "frp_max_mw": 1.4,
+        "edad_min_h": 8.1,
+        "ultima_deteccion_utc": "2026-08-08 01:09:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-054<\/strong><br>Nivel: seguimiento<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 2.7 MW<br>Última detección UTC: 2026-08-08 01:09:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-8.9371, 38.5011]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-055",
+        "alerta_operativa": "seguimiento",
+        "score": 6.4,
+        "n_focos": 2,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 2.3,
+        "frp_max_mw": 1.5,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-055<\/strong><br>Nivel: seguimiento<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 2.3 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
@@ -1020,7 +1273,7 @@
         "coordinates": [-7.7724, 40.6249]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-045",
+        "cluster_id": "ALERT-20260808-056",
         "alerta_operativa": "seguimiento",
         "score": 6.3,
         "n_focos": 1,
@@ -1028,35 +1281,35 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 4.1,
         "frp_max_mw": 4.1,
-        "edad_min_h": 12.3,
+        "edad_min_h": 19,
         "ultima_deteccion_utc": "2026-08-07 14:12:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-045<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 4.1 MW<br>Última detección UTC: 2026-08-07 14:12:00"
+        "popup_label": "<strong>ALERT-20260808-056<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 4.1 MW<br>Última detección UTC: 2026-08-07 14:12:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [3.172, 32.5553]
+        "coordinates": [-0.2775, 35.5308]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-046",
+        "cluster_id": "ALERT-20260808-057",
         "alerta_operativa": "seguimiento",
-        "score": 6,
-        "n_focos": 1,
+        "score": 6.3,
+        "n_focos": 2,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 3.4,
-        "frp_max_mw": 3.4,
-        "edad_min_h": 14.1,
-        "ultima_deteccion_utc": "2026-08-07 12:27:00",
-        "sensores": "VIIRS_SNPP_NRT",
-        "satellites": "N",
+        "frp_total_mw": 2.1,
+        "frp_max_mw": 1.2,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-046<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 3.4 MW<br>Última detección UTC: 2026-08-07 12:27:00"
+        "popup_label": "<strong>ALERT-20260808-057<\/strong><br>Nivel: seguimiento<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 2.1 MW<br>Última detección UTC: 2026-08-08 02:49:00"
       }
     },
     {
@@ -1066,7 +1319,7 @@
         "coordinates": [1.5364, 43.5966]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-047",
+        "cluster_id": "ALERT-20260808-058",
         "alerta_operativa": "seguimiento",
         "score": 5.8,
         "n_focos": 1,
@@ -1074,12 +1327,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 3.1,
         "frp_max_mw": 3.1,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-047<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 3.1 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-058<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 3.1 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -1089,7 +1342,7 @@
         "coordinates": [-0.9987, 43.9617]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-048",
+        "cluster_id": "ALERT-20260808-059",
         "alerta_operativa": "seguimiento",
         "score": 5.7,
         "n_focos": 1,
@@ -1097,12 +1350,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2.9,
         "frp_max_mw": 2.9,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-048<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.9 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-059<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.9 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -1112,7 +1365,7 @@
         "coordinates": [-4.5731, 40.3734]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-049",
+        "cluster_id": "ALERT-20260808-060",
         "alerta_operativa": "seguimiento",
         "score": 5.7,
         "n_focos": 1,
@@ -1120,12 +1373,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2.8,
         "frp_max_mw": 2.8,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-049<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.8 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-060<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.8 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -1135,7 +1388,7 @@
         "coordinates": [-8.3753, 40.8154]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-050",
+        "cluster_id": "ALERT-20260808-061",
         "alerta_operativa": "seguimiento",
         "score": 5.6,
         "n_focos": 1,
@@ -1143,12 +1396,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2.6,
         "frp_max_mw": 2.6,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-050<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.6 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-061<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.6 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -1158,7 +1411,7 @@
         "coordinates": [-9.3354, 39.1225]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-051",
+        "cluster_id": "ALERT-20260808-062",
         "alerta_operativa": "seguimiento",
         "score": 5.4,
         "n_focos": 1,
@@ -1166,12 +1419,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2.3,
         "frp_max_mw": 2.3,
-        "edad_min_h": 12.3,
+        "edad_min_h": 19,
         "ultima_deteccion_utc": "2026-08-07 14:12:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-051<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.3 MW<br>Última detección UTC: 2026-08-07 14:12:00"
+        "popup_label": "<strong>ALERT-20260808-062<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.3 MW<br>Última detección UTC: 2026-08-07 14:12:00"
       }
     },
     {
@@ -1181,7 +1434,7 @@
         "coordinates": [-6.4598, 38.9835]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-052",
+        "cluster_id": "ALERT-20260808-063",
         "alerta_operativa": "seguimiento",
         "score": 5.3,
         "n_focos": 1,
@@ -1189,12 +1442,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2.2,
         "frp_max_mw": 2.2,
-        "edad_min_h": 14,
+        "edad_min_h": 20.7,
         "ultima_deteccion_utc": "2026-08-07 12:32:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-052<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.2 MW<br>Última detección UTC: 2026-08-07 12:32:00"
+        "popup_label": "<strong>ALERT-20260808-063<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.2 MW<br>Última detección UTC: 2026-08-07 12:32:00"
       }
     },
     {
@@ -1204,7 +1457,7 @@
         "coordinates": [-5.5554, 33.6996]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-053",
+        "cluster_id": "ALERT-20260808-064",
         "alerta_operativa": "seguimiento",
         "score": 5.3,
         "n_focos": 1,
@@ -1212,12 +1465,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2.2,
         "frp_max_mw": 2.2,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.5,
         "ultima_deteccion_utc": "2026-08-07 12:46:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-053<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.2 MW<br>Última detección UTC: 2026-08-07 12:46:00"
+        "popup_label": "<strong>ALERT-20260808-064<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.2 MW<br>Última detección UTC: 2026-08-07 12:46:00"
       }
     },
     {
@@ -1227,7 +1480,7 @@
         "coordinates": [2.9187, 39.7238]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-054",
+        "cluster_id": "ALERT-20260808-065",
         "alerta_operativa": "seguimiento",
         "score": 5.3,
         "n_focos": 1,
@@ -1235,12 +1488,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2.1,
         "frp_max_mw": 2.1,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-054<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.1 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-065<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.1 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -1250,7 +1503,7 @@
         "coordinates": [-1.4792, 40.929]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-055",
+        "cluster_id": "ALERT-20260808-066",
         "alerta_operativa": "seguimiento",
         "score": 5.2,
         "n_focos": 1,
@@ -1258,22 +1511,22 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2,
         "frp_max_mw": 2,
-        "edad_min_h": 14,
+        "edad_min_h": 20.7,
         "ultima_deteccion_utc": "2026-08-07 12:32:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-055<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2 MW<br>Última detección UTC: 2026-08-07 12:32:00"
+        "popup_label": "<strong>ALERT-20260808-066<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2 MW<br>Última detección UTC: 2026-08-07 12:32:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-9.0099, 38.9201]
+        "coordinates": [0.1236, 36.0176]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-056",
+        "cluster_id": "ALERT-20260808-067",
         "alerta_operativa": "seguimiento",
         "score": 5.2,
         "n_focos": 1,
@@ -1281,12 +1534,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2,
         "frp_max_mw": 2,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
-        "sensores": "VIIRS_SNPP_NRT",
-        "satellites": "N",
+        "edad_min_h": 8.1,
+        "ultima_deteccion_utc": "2026-08-08 01:09:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-056<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-067<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2 MW<br>Última detección UTC: 2026-08-08 01:09:00"
       }
     },
     {
@@ -1296,7 +1549,7 @@
         "coordinates": [-0.6202, 43.929]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-057",
+        "cluster_id": "ALERT-20260808-068",
         "alerta_operativa": "seguimiento",
         "score": 5.2,
         "n_focos": 1,
@@ -1304,12 +1557,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 2,
         "frp_max_mw": 2,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-057<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-068<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
@@ -1319,7 +1572,7 @@
         "coordinates": [-3.6448, 37.1688]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-058",
+        "cluster_id": "ALERT-20260808-069",
         "alerta_operativa": "seguimiento",
         "score": 5.1,
         "n_focos": 1,
@@ -1327,12 +1580,58 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 1.9,
         "frp_max_mw": 1.9,
-        "edad_min_h": 12.3,
+        "edad_min_h": 19.1,
         "ultima_deteccion_utc": "2026-08-07 14:10:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-058<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.9 MW<br>Última detección UTC: 2026-08-07 14:10:00"
+        "popup_label": "<strong>ALERT-20260808-069<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.9 MW<br>Última detección UTC: 2026-08-07 14:10:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-4.5045, 36.719]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-070",
+        "alerta_operativa": "seguimiento",
+        "score": 5.1,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 1.9,
+        "frp_max_mw": 1.9,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-070<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.9 MW<br>Última detección UTC: 2026-08-08 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-4.6719, 37.6225]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-071",
+        "alerta_operativa": "seguimiento",
+        "score": 5.1,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 1.8,
+        "frp_max_mw": 1.8,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-071<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.8 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
@@ -1342,7 +1641,7 @@
         "coordinates": [1.5845, 43.8019]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-059",
+        "cluster_id": "ALERT-20260808-072",
         "alerta_operativa": "seguimiento",
         "score": 4.8,
         "n_focos": 1,
@@ -1350,12 +1649,35 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 1.5,
         "frp_max_mw": 1.5,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-059<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.5 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-072<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.5 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-5.8643, 37.3601]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-073",
+        "alerta_operativa": "seguimiento",
+        "score": 4.8,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 1.4,
+        "frp_max_mw": 1.4,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-073<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-08 02:32:00"
       }
     },
     {
@@ -1365,7 +1687,7 @@
         "coordinates": [-7.3297, 33.3834]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-060",
+        "cluster_id": "ALERT-20260808-074",
         "alerta_operativa": "seguimiento",
         "score": 4.8,
         "n_focos": 1,
@@ -1373,35 +1695,12 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 1.4,
         "frp_max_mw": 1.4,
-        "edad_min_h": 12.3,
+        "edad_min_h": 19.1,
         "ultima_deteccion_utc": "2026-08-07 14:10:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-060<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 14:10:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [1.2217, 41.1754]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-061",
-        "alerta_operativa": "seguimiento",
-        "score": 4.8,
-        "n_focos": 1,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 1,
-        "frp_total_mw": 1.4,
-        "frp_max_mw": 1.4,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:47:00",
-        "sensores": "VIIRS_SNPP_NRT",
-        "satellites": "N",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-061<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 02:47:00"
+        "popup_label": "<strong>ALERT-20260808-074<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 14:10:00"
       }
     },
     {
@@ -1411,7 +1710,7 @@
         "coordinates": [1.1147, 43.316]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-062",
+        "cluster_id": "ALERT-20260808-075",
         "alerta_operativa": "seguimiento",
         "score": 4.8,
         "n_focos": 1,
@@ -1419,91 +1718,91 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 1.4,
         "frp_max_mw": 1.4,
-        "edad_min_h": 13.7,
+        "edad_min_h": 20.4,
         "ultima_deteccion_utc": "2026-08-07 12:49:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-062<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 12:49:00"
+        "popup_label": "<strong>ALERT-20260808-075<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 12:49:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-0.3952, 35.4617]
+        "coordinates": [-6.7177, 38.3195]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-063",
+        "cluster_id": "ALERT-20260808-076",
         "alerta_operativa": "seguimiento",
-        "score": 4.6,
+        "score": 4.5,
         "n_focos": 1,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 1.2,
-        "frp_max_mw": 1.2,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
+        "frp_total_mw": 1.1,
+        "frp_max_mw": 1.1,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-063<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.2 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-076<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.1 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-0.5442, 38.3749]
+        "coordinates": [4.692, 44.0886]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-064",
+        "cluster_id": "ALERT-20260808-077",
         "alerta_operativa": "seguimiento",
-        "score": 4.6,
+        "score": 4.5,
         "n_focos": 1,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 1.2,
-        "frp_max_mw": 1.2,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
-        "sensores": "VIIRS_SNPP_NRT",
-        "satellites": "N",
+        "frp_total_mw": 1.1,
+        "frp_max_mw": 1.1,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-064<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.2 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-077<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.1 MW<br>Última detección UTC: 2026-08-08 02:47:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-0.2786, 35.53]
+        "coordinates": [-2.3465, 34.5953]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-065",
+        "cluster_id": "ALERT-20260808-078",
         "alerta_operativa": "seguimiento",
-        "score": 4.3,
+        "score": 4.4,
         "n_focos": 1,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 0.9,
-        "frp_max_mw": 0.9,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
+        "frp_total_mw": 1,
+        "frp_max_mw": 1,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-065<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.9 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-078<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1 MW<br>Última detección UTC: 2026-08-08 02:32:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-8.9359, 38.501]
+        "coordinates": [-7.7513, 33.3665]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-066",
+        "cluster_id": "ALERT-20260808-079",
         "alerta_operativa": "seguimiento",
         "score": 4.2,
         "n_focos": 1,
@@ -1511,58 +1810,196 @@
         "n_ultimas_24h": 1,
         "frp_total_mw": 0.8,
         "frp_max_mw": 0.8,
-        "edad_min_h": 23.7,
-        "ultima_deteccion_utc": "2026-08-07 02:49:00",
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
         "sensores": "VIIRS_SNPP_NRT",
         "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-066<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.8 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+        "popup_label": "<strong>ALERT-20260808-079<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.8 MW<br>Última detección UTC: 2026-08-08 02:32:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-2.2206, 43.0363]
+        "coordinates": [-4.9668, 37.2904]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-067",
+        "cluster_id": "ALERT-20260808-080",
         "alerta_operativa": "seguimiento",
-        "score": 3.8,
+        "score": 4.2,
         "n_focos": 1,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 0.5,
-        "frp_max_mw": 0.5,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
-        "sensores": "VIIRS_NOAA20_NRT",
-        "satellites": "N20",
+        "frp_total_mw": 0.8,
+        "frp_max_mw": 0.8,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:30:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-067<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.5 MW<br>Última detección UTC: 2026-08-07 03:08:00"
+        "popup_label": "<strong>ALERT-20260808-080<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.8 MW<br>Última detección UTC: 2026-08-08 02:30:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-3.8391, 43.4141]
+        "coordinates": [1.9815, 41.4531]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-068",
+        "cluster_id": "ALERT-20260808-081",
         "alerta_operativa": "seguimiento",
-        "score": 3.8,
+        "score": 4.2,
         "n_focos": 1,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 1,
-        "frp_total_mw": 0.5,
-        "frp_max_mw": 0.5,
-        "edad_min_h": 23.4,
-        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "frp_total_mw": 0.8,
+        "frp_max_mw": 0.8,
+        "edad_min_h": 8.1,
+        "ultima_deteccion_utc": "2026-08-08 01:07:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-068<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.5 MW<br>Última detección UTC: 2026-08-07 03:08:00"
+        "popup_label": "<strong>ALERT-20260808-081<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.8 MW<br>Última detección UTC: 2026-08-08 01:07:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.304, 28.115]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-082",
+        "alerta_operativa": "seguimiento",
+        "score": 4.1,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 0.7,
+        "frp_max_mw": 0.7,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:34:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-082<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.7 MW<br>Última detección UTC: 2026-08-08 02:34:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-8.5952, 33.1609]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-083",
+        "alerta_operativa": "seguimiento",
+        "score": 4.1,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 0.7,
+        "frp_max_mw": 0.7,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-083<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.7 MW<br>Última detección UTC: 2026-08-08 02:32:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.1796, 41.9252]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-084",
+        "alerta_operativa": "seguimiento",
+        "score": 4.1,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 0.7,
+        "frp_max_mw": 0.7,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-084<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.7 MW<br>Última detección UTC: 2026-08-08 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.6773, 37.6561]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-085",
+        "alerta_operativa": "seguimiento",
+        "score": 4.1,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 0.7,
+        "frp_max_mw": 0.7,
+        "edad_min_h": 8.1,
+        "ultima_deteccion_utc": "2026-08-08 01:09:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-085<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.7 MW<br>Última detección UTC: 2026-08-08 01:09:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-6.9524, 33.8909]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-086",
+        "alerta_operativa": "seguimiento",
+        "score": 3.9,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 0.6,
+        "frp_max_mw": 0.6,
+        "edad_min_h": 6.7,
+        "ultima_deteccion_utc": "2026-08-08 02:32:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-086<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.6 MW<br>Última detección UTC: 2026-08-08 02:32:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.359, 42.4607]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-087",
+        "alerta_operativa": "seguimiento",
+        "score": 3.9,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 1,
+        "frp_total_mw": 0.6,
+        "frp_max_mw": 0.6,
+        "edad_min_h": 6.4,
+        "ultima_deteccion_utc": "2026-08-08 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-087<\/strong><br>Nivel: seguimiento<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.6 MW<br>Última detección UTC: 2026-08-08 02:47:00"
       }
     },
     {
@@ -1572,7 +2009,7 @@
         "coordinates": [2.5394, 27.1237]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-069",
+        "cluster_id": "ALERT-20260808-088",
         "alerta_operativa": "informativa",
         "score": 8.5,
         "n_focos": 4,
@@ -1580,58 +2017,104 @@
         "n_ultimas_24h": 0,
         "frp_total_mw": 8.3,
         "frp_max_mw": 2.6,
-        "edad_min_h": 25,
+        "edad_min_h": 31.7,
         "ultima_deteccion_utc": "2026-08-07 01:30:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-069<\/strong><br>Nivel: informativa<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 8.3 MW<br>Última detección UTC: 2026-08-07 01:30:00"
+        "popup_label": "<strong>ALERT-20260808-088<\/strong><br>Nivel: informativa<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 8.3 MW<br>Última detección UTC: 2026-08-07 01:30:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [4.4759, 35.7079]
+        "coordinates": [-5.228, 38.7218]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-070",
+        "cluster_id": "ALERT-20260808-089",
         "alerta_operativa": "informativa",
-        "score": 7.3,
+        "score": 7.5,
         "n_focos": 3,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 0,
-        "frp_total_mw": 7.4,
-        "frp_max_mw": 3,
-        "edad_min_h": 25,
-        "ultima_deteccion_utc": "2026-08-07 01:28:00",
+        "frp_total_mw": 8.5,
+        "frp_max_mw": 3.3,
+        "edad_min_h": 30.1,
+        "ultima_deteccion_utc": "2026-08-07 03:08:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-070<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 7.4 MW<br>Última detección UTC: 2026-08-07 01:28:00"
+        "popup_label": "<strong>ALERT-20260808-089<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 8.5 MW<br>Última detección UTC: 2026-08-07 03:08:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [3.7497, 36.1794]
+        "coordinates": [-2.8288, 43.2165]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-071",
+        "cluster_id": "ALERT-20260808-090",
         "alerta_operativa": "informativa",
-        "score": 6.4,
-        "n_focos": 3,
+        "score": 6.7,
+        "n_focos": 4,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 0,
-        "frp_total_mw": 4.5,
-        "frp_max_mw": 1.6,
-        "edad_min_h": 25,
-        "ultima_deteccion_utc": "2026-08-07 01:28:00",
+        "frp_total_mw": 2.9,
+        "frp_max_mw": 0.9,
+        "edad_min_h": 30.4,
+        "ultima_deteccion_utc": "2026-08-07 02:47:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-071<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 4.5 MW<br>Última detección UTC: 2026-08-07 01:28:00"
+        "popup_label": "<strong>ALERT-20260808-090<\/strong><br>Nivel: informativa<br>Focos: 4<br>Últimas 6 h: 0<br>FRP total: 2.9 MW<br>Última detección UTC: 2026-08-07 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-6.3473, 39.4938]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-091",
+        "alerta_operativa": "informativa",
+        "score": 6.6,
+        "n_focos": 3,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 0,
+        "frp_total_mw": 5,
+        "frp_max_mw": 1.9,
+        "edad_min_h": 30.4,
+        "ultima_deteccion_utc": "2026-08-07 02:49:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-091<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 5 MW<br>Última detección UTC: 2026-08-07 02:49:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-7.726, 32.8894]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-092",
+        "alerta_operativa": "informativa",
+        "score": 6.5,
+        "n_focos": 3,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 0,
+        "frp_total_mw": 4.8,
+        "frp_max_mw": 2.1,
+        "edad_min_h": 30.1,
+        "ultima_deteccion_utc": "2026-08-07 03:10:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-092<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 4.8 MW<br>Última detección UTC: 2026-08-07 03:10:00"
       }
     },
     {
@@ -1641,7 +2124,7 @@
         "coordinates": [4.8451, 43.9982]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-072",
+        "cluster_id": "ALERT-20260808-093",
         "alerta_operativa": "informativa",
         "score": 6.4,
         "n_focos": 3,
@@ -1649,12 +2132,81 @@
         "n_ultimas_24h": 0,
         "frp_total_mw": 4.4,
         "frp_max_mw": 1.7,
-        "edad_min_h": 25.1,
+        "edad_min_h": 31.8,
         "ultima_deteccion_utc": "2026-08-07 01:26:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-072<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 4.4 MW<br>Última detección UTC: 2026-08-07 01:26:00"
+        "popup_label": "<strong>ALERT-20260808-093<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 4.4 MW<br>Última detección UTC: 2026-08-07 01:26:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-6.7699, 42.5532]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-094",
+        "alerta_operativa": "informativa",
+        "score": 5.6,
+        "n_focos": 3,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 0,
+        "frp_total_mw": 2.6,
+        "frp_max_mw": 1,
+        "edad_min_h": 30.4,
+        "ultima_deteccion_utc": "2026-08-07 02:47:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-094<\/strong><br>Nivel: informativa<br>Focos: 3<br>Últimas 6 h: 0<br>FRP total: 2.6 MW<br>Última detección UTC: 2026-08-07 02:47:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-6.8967, 37.182]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-095",
+        "alerta_operativa": "informativa",
+        "score": 5.1,
+        "n_focos": 2,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 0,
+        "frp_total_mw": 3.7,
+        "frp_max_mw": 2.5,
+        "edad_min_h": 30.1,
+        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-095<\/strong><br>Nivel: informativa<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 3.7 MW<br>Última detección UTC: 2026-08-07 03:08:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-3.7968, 37.2131]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-096",
+        "alerta_operativa": "informativa",
+        "score": 4.9,
+        "n_focos": 2,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 0,
+        "frp_total_mw": 3.3,
+        "frp_max_mw": 2,
+        "edad_min_h": 30.1,
+        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-096<\/strong><br>Nivel: informativa<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 3.3 MW<br>Última detección UTC: 2026-08-07 03:08:00"
       }
     },
     {
@@ -1664,7 +2216,7 @@
         "coordinates": [-0.8662, 41.5593]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-073",
+        "cluster_id": "ALERT-20260808-097",
         "alerta_operativa": "informativa",
         "score": 4.8,
         "n_focos": 2,
@@ -1672,12 +2224,35 @@
         "n_ultimas_24h": 0,
         "frp_total_mw": 3.1,
         "frp_max_mw": 1.8,
-        "edad_min_h": 25.1,
+        "edad_min_h": 31.8,
         "ultima_deteccion_utc": "2026-08-07 01:26:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-073<\/strong><br>Nivel: informativa<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 3.1 MW<br>Última detección UTC: 2026-08-07 01:26:00"
+        "popup_label": "<strong>ALERT-20260808-097<\/strong><br>Nivel: informativa<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 3.1 MW<br>Última detección UTC: 2026-08-07 01:26:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-4.7424, 41.5189]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-098",
+        "alerta_operativa": "informativa",
+        "score": 4.3,
+        "n_focos": 2,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 0,
+        "frp_total_mw": 2.2,
+        "frp_max_mw": 1.6,
+        "edad_min_h": 30.1,
+        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
+        "satellites": "N, N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-098<\/strong><br>Nivel: informativa<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 2.2 MW<br>Última detección UTC: 2026-08-07 03:08:00"
       }
     },
     {
@@ -1687,7 +2262,7 @@
         "coordinates": [3.5432, 43.6523]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-074",
+        "cluster_id": "ALERT-20260808-099",
         "alerta_operativa": "informativa",
         "score": 4.1,
         "n_focos": 2,
@@ -1695,58 +2270,35 @@
         "n_ultimas_24h": 0,
         "frp_total_mw": 1.8,
         "frp_max_mw": 1.2,
-        "edad_min_h": 25.1,
+        "edad_min_h": 31.8,
         "ultima_deteccion_utc": "2026-08-07 01:26:00",
         "sensores": "VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT",
         "satellites": "N, N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-074<\/strong><br>Nivel: informativa<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 1.8 MW<br>Última detección UTC: 2026-08-07 01:26:00"
+        "popup_label": "<strong>ALERT-20260808-099<\/strong><br>Nivel: informativa<br>Focos: 2<br>Últimas 6 h: 0<br>FRP total: 1.8 MW<br>Última detección UTC: 2026-08-07 01:26:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-1.9036, 36.9685]
+        "coordinates": [1.2217, 41.1754]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-075",
+        "cluster_id": "ALERT-20260808-100",
         "alerta_operativa": "informativa",
-        "score": 3.6,
+        "score": 2.8,
         "n_focos": 1,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 0,
-        "frp_total_mw": 2.6,
-        "frp_max_mw": 2.6,
-        "edad_min_h": 25,
-        "ultima_deteccion_utc": "2026-08-07 01:28:00",
-        "sensores": "VIIRS_NOAA20_NRT",
-        "satellites": "N20",
+        "frp_total_mw": 1.4,
+        "frp_max_mw": 1.4,
+        "edad_min_h": 30.4,
+        "ultima_deteccion_utc": "2026-08-07 02:47:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-075<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.6 MW<br>Última detección UTC: 2026-08-07 01:28:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [4.004, 32.4017]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-076",
-        "alerta_operativa": "informativa",
-        "score": 3.3,
-        "n_focos": 1,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 0,
-        "frp_total_mw": 2.1,
-        "frp_max_mw": 2.1,
-        "edad_min_h": 25,
-        "ultima_deteccion_utc": "2026-08-07 01:30:00",
-        "sensores": "VIIRS_NOAA20_NRT",
-        "satellites": "N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-076<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 2.1 MW<br>Última detección UTC: 2026-08-07 01:30:00"
+        "popup_label": "<strong>ALERT-20260808-100<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 02:47:00"
       }
     },
     {
@@ -1756,7 +2308,7 @@
         "coordinates": [-7.5032, 33.5766]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-077",
+        "cluster_id": "ALERT-20260808-101",
         "alerta_operativa": "informativa",
         "score": 2.8,
         "n_focos": 1,
@@ -1764,58 +2316,35 @@
         "n_ultimas_24h": 0,
         "frp_total_mw": 1.4,
         "frp_max_mw": 1.4,
-        "edad_min_h": 25,
+        "edad_min_h": 31.7,
         "ultima_deteccion_utc": "2026-08-07 01:30:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-077<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 01:30:00"
+        "popup_label": "<strong>ALERT-20260808-101<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 01:30:00"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [0.5384, 35.7843]
+        "coordinates": [-0.3952, 35.4617]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-078",
+        "cluster_id": "ALERT-20260808-102",
         "alerta_operativa": "informativa",
-        "score": 2.8,
+        "score": 2.6,
         "n_focos": 1,
         "n_ultimas_6h": 0,
         "n_ultimas_24h": 0,
-        "frp_total_mw": 1.4,
-        "frp_max_mw": 1.4,
-        "edad_min_h": 25,
-        "ultima_deteccion_utc": "2026-08-07 01:28:00",
-        "sensores": "VIIRS_NOAA20_NRT",
-        "satellites": "N20",
+        "frp_total_mw": 1.2,
+        "frp_max_mw": 1.2,
+        "edad_min_h": 30.4,
+        "ultima_deteccion_utc": "2026-08-07 02:49:00",
+        "sensores": "VIIRS_SNPP_NRT",
+        "satellites": "N",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-078<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.4 MW<br>Última detección UTC: 2026-08-07 01:28:00"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-0.9403, 35.5679]
-      },
-      "properties": {
-        "cluster_id": "ALERT-20260808-079",
-        "alerta_operativa": "informativa",
-        "score": 2.5,
-        "n_focos": 1,
-        "n_ultimas_6h": 0,
-        "n_ultimas_24h": 0,
-        "frp_total_mw": 1.1,
-        "frp_max_mw": 1.1,
-        "edad_min_h": 25,
-        "ultima_deteccion_utc": "2026-08-07 01:28:00",
-        "sensores": "VIIRS_NOAA20_NRT",
-        "satellites": "N20",
-        "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-079<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.1 MW<br>Última detección UTC: 2026-08-07 01:28:00"
+        "popup_label": "<strong>ALERT-20260808-102<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 1.2 MW<br>Última detección UTC: 2026-08-07 02:49:00"
       }
     },
     {
@@ -1825,7 +2354,7 @@
         "coordinates": [-7.1493, 32.9926]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-080",
+        "cluster_id": "ALERT-20260808-103",
         "alerta_operativa": "informativa",
         "score": 2.2,
         "n_focos": 1,
@@ -1833,12 +2362,12 @@
         "n_ultimas_24h": 0,
         "frp_total_mw": 0.8,
         "frp_max_mw": 0.8,
-        "edad_min_h": 25,
+        "edad_min_h": 31.7,
         "ultima_deteccion_utc": "2026-08-07 01:30:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-080<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.8 MW<br>Última detección UTC: 2026-08-07 01:30:00"
+        "popup_label": "<strong>ALERT-20260808-103<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.8 MW<br>Última detección UTC: 2026-08-07 01:30:00"
       }
     },
     {
@@ -1848,7 +2377,7 @@
         "coordinates": [1.9397, 44.3887]
       },
       "properties": {
-        "cluster_id": "ALERT-20260808-081",
+        "cluster_id": "ALERT-20260808-104",
         "alerta_operativa": "informativa",
         "score": 1.9,
         "n_focos": 1,
@@ -1856,12 +2385,35 @@
         "n_ultimas_24h": 0,
         "frp_total_mw": 0.6,
         "frp_max_mw": 0.6,
-        "edad_min_h": 25.1,
+        "edad_min_h": 31.8,
         "ultima_deteccion_utc": "2026-08-07 01:26:00",
         "sensores": "VIIRS_NOAA20_NRT",
         "satellites": "N20",
         "instruments": "VIIRS",
-        "popup_label": "<strong>ALERT-20260808-081<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.6 MW<br>Última detección UTC: 2026-08-07 01:26:00"
+        "popup_label": "<strong>ALERT-20260808-104<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.6 MW<br>Última detección UTC: 2026-08-07 01:26:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-2.2206, 43.0363]
+      },
+      "properties": {
+        "cluster_id": "ALERT-20260808-105",
+        "alerta_operativa": "informativa",
+        "score": 1.8,
+        "n_focos": 1,
+        "n_ultimas_6h": 0,
+        "n_ultimas_24h": 0,
+        "frp_total_mw": 0.5,
+        "frp_max_mw": 0.5,
+        "edad_min_h": 30.1,
+        "ultima_deteccion_utc": "2026-08-07 03:08:00",
+        "sensores": "VIIRS_NOAA20_NRT",
+        "satellites": "N20",
+        "instruments": "VIIRS",
+        "popup_label": "<strong>ALERT-20260808-105<\/strong><br>Nivel: informativa<br>Focos: 1<br>Últimas 6 h: 0<br>FRP total: 0.5 MW<br>Última detección UTC: 2026-08-07 03:08:00"
       }
     }
   ]
