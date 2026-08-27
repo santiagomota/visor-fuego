@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -39,10 +42,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-bba5ebae505b5c03f3f0d8040a416a6b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-e3adbaa939bcd423dddc8c8a834270b4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -73,6 +76,7 @@ ul.task-list li input[type="checkbox"] {
 <style>html{ scroll-behavior: smooth; }</style>
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -169,12 +173,6 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 35%">
-<col style="width: 7%">
-<col style="width: 45%">
-</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">fuente</th>
@@ -193,19 +191,19 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td style="text-align: left;">FIRMS</td>
 <td style="text-align: left;">OK</td>
-<td style="text-align: right;">941</td>
+<td style="text-align: right;">457</td>
 <td style="text-align: left;">data/processed/firms_active_fires.csv</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Alertas</td>
 <td style="text-align: left;">OK</td>
-<td style="text-align: right;">138</td>
+<td style="text-align: right;">80</td>
 <td style="text-align: left;">data/processed/operational_alerts.csv</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">EFFIS</td>
 <td style="text-align: left;">OK</td>
-<td style="text-align: right;">404</td>
+<td style="text-align: right;">756</td>
 <td style="text-align: left;">assets/effis_ba/summary.json</td>
 </tr>
 <tr class="odd">
@@ -242,15 +240,15 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Última emisión</td>
-<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-08-26</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Primera fecha válida</td>
-<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-08-26</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Última fecha válida</td>
-<td style="text-align: left;">2026-07-16</td>
+<td style="text-align: left;">2026-09-02</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Áreas disponibles</td>
@@ -285,131 +283,131 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-26</td>
 <td style="text-align: left;">Día 1</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">aemet_2026_07_09_c_previsto_d1_aemet_incendios_20260709_c_previsto_d1</td>
+<td style="text-align: left;">aemet_2026_08_26_c_previsto_d1_aemet_incendios_20260826_c_previsto_d1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-10</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-27</td>
 <td style="text-align: left;">Día 2</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: left;">aemet_2026_07_10_c_previsto_d2_aemet_incendios_20260710_c_previsto_d2</td>
+<td style="text-align: left;">aemet_2026_08_27_c_previsto_d2_aemet_incendios_20260827_c_previsto_d2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-11</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-28</td>
 <td style="text-align: left;">Día 3</td>
 <td style="text-align: right;">3</td>
-<td style="text-align: left;">aemet_2026_07_11_c_previsto_d3_aemet_incendios_20260711_c_previsto_d3</td>
+<td style="text-align: left;">aemet_2026_08_28_c_previsto_d3_aemet_incendios_20260828_c_previsto_d3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-12</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-29</td>
 <td style="text-align: left;">Día 4</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: left;">aemet_2026_07_12_c_previsto_d4_aemet_incendios_20260712_c_previsto_d4</td>
+<td style="text-align: left;">aemet_2026_08_29_c_previsto_d4_aemet_incendios_20260829_c_previsto_d4</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-13</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-30</td>
 <td style="text-align: left;">Día 5</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: left;">aemet_2026_07_13_c_previsto_d5_aemet_incendios_20260713_c_previsto_d5</td>
+<td style="text-align: left;">aemet_2026_08_30_c_previsto_d5_aemet_incendios_20260830_c_previsto_d5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-14</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-31</td>
 <td style="text-align: left;">Día 6</td>
 <td style="text-align: right;">6</td>
-<td style="text-align: left;">aemet_2026_07_14_c_previsto_d6_aemet_incendios_20260714_c_previsto_d6</td>
+<td style="text-align: left;">aemet_2026_08_31_c_previsto_d6_aemet_incendios_20260831_c_previsto_d6</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-15</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-09-01</td>
 <td style="text-align: left;">Día 7</td>
 <td style="text-align: right;">7</td>
-<td style="text-align: left;">aemet_2026_07_15_c_previsto_d7_aemet_incendios_20260715_c_previsto_d7</td>
+<td style="text-align: left;">aemet_2026_09_01_c_previsto_d7_aemet_incendios_20260901_c_previsto_d7</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Canarias</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-16</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-09-02</td>
 <td style="text-align: left;">Día 8</td>
 <td style="text-align: right;">8</td>
-<td style="text-align: left;">aemet_2026_07_16_c_previsto_d8_aemet_incendios_20260716_c_previsto_d8</td>
+<td style="text-align: left;">aemet_2026_09_02_c_previsto_d8_aemet_incendios_20260902_c_previsto_d8</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-09</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-26</td>
 <td style="text-align: left;">Día 1</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">aemet_2026_07_09_p_previsto_d1_aemet_incendios_20260709_p_previsto_d1</td>
+<td style="text-align: left;">aemet_2026_08_26_p_previsto_d1_aemet_incendios_20260826_p_previsto_d1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-10</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-27</td>
 <td style="text-align: left;">Día 2</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: left;">aemet_2026_07_10_p_previsto_d2_aemet_incendios_20260710_p_previsto_d2</td>
+<td style="text-align: left;">aemet_2026_08_27_p_previsto_d2_aemet_incendios_20260827_p_previsto_d2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-11</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-28</td>
 <td style="text-align: left;">Día 3</td>
 <td style="text-align: right;">3</td>
-<td style="text-align: left;">aemet_2026_07_11_p_previsto_d3_aemet_incendios_20260711_p_previsto_d3</td>
+<td style="text-align: left;">aemet_2026_08_28_p_previsto_d3_aemet_incendios_20260828_p_previsto_d3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-12</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-29</td>
 <td style="text-align: left;">Día 4</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: left;">aemet_2026_07_12_p_previsto_d4_aemet_incendios_20260712_p_previsto_d4</td>
+<td style="text-align: left;">aemet_2026_08_29_p_previsto_d4_aemet_incendios_20260829_p_previsto_d4</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-13</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-30</td>
 <td style="text-align: left;">Día 5</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: left;">aemet_2026_07_13_p_previsto_d5_aemet_incendios_20260713_p_previsto_d5</td>
+<td style="text-align: left;">aemet_2026_08_30_p_previsto_d5_aemet_incendios_20260830_p_previsto_d5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-14</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-08-31</td>
 <td style="text-align: left;">Día 6</td>
 <td style="text-align: right;">6</td>
-<td style="text-align: left;">aemet_2026_07_14_p_previsto_d6_aemet_incendios_20260714_p_previsto_d6</td>
+<td style="text-align: left;">aemet_2026_08_31_p_previsto_d6_aemet_incendios_20260831_p_previsto_d6</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-15</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-09-01</td>
 <td style="text-align: left;">Día 7</td>
 <td style="text-align: right;">7</td>
-<td style="text-align: left;">aemet_2026_07_15_p_previsto_d7_aemet_incendios_20260715_p_previsto_d7</td>
+<td style="text-align: left;">aemet_2026_09_01_p_previsto_d7_aemet_incendios_20260901_p_previsto_d7</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Península y Baleares</td>
-<td style="text-align: left;">2026-07-09</td>
-<td style="text-align: left;">2026-07-16</td>
+<td style="text-align: left;">2026-08-26</td>
+<td style="text-align: left;">2026-09-02</td>
 <td style="text-align: left;">Día 8</td>
 <td style="text-align: right;">8</td>
-<td style="text-align: left;">aemet_2026_07_16_p_previsto_d8_aemet_incendios_20260716_p_previsto_d8</td>
+<td style="text-align: left;">aemet_2026_09_02_p_previsto_d8_aemet_incendios_20260902_p_previsto_d8</td>
 </tr>
 </tbody>
 </table>
@@ -430,11 +428,11 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Detecciones FIRMS</td>
-<td style="text-align: right;">941</td>
+<td style="text-align: right;">457</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Alertas operativas</td>
-<td style="text-align: right;">138</td>
+<td style="text-align: right;">80</td>
 </tr>
 </tbody>
 </table>
@@ -451,64 +449,64 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-001</td>
+<td style="text-align: left;">ALERT-20260827-001</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-002</td>
+<td style="text-align: left;">ALERT-20260827-002</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-003</td>
+<td style="text-align: left;">ALERT-20260827-003</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-004</td>
+<td style="text-align: left;">ALERT-20260827-004</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-005</td>
+<td style="text-align: left;">ALERT-20260827-005</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-006</td>
+<td style="text-align: left;">ALERT-20260827-006</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-007</td>
+<td style="text-align: left;">ALERT-20260827-007</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-008</td>
+<td style="text-align: left;">ALERT-20260827-008</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-009</td>
+<td style="text-align: left;">ALERT-20260827-009</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-010</td>
+<td style="text-align: left;">ALERT-20260827-010</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-011</td>
+<td style="text-align: left;">ALERT-20260827-011</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-012</td>
+<td style="text-align: left;">ALERT-20260827-012</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-013</td>
+<td style="text-align: left;">ALERT-20260827-013</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-014</td>
+<td style="text-align: left;">ALERT-20260827-014</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-015</td>
+<td style="text-align: left;">ALERT-20260827-015</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-016</td>
+<td style="text-align: left;">ALERT-20260827-016</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-017</td>
+<td style="text-align: left;">ALERT-20260827-017</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-018</td>
+<td style="text-align: left;">ALERT-20260827-018</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">ALERT-20260710-019</td>
+<td style="text-align: left;">ALERT-20260827-019</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ALERT-20260710-020</td>
+<td style="text-align: left;">ALERT-20260827-020</td>
 </tr>
 </tbody>
 </table>
