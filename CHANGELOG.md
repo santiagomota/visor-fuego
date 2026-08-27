@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.6.12 - API key de CARTO Basemaps
+
+- Integra `CARTO_BASEMAP_KEY` en la base clara del mapa.
+- Sustituye el proveedor anónimo `CartoDB.Positron` por la URL raster Positron con el parámetro `key`.
+- Mantiene la atribución obligatoria a OpenStreetMap y CARTO.
+- Añade fallback automático a OpenStreetMap cuando la clave no está configurada.
+- Añade `CARTO_BASEMAP_KEY` a `.Renviron.example` y al workflow mediante un Repository Secret.
+- Escribe las claves CARTO y FIRMS desde variables de entorno en el workflow para evitar expansión accidental en el heredoc.
+- Amplía `scripts/11_check_published_assets.R` para detectar el proveedor CARTO anónimo y validar el fallback.
+
+## v0.6.11 - validación CSS robusta
+
+- Corrige el falso positivo de `scripts/11_check_published_assets.R` tras un render real de Quarto.
+- Busca las reglas del diseño panorámico tanto en estilos embebidos como en las hojas CSS enlazadas.
+- Tolera la compilación y minificación de CSS realizada por Quarto, sin depender de comentarios ni espacios literales.
+- Comprueba de forma independiente `page-layout: full`, la altura `88vh`, el selector de la página Mapa y la regla de ancho completo.
+- Mantiene la detección del índice lateral para evitar que vuelva a desperdiciarse ancho útil.
+- No modifica el pipeline de datos, el mapa ni el horario del workflow.
+
 ## v0.6.10 - mapa panorámico
 
 - Desactiva el índice de contenidos en `index.qmd` para recuperar la columna derecha reservada por Quarto.

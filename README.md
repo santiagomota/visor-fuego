@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.10: mapa panorámico
+## v0.6.12: autenticación CARTO Basemaps
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,16 +9,15 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.10
+### Cambios principales de v0.6.12
 
-- Elimina el índice lateral únicamente en `index.qmd`, evitando que Quarto reserve una columna derecha vacía.
-- Amplía el contenido de la página Mapa hasta los márgenes interiores de la pantalla en resoluciones de escritorio.
-- Aumenta la altura del mapa de `84vh` a `88vh`.
-- Compacta el título, el subtítulo y el encabezado del mapa para dedicar más superficie útil al visor.
-- Traslada el diagnóstico desplegable **Fuente y actualización** debajo del mapa.
-- Añade borde, sombra ligera y esquinas redondeadas para delimitar el área cartográfica en pantallas grandes.
-- Mantiene un diseño adaptativo en portátiles, tabletas y móviles.
-- Amplía la validación automática para comprobar el diseño panorámico y que el índice lateral no reaparezca.
+- Añade soporte para la nueva API key obligatoria de CARTO Basemaps.
+- Lee la clave desde `CARTO_BASEMAP_KEY` en `.Renviron` y desde el secret homónimo en GitHub Actions.
+- Sustituye `providers$CartoDB.Positron` por una URL explícita Positron con `?key=...`.
+- Mantiene las atribuciones obligatorias de OpenStreetMap y CARTO.
+- Si no existe clave, usa OpenStreetMap como base clara de respaldo y evita el aviso de CARTO.
+- El workflow escribe las claves desde variables de entorno para no interpretarlas dentro del heredoc.
+- La validación comprueba que un render con clave no vuelva a utilizar el proveedor CARTO anónimo.
 
 Se mantienen las mejoras anteriores:
 
@@ -42,7 +41,11 @@ quarto render --execute
 Rscript scripts/11_check_published_assets.R
 ```
 
-Para descargar FIRMS es necesario definir `FIRMS_MAP_KEY`. Las variables operativas pueden configurarse en `.Renviron`; el workflow crea este fichero durante cada ejecución.
+Para descargar FIRMS es necesario definir `FIRMS_MAP_KEY`. Para usar la base clara de CARTO hay que definir `CARTO_BASEMAP_KEY`. Las variables operativas pueden configurarse en `.Renviron`; el workflow crea este fichero durante cada ejecución.
+
+### Clave CARTO en GitHub Actions
+
+Crea un secret del repositorio llamado `CARTO_BASEMAP_KEY` en **Settings → Secrets and variables → Actions → New repository secret**. La clave se incorpora a la URL de teselas que consume el navegador, por lo que en un sitio estático no puede considerarse secreta frente al usuario final; debe solicitarse/restringirse para el dominio del visor. No se debe escribir manualmente en `index.qmd` ni en `.Renviron.example`.
 
 ### Publicación
 

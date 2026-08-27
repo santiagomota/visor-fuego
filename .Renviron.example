@@ -1,4 +1,4 @@
-# visor-fuego v0.6.10
+# visor-fuego v0.6.12
 # Copiar este fichero como .Renviron en la raíz del proyecto.
 # No incluir .Renviron en Git si contiene claves reales.
 
@@ -27,6 +27,14 @@ AEMET_CLASSIC_KEEP_LATEST_ISSUE_ONLY=true
 AEMET_CLASSIC_CLEAN_RAW_BEFORE_INSTALL=true
 AEMET_INCLUDE_ORPHAN_RAW=false
 AEMET_CLEAN_WEB_ASSETS=true
+
+# -----------------------------------------------------------------------------
+# CARTO Basemaps
+# -----------------------------------------------------------------------------
+# Solicita la clave para el dominio donde se publica el visor. La clave se
+# incorpora a la URL de teselas en el navegador, por lo que conviene restringir
+# su uso al dominio del proyecto desde CARTO. Si queda vacía se usa OSM.
+CARTO_BASEMAP_KEY=
 
 # -----------------------------------------------------------------------------
 # NASA FIRMS

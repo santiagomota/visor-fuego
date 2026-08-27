@@ -143,6 +143,26 @@ if (file.exists("docs/index.html")) {
     fail("El token __TERRITORIAL_DATA__ no fue sustituido en docs/index.html")
   }
 
+
+  carto_key <- trimws(Sys.getenv("CARTO_BASEMAP_KEY", unset = ""))
+  if (nzchar(carto_key)) {
+    if (!grepl("basemaps.cartocdn.com/light_all", index_html, fixed = TRUE)) {
+      fail("CARTO_BASEMAP_KEY está definida pero el HTML no usa el basemap CARTO Positron")
+    }
+    if (!grepl("?key=", index_html, fixed = TRUE)) {
+      fail("El basemap CARTO publicado no contiene el parámetro key")
+    }
+    if (grepl("CartoDB.Positron", index_html, fixed = TRUE)) {
+      fail("El HTML sigue usando el proveedor CARTO anónimo antiguo")
+    }
+  } else {
+    if (!grepl("tile.openstreetmap.org", index_html, fixed = TRUE) &&
+        !grepl("OpenStreetMap.Mapnik", index_html, fixed = TRUE)) {
+      fail("Sin CARTO_BASEMAP_KEY el HTML debe utilizar el fallback OpenStreetMap")
+    }
+    warn("CARTO_BASEMAP_KEY no está definida; se ha publicado el fallback OpenStreetMap")
+  }
+
   # Quarto puede dejar el CSS personalizado embebido en el HTML o
   # compilarlo/minificarlo dentro de una hoja enlazada. La validación debe
   # aceptar ambos resultados y no depender de comentarios ni espacios.

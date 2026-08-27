@@ -388,6 +388,30 @@ if (nrow(overview_data) > 0) {
 effis_groups <- effis_overlay_groups()
 effis_cfg <- effis_layer_config()
 
+# CARTO exige API key para sus basemaps raster. La clave se toma del entorno
+# para no escribirla en el código fuente. En un sitio estático la clave forma
+# parte necesariamente de la URL solicitada por el navegador, por lo que debe
+# estar restringida al dominio del visor en la configuración de CARTO.
+carto_basemap_key <- trimws(Sys.getenv("CARTO_BASEMAP_KEY", unset = ""))
+
+if (nzchar(carto_basemap_key)) {
+  base_tile_url <- paste0(
+    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=",
+    utils::URLencode(carto_basemap_key, reserved = TRUE)
+  )
+  base_tile_attribution <- paste0(
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ',
+    '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+  )
+  base_tile_subdomains <- "abcd"
+} else {
+  # Fallback deliberado: evita el aviso "API key required" de CARTO cuando
+  # alguien renderiza el proyecto sin configurar todavía la clave.
+  base_tile_url <- "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  base_tile_attribution <- '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  base_tile_subdomains <- "abc"
+}
+
 n_alerts <- nrow(alerts_data)
 n_alerts_high <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "alta", na.rm = TRUE) else 0L
 n_alerts_medium <- if (n_alerts > 0 && "alerta_operativa" %in% names(alerts_data)) sum(alerts_data$alerta_operativa == "media", na.rm = TRUE) else 0L
@@ -402,7 +426,12 @@ base_groups <- c("Base clara", "Satélite")
 overlay_groups <- character()
 
 map <- leaflet(width = "100%", height = "88vh", options = leafletOptions(preferCanvas = TRUE, zoomControl = TRUE)) |>
-  addProviderTiles(providers$CartoDB.Positron, group = "Base clara") |>
+  addTiles(
+    urlTemplate = base_tile_url,
+    group = "Base clara",
+    attribution = base_tile_attribution,
+    options = tileOptions(subdomains = base_tile_subdomains, maxZoom = 20)
+  ) |>
   addProviderTiles(providers$Esri.WorldImagery, group = "Satélite") |>
   setView(lng = -3.7, lat = 40.2, zoom = 6)
 
