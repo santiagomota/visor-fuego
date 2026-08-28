@@ -225,52 +225,9 @@ jobs:
             exit 1
           fi
 
-      - name: Commit de datos generados
-        env:
-          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # docs/ contiene el sitio renderizado y la URL pública de CARTO con la API key.
-          # Se despliega como artefacto de Pages, pero no se guarda en el historial Git.
-          git add -A -- data/processed assets
-
-          if git diff --cached --quiet; then
-            echo "No hay cambios de datos que confirmar."
-          else
-            git commit -m "Actualiza datos del visor automáticamente"
-
-            # El proceso tarda varios minutos. Durante ese tiempo puede entrar un commit
-            # nuevo en main. Rebasamos el commit generado y reintentamos el push sin
-            # sobrescribir el historial remoto.
-            publicado=false
-            for intento in 1 2 3; do
-              echo "Intento de publicación $intento de 3"
-              git fetch origin "$TARGET_BRANCH"
-
-              if ! git rebase "origin/$TARGET_BRANCH"; then
-                git rebase --abort || true
-                echo "::error::No se pudo integrar de forma segura un cambio remoto. Revisa si se modificaron simultáneamente assets o data/processed."
-                exit 1
-              fi
-
-              if git push origin "HEAD:$TARGET_BRANCH"; then
-                echo "Datos publicados correctamente en Git."
-                publicado=true
-                break
-              fi
-
-              sleep $((intento * 5))
-            done
-
-            if [ "$publicado" != "true" ]; then
-              echo "::error::No se pudo publicar después de tres intentos por cambios concurrentes en la rama remota."
-              exit 1
-            fi
-          fi
-
+      # El sitio se publica antes de cualquier operación de escritura en Git.
+      # De este modo un conflicto al guardar snapshots de datos no puede impedir
+      # que GitHub Pages reciba un render ya validado.
       - name: Subir artefacto de GitHub Pages
         uses: actions/upload-pages-artifact@v4
         with:
@@ -279,3 +236,59 @@ jobs:
       - name: Desplegar GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Guardar datos generados en Git
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Solo versionamos datos y assets. docs/ contiene el render público con
+          # la URL de CARTO y se distribuye exclusivamente como artefacto de Pages.
+          git add -A -- data/processed assets
+
+          if git diff --cached --quiet; then
+            echo "No hay cambios de datos que confirmar."
+            exit 0
+          fi
+
+          git commit -m "Actualiza datos del visor automáticamente"
+
+          # Quarto acaba de regenerar docs/. Como docs/ no forma parte del commit,
+          # esas modificaciones quedan sin preparar y Git no permite hacer rebase
+          # con un árbol de trabajo sucio. El artefacto ya está desplegado, por lo
+          # que podemos devolver docs/ al estado del checkout antes de integrar Git.
+          git restore --worktree -- docs || true
+          git clean -fd -- docs || true
+
+          if ! git diff --quiet || ! git diff --cached --quiet; then
+            echo "::warning::Quedan cambios rastreados fuera de assets/ y data/processed; se omite el push automático para no sobrescribir trabajo ajeno."
+            git status --short
+            exit 0
+          fi
+
+          publicado=false
+          for intento in 1 2 3; do
+            echo "Intento de guardado en Git $intento de 3"
+            git fetch origin "$TARGET_BRANCH"
+
+            if ! git rebase "origin/$TARGET_BRANCH"; then
+              git rebase --abort || true
+              echo "::warning::No se pudieron integrar automáticamente cambios remotos. GitHub Pages ya ha sido desplegado; el snapshot Git se reintentará en la próxima ejecución."
+              exit 0
+            fi
+
+            if git push origin "HEAD:$TARGET_BRANCH"; then
+              echo "Datos guardados correctamente en Git."
+              publicado=true
+              break
+            fi
+
+            sleep $((intento * 5))
+          done
+
+          if [ "$publicado" != "true" ]; then
+            echo "::warning::No se pudo guardar el snapshot de datos después de tres intentos. GitHub Pages ya está desplegado y el siguiente workflow volverá a intentarlo."
+          fi

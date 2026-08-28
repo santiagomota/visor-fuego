@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.13: despliegue directo en GitHub Pages
+## v0.6.14: despliegue independiente del guardado Git
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,19 +9,13 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.13
+### Cambios principales de v0.6.14
 
-- Despliega `docs/` directamente en GitHub Pages desde el workflow, evitando que los commits realizados con `GITHUB_TOKEN` dejen la web pública sin actualizar.
-- Corrige el horario automático a las **04:30** y **12:30** con `timezone: Europe/Madrid`.
-- Exige `CARTO_BASEMAP_KEY` en GitHub Actions y valida que el HTML renderizado usa CARTO.
-- Deja de confirmar `docs/` en los commits automáticos; se versionan los datos y assets, mientras el sitio renderizado se publica como artefacto de Pages.
-- Mantiene el soporte para la API key obligatoria de CARTO Basemaps.
-- Lee la clave desde `CARTO_BASEMAP_KEY` en `.Renviron` y desde el secret homónimo en GitHub Actions.
-- Sustituye `providers$CartoDB.Positron` por una URL explícita Positron con `?key=...`.
-- Mantiene las atribuciones obligatorias de OpenStreetMap y CARTO.
-- Si no existe clave, usa OpenStreetMap como base clara de respaldo y evita el aviso de CARTO.
-- El workflow escribe las claves desde variables de entorno para no interpretarlas dentro del heredoc.
-- La validación comprueba que un render con clave no vuelva a utilizar el proveedor CARTO anónimo.
+- Despliega GitHub Pages **antes** de intentar guardar los snapshots de datos en `main`.
+- Corrige el error `cannot rebase: You have unstaged changes`: tras subir el artefacto, `docs/` se restaura al estado del checkout antes del `rebase`.
+- Un conflicto al guardar `data/processed` o `assets` ya no bloquea la publicación: el workflow emite un aviso y la siguiente ejecución vuelve a intentarlo.
+- Mantiene `fetch` + `rebase` + hasta tres reintentos de `push`, sin sobrescribir el historial remoto.
+- Conserva el despliegue directo de Pages, el horario 04:30/12:30 Madrid y el uso de `CARTO_BASEMAP_KEY`.
 
 Se mantienen las mejoras anteriores:
 

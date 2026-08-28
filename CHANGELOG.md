@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.14 - despliegue independiente del guardado Git
+
+- Corrige el fallo `cannot rebase: You have unstaged changes` causado por el `docs/` regenerado por Quarto.
+- Publica y despliega el artefacto de GitHub Pages inmediatamente después de validar el sitio, antes del commit automático de datos.
+- Restaura `docs/` al estado del checkout antes de cualquier `rebase`, ya que el render ya ha quedado capturado en el artefacto de Pages.
+- Convierte el guardado automático de `data/processed` y `assets` en una operación *best-effort*: un conflicto Git genera un aviso pero no bloquea una web ya desplegada.
+- Mantiene hasta tres intentos de `fetch` + `rebase` + `push`, sin `force push`.
+- Añade una comprobación explícita de que no queden cambios rastreados ajenos a los datos antes de hacer `rebase`.
+
 ## v0.6.13 - despliegue directo en GitHub Pages
 
 - Corrige la publicación automática: el workflow despliega `docs/` directamente con `actions/upload-pages-artifact@v4` y `actions/deploy-pages@v4`.
