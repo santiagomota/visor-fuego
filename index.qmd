@@ -360,6 +360,7 @@ first_overview_value <- function(data, field) {
 
 freshness_config_json <- jsonlite::toJSON(
   list(
+    site_generated_at_utc = format(Sys.time(), tz = "UTC", format = "%Y-%m-%dT%H:%M:%SZ"),
     aemet_issue_date = latest_layer_value(layers_data, "issue_date"),
     firms_latest_detection_utc = first_overview_value(overview_data, "ultima_deteccion_utc"),
     firms_generated_at_utc = first_overview_value(overview_data, "generated_at_utc"),
@@ -778,11 +779,13 @@ function(el, x) {
     }
 
     const validDate = layer.valid_date || layer.date || '';
+    const issueDate = layer.issue_date || '';
     const dia = layerForecastLabel(layer);
     const tipo = layer.tipo === 'estimado' ? 'Estimado' : 'Previsto';
     let html = '<b>Nivel de peligro AEMET</b>';
     html += '<div class="fire-legend-context">' +
-      escapeHtml(formatAemetDate(validDate)) + ' · ' + escapeHtml(dia) + '<br>' +
+      '<strong>Válido:</strong> ' + escapeHtml(formatAemetDate(validDate)) + ' · ' + escapeHtml(dia) + '<br>' +
+      '<strong>Emisión:</strong> ' + escapeHtml(issueDate ? formatAemetDate(issueDate) : 'No disponible') + '<br>' +
       escapeHtml(layer.area_label || '') + ' · ' + escapeHtml(tipo) +
       '</div>';
 
@@ -908,6 +911,28 @@ function(el, x) {
     return 'hace ' + Math.round(hours / 24) + ' días';
   }
 
+  function formatMadridTimestamp(date) {
+    if (!date) return 'Fecha no disponible';
+    return new Intl.DateTimeFormat('es-ES', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      timeZone: 'Europe/Madrid', timeZoneName: 'short'
+    }).format(date);
+  }
+
+  function validDateRelation(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return 'validez no disponible';
+    const today = madridDateKey(new Date());
+    const todayDate = parseIsoDateUtc(today);
+    const validDate = parseIsoDateUtc(value);
+    if (!todayDate || !validDate) return 'validez no disponible';
+    const delta = Math.round((validDate.getTime() - todayDate.getTime()) / 86400000);
+    if (delta === 0) return 'válido para hoy';
+    if (delta === 1) return 'válido para mañana';
+    if (delta === -1) return 'válido para ayer';
+    return 'válido para ' + formatAemetDate(value);
+  }
+
   function freshnessRow(source, text, status, title) {
     return '<div class="freshness-row freshness-' + status + '" title="' + escapeHtml(title || text) + '">' +
       '<span class="freshness-dot" aria-hidden="true"></span>' +
@@ -920,15 +945,38 @@ function(el, x) {
     if (!container) return;
     let html = '<div class="freshness-title">Actualidad de datos</div>';
 
-    const aemetDays = calendarAgeDays(freshness && freshness.aemet_issue_date);
-    if (aemetDays === null) {
-      html += freshnessRow('AEMET', 'sin fecha de emisión', 'unavailable');
-    } else if (aemetDays <= 0) {
-      html += freshnessRow('AEMET', 'emitido hoy', 'fresh', formatAemetDate(freshness.aemet_issue_date));
-    } else if (aemetDays === 1) {
-      html += freshnessRow('AEMET', 'emitido ayer', 'warning', formatAemetDate(freshness.aemet_issue_date));
+    const siteDate = parseUtcTimestamp(freshness && freshness.site_generated_at_utc);
+    if (!siteDate) {
+      html += freshnessRow('Visor', 'sin fecha de actualización', 'unavailable');
     } else {
-      html += freshnessRow('AEMET', 'emitido hace ' + aemetDays + ' días', 'stale', formatAemetDate(freshness.aemet_issue_date));
+      const siteHours = Math.max(0, (Date.now() - siteDate.getTime()) / 3600000);
+      const siteStatus = siteHours <= 6 ? 'fresh' : (siteHours <= 24 ? 'warning' : 'stale');
+      html += freshnessRow(
+        'Visor',
+        'actualizado ' + relativeAge(siteDate),
+        siteStatus,
+        'Visor actualizado: ' + formatMadridTimestamp(siteDate)
+      );
+    }
+
+    const selectedLayer = layers && layers.length > 0 ? layers[currentLayerIndex] : null;
+    const aemetIssueDate = selectedLayer ? (selectedLayer.issue_date || '') : (freshness && freshness.aemet_issue_date);
+    const aemetValidDate = selectedLayer ? (selectedLayer.valid_date || selectedLayer.date || '') : '';
+    const aemetDays = calendarAgeDays(aemetIssueDate);
+    const validRelation = validDateRelation(aemetValidDate);
+    const aemetTitle = 'Emisión: ' + (aemetIssueDate ? formatAemetDate(aemetIssueDate) : 'no disponible') +
+      (aemetValidDate ? ' · Válido: ' + formatAemetDate(aemetValidDate) : '');
+
+    if (aemetDays === null) {
+      html += freshnessRow('AEMET', 'sin fecha de emisión · ' + validRelation, 'unavailable', aemetTitle);
+    } else if (aemetDays <= 0) {
+      html += freshnessRow('AEMET', 'emisión de hoy · ' + validRelation, 'fresh', aemetTitle);
+    } else if (aemetDays === 1 && aemetValidDate === madridDateKey(new Date())) {
+      html += freshnessRow('AEMET', 'emisión de ayer · válido para hoy', 'fresh', aemetTitle);
+    } else if (aemetDays === 1) {
+      html += freshnessRow('AEMET', 'emisión de ayer · ' + validRelation, 'warning', aemetTitle);
+    } else {
+      html += freshnessRow('AEMET', 'emisión de hace ' + aemetDays + ' días · ' + validRelation, 'stale', aemetTitle);
     }
 
     const firmsDate = parseUtcTimestamp(freshness && freshness.firms_latest_detection_utc);
@@ -937,7 +985,7 @@ function(el, x) {
     } else {
       const firmsHours = Math.max(0, (Date.now() - firmsDate.getTime()) / 3600000);
       const firmsStatus = firmsHours <= 6 ? 'fresh' : (firmsHours <= 24 ? 'warning' : 'stale');
-      html += freshnessRow('FIRMS', 'última detección ' + relativeAge(firmsDate), firmsStatus, firmsDate.toLocaleString('es-ES', {timeZone: 'Europe/Madrid'}));
+      html += freshnessRow('FIRMS', 'última detección ' + relativeAge(firmsDate), firmsStatus, 'Última detección FIRMS: ' + formatMadridTimestamp(firmsDate));
     }
 
     const effisDate = parseUtcTimestamp(freshness && freshness.effis_generated_at_utc);
@@ -946,7 +994,7 @@ function(el, x) {
     } else {
       const effisHours = Math.max(0, (Date.now() - effisDate.getTime()) / 3600000);
       const effisStatus = effisHours <= 24 ? 'fresh' : (effisHours <= 72 ? 'warning' : 'stale');
-      html += freshnessRow('EFFIS', 'actualizado ' + relativeAge(effisDate), effisStatus, effisDate.toLocaleString('es-ES', {timeZone: 'Europe/Madrid'}));
+      html += freshnessRow('EFFIS', 'actualizado ' + relativeAge(effisDate), effisStatus, 'EFFIS actualizado: ' + formatMadridTimestamp(effisDate));
     }
 
     container.innerHTML = html;
@@ -1356,6 +1404,7 @@ function(el, x) {
     }
 
     const layer = layers[currentLayerIndex];
+    updateFreshnessIndicator();
     if (!layer) {
       updateLegend(null);
       return;
@@ -1537,7 +1586,9 @@ Este visor combina:
 
 ```{r}
 cat("Capas AEMET:", n_layers)
-if (n_layers > 0) cat(" · Fecha:", last_update, "· Catálogo:", layers_source)
+if (n_layers > 0) {
+  cat(" · Validez máxima:", last_update, "· Emisión:", latest_layer_value(layers_data, "issue_date"), "· Catálogo:", layers_source)
+}
 
 cat("\nFocos NASA FIRMS:", n_firms)
 if (n_firms > 0) cat(" · Catálogo:", firms_source)

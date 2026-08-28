@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.15 - fechas y actualidad de las fuentes
+
+- Añade una marca temporal explícita de generación del visor al panel `Actualidad de datos`.
+- Separa en la leyenda AEMET `Válido` y `Emisión`, con día de la semana y fecha completa.
+- Hace que el indicador AEMET use la capa seleccionada y distinga fecha de emisión de fecha válida.
+- Trata `emisión de ayer · válido para hoy` como estado vigente en lugar de mostrar un aviso de datos atrasados.
+- Al navegar a otros horizontes, muestra `válido para mañana` o la fecha válida concreta sin alterar la antigüedad real de la emisión.
+- Muestra en los tooltips las fechas y horas exactas del visor, FIRMS y EFFIS en `Europe/Madrid`.
+- Mejora el diagnóstico desplegable para mostrar por separado la validez máxima y la emisión AEMET.
+
 ## v0.6.14 - despliegue independiente del guardado Git
 
 - Corrige el fallo `cannot rebase: You have unstaged changes` causado por el `docs/` regenerado por Quarto.

@@ -123,7 +123,11 @@ if (file.exists("docs/index.html")) {
     "territory-panel",
     "n_ultimas_12h",
     "effis_area_ha_90d",
-    "Centrar y ampliar"
+    "Centrar y ampliar",
+    "Visor actualizado:",
+    "emisión de ayer · válido para hoy",
+    "<strong>Válido:</strong>",
+    "<strong>Emisión:</strong>"
   )
 
   missing_fragments <- required_fragments[!vapply(

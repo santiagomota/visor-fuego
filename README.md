@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.14: despliegue independiente del guardado Git
+## v0.6.15: fechas y actualidad de las fuentes
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,13 +9,14 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.14
+### Cambios principales de v0.6.15
 
-- Despliega GitHub Pages **antes** de intentar guardar los snapshots de datos en `main`.
-- Corrige el error `cannot rebase: You have unstaged changes`: tras subir el artefacto, `docs/` se restaura al estado del checkout antes del `rebase`.
-- Un conflicto al guardar `data/processed` o `assets` ya no bloquea la publicación: el workflow emite un aviso y la siguiente ejecución vuelve a intentarlo.
-- Mantiene `fetch` + `rebase` + hasta tres reintentos de `push`, sin sobrescribir el historial remoto.
-- Conserva el despliegue directo de Pages, el horario 04:30/12:30 Madrid y el uso de `CARTO_BASEMAP_KEY`.
+- Distingue en la leyenda AEMET la **fecha válida** de la **fecha de emisión**.
+- Añade al panel de actualidad la marca temporal de generación del propio visor.
+- El estado AEMET se calcula sobre la capa seleccionada y muestra mensajes como `emisión de ayer · válido para hoy`.
+- Una emisión de ayer se considera vigente cuando la capa seleccionada es válida para hoy, evitando marcar como atrasado un producto AEMET todavía operativo.
+- Las fechas y horas exactas de Visor, FIRMS y EFFIS se muestran en horario de Madrid al pasar el cursor.
+- Mantiene el despliegue independiente de Pages y el guardado Git *best-effort* introducidos en v0.6.14.
 
 Se mantienen las mejoras anteriores:
 
