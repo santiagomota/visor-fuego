@@ -1,13 +1,10 @@
 source("R/utils.R", encoding = "UTF-8")
 
-risk_palette <- c(
-  "#2c7bb6", # muy bajo / bajo
-  "#abd9e9",
-  "#ffffbf",
-  "#fdae61",
-  "#d7191c",
-  "#7f0000"
-)
+# AEMET IPIF 2026 usa seis clases discretas codificadas 1..6.
+# La simbología oficial se intenta leer siempre del propio GeoTIFF (metadato
+# ESCALA o tabla de color). Esta paleta solo es un fallback de seguridad y NO se
+# utiliza para inferir clases por posición.
+risk_values <- 1:6
 
 risk_labels <- c(
   "Muy bajo",
@@ -17,6 +14,23 @@ risk_labels <- c(
   "Muy alto",
   "Extremo"
 )
+names(risk_labels) <- as.character(risk_values)
+
+# Fallback cromático coherente con la leyenda IPIF actual de AEMET. La fuente
+# preferente sigue siendo ESCALA/colortable del GeoTIFF para reproducir el estilo
+# oficial sin depender de colores codificados en el proyecto.
+risk_palette_fallback <- c(
+  "1" = "#42A5F5", # Muy bajo - azul
+  "2" = "#67D4C5", # Bajo - turquesa
+  "3" = "#7BCB6B", # Moderado - verde
+  "4" = "#F3E64D", # Alto - amarillo
+  "5" = "#F39A32", # Muy alto - naranja
+  "6" = "#E6322B"  # Extremo - rojo
+)
+
+# Compatibilidad con las ramas de preparación de imágenes no GeoTIFF.
+risk_palette <- unname(risk_palette_fallback)
+
 
 allow_aemet_png_overlay <- function() {
   tolower(Sys.getenv("AEMET_ALLOW_PNG_OVERLAY", unset = "false")) %in% c("1", "true", "yes", "si", "sí")
@@ -112,11 +126,184 @@ hex_to_rgba <- function(hex, alpha = 1) {
   c(rgb[, 1], alpha)
 }
 
+rgba_to_hex <- function(r, g, b) {
+  vals <- pmax(0, pmin(255, round(c(r, g, b))))
+  sprintf("#%02X%02X%02X", vals[[1]], vals[[2]], vals[[3]])
+}
+
+normalise_alpha <- function(a) {
+  if (is.na(a)) return(1)
+  if (a > 1) a <- a / 255
+  max(0, min(1, a))
+}
+
+aemet_metadata_text <- function(file, r_source) {
+  chunks <- character()
+
+  desc <- if ("describe" %in% getNamespaceExports("terra")) {
+    tryCatch(terra::describe(file), error = function(e) NULL)
+  } else {
+    NULL
+  }
+  if (!is.null(desc)) {
+    chunks <- c(chunks, as.character(unlist(desc, use.names = TRUE)))
+  }
+
+  # terra::metags está disponible en versiones recientes. Se consulta de forma
+  # defensiva para mantener compatibilidad con instalaciones algo anteriores.
+  if ("metags" %in% getNamespaceExports("terra")) {
+    mt <- tryCatch(terra::metags(r_source), error = function(e) NULL)
+    if (!is.null(mt)) {
+      uv <- unlist(mt, use.names = TRUE)
+      if (length(uv) > 0) {
+        nm <- names(uv)
+        if (is.null(nm)) nm <- rep("", length(uv))
+        chunks <- c(chunks, paste0(nm, "=", as.character(uv)))
+      }
+    }
+  }
+
+  paste(chunks, collapse = "\n")
+}
+
+parse_aemet_escala <- function(metadata_text) {
+  if (!nzchar(metadata_text)) return(NULL)
+
+  lines <- strsplit(metadata_text, "\n", fixed = TRUE)[[1]]
+  idx <- grep("ESCALA", lines, ignore.case = TRUE)
+  if (length(idx) == 0) return(NULL)
+
+  # El valor ESCALA puede llegar en una sola línea o continuar en varias.
+  take <- unique(unlist(lapply(idx, function(i) seq.int(i, min(length(lines), i + 12L)))))
+  txt <- paste(lines[take], collapse = " ")
+
+  colours <- rep(NA_character_, 6)
+  alpha <- rep(NA_real_, 6)
+  names(colours) <- names(alpha) <- as.character(risk_values)
+
+  # Formato 1:#RRGGBB o 1:#RRGGBBAA
+  hm <- stringr::str_match_all(
+    txt,
+    stringr::regex("(?:^|[^0-9])([1-6])\\s*[:=]\\s*[\"']?#([0-9a-f]{6})([0-9a-f]{2})?", ignore_case = TRUE)
+  )[[1]]
+  if (nrow(hm) > 0) {
+    for (i in seq_len(nrow(hm))) {
+      k <- hm[i, 2]
+      colours[[k]] <- paste0("#", toupper(hm[i, 3]))
+      alpha[[k]] <- if (!is.na(hm[i, 4]) && nzchar(hm[i, 4])) {
+        strtoi(hm[i, 4], base = 16L) / 255
+      } else {
+        1
+      }
+    }
+  }
+
+  # Formato 1:(R,G,B,A), 1=[R G B A], etc.
+  rm <- stringr::str_match_all(
+    txt,
+    stringr::regex(
+      "(?:^|[^0-9])([1-6])\\s*[:=]\\s*[\\[\\(]?\\s*([0-9.]+)\\s*[,; ]+\\s*([0-9.]+)\\s*[,; ]+\\s*([0-9.]+)(?:\\s*[,; ]+\\s*([0-9.]+))?",
+      ignore_case = TRUE
+    )
+  )[[1]]
+  if (nrow(rm) > 0) {
+    for (i in seq_len(nrow(rm))) {
+      k <- rm[i, 2]
+      r <- suppressWarnings(as.numeric(rm[i, 3]))
+      g <- suppressWarnings(as.numeric(rm[i, 4]))
+      b <- suppressWarnings(as.numeric(rm[i, 5]))
+      a <- suppressWarnings(as.numeric(rm[i, 6]))
+      if (all(is.finite(c(r, g, b)))) {
+        # Algunos metadatos expresan RGB en 0..1.
+        if (max(c(r, g, b), na.rm = TRUE) <= 1) {
+          r <- r * 255; g <- g * 255; b <- b * 255
+        }
+        colours[[k]] <- rgba_to_hex(r, g, b)
+        alpha[[k]] <- normalise_alpha(a)
+      }
+    }
+  }
+
+  if (all(!is.na(colours))) {
+    alpha[is.na(alpha)] <- 1
+    return(list(colours = colours, alpha = alpha, source = "AEMET GeoTIFF ESCALA"))
+  }
+
+  NULL
+}
+
+aemet_colortable_style <- function(r_source) {
+  if (!"coltab" %in% getNamespaceExports("terra")) return(NULL)
+  ct <- tryCatch(terra::coltab(r_source), error = function(e) NULL)
+  if (is.null(ct)) return(NULL)
+  if (is.list(ct)) {
+    if (length(ct) == 0 || is.null(ct[[1]])) return(NULL)
+    ct <- ct[[1]]
+  }
+  if (!(is.data.frame(ct) || is.matrix(ct))) return(NULL)
+  ct <- as.data.frame(ct)
+  if (nrow(ct) == 0) return(NULL)
+
+  nms <- tolower(names(ct))
+  find_col <- function(candidates) {
+    hit <- which(nms %in% candidates)
+    if (length(hit) == 0) NA_integer_ else hit[[1]]
+  }
+  iv <- find_col(c("value", "values", "id", "index"))
+  ir <- find_col(c("red", "r"))
+  ig <- find_col(c("green", "g"))
+  ib <- find_col(c("blue", "b"))
+  ia <- find_col(c("alpha", "a"))
+  if (any(is.na(c(ir, ig, ib)))) return(NULL)
+
+  values <- if (!is.na(iv)) {
+    suppressWarnings(as.integer(ct[[iv]]))
+  } else {
+    suppressWarnings(as.integer(rownames(ct)))
+  }
+  if (length(values) != nrow(ct) || all(is.na(values))) return(NULL)
+
+  colours <- rep(NA_character_, 6)
+  alpha <- rep(NA_real_, 6)
+  names(colours) <- names(alpha) <- as.character(risk_values)
+  for (k in risk_values) {
+    j <- which(values == k)
+    if (length(j) == 0) next
+    j <- j[[1]]
+    colours[[as.character(k)]] <- rgba_to_hex(ct[[ir]][j], ct[[ig]][j], ct[[ib]][j])
+    alpha[[as.character(k)]] <- if (!is.na(ia)) normalise_alpha(ct[[ia]][j]) else 1
+  }
+
+  if (all(!is.na(colours))) {
+    alpha[is.na(alpha)] <- 1
+    return(list(colours = colours, alpha = alpha, source = "GeoTIFF colour table"))
+  }
+  NULL
+}
+
+aemet_risk_style <- function(file, r_source) {
+  meta <- aemet_metadata_text(file, r_source)
+  style <- parse_aemet_escala(meta)
+  if (!is.null(style)) return(style)
+
+  style <- aemet_colortable_style(r_source)
+  if (!is.null(style)) return(style)
+
+  warning(
+    "No se pudo leer ESCALA ni la tabla de color AEMET en ", basename(file),
+    ". Se usa la paleta IPIF de respaldo con clases fijas 1..6.",
+    call. = FALSE
+  )
+  list(
+    colours = risk_palette_fallback,
+    alpha = stats::setNames(rep(1, 6), as.character(risk_values)),
+    source = "IPIF fallback 1..6"
+  )
+}
+
 label_for_values <- function(vals) {
-  vals <- sort(unique(vals))
-  if (length(vals) == 5) return(c("Bajo", "Moderado", "Alto", "Muy alto", "Extremo"))
-  if (length(vals) <= length(risk_labels)) return(risk_labels[seq_along(vals)])
-  paste("Nivel", vals)
+  present <- intersect(risk_values, sort(unique(as.integer(vals))))
+  unname(risk_labels[as.character(present)])
 }
 
 extent_vector <- function(r) {
@@ -174,34 +361,55 @@ write_spatraster_png <- function(file, out_png) {
     stop("Raster sin CRS: ", file, call. = FALSE)
   }
 
+  # La clase de peligro se codifica de forma estable como 1..6. El estilo se
+  # obtiene ANTES de reproyectar porque los metadatos/tablas pueden perderse al
+  # crear el raster Web Mercator temporal.
+  style <- aemet_risk_style(file, r_source)
+  message("AEMET estilo ", basename(file), ": ", style$source)
+
   target_crs <- aemet_leaflet_projection()
   r_render <- project_for_leaflet(r_source, target_crs = target_crs)
   r_render <- r_render[[1]]
 
   m <- terra::as.matrix(r_render, wide = TRUE)
-  vals <- sort(unique(as.vector(m[!is.na(m)])))
-
-  if (length(vals) == 0) {
+  raw_vals <- as.vector(m[!is.na(m)])
+  if (length(raw_vals) == 0) {
     stop("Raster sin valores válidos: ", file, call. = FALSE)
   }
 
-  palette <- risk_palette[seq_len(min(length(vals), length(risk_palette)))]
-  if (length(vals) > length(palette)) {
-    palette <- grDevices::hcl.colors(length(vals), palette = "Inferno")
+  # IPIF es categórico. La interpolación nearest-neighbour debe conservar enteros.
+  if (any(abs(raw_vals - round(raw_vals)) > 1e-6, na.rm = TRUE)) {
+    stop("Raster AEMET con valores no categóricos tras reproyección: ", file, call. = FALSE)
   }
-  names(palette) <- as.character(vals)
+  m <- round(m)
+  vals <- sort(unique(as.integer(raw_vals)))
+  valid_vals <- intersect(vals, risk_values)
+  unexpected <- setdiff(vals, risk_values)
+  if (length(unexpected) > 0) {
+    warning(
+      "Valores fuera de las clases IPIF 1..6 tratados como transparentes en ",
+      basename(file), ": ", paste(unexpected, collapse = ", "),
+      call. = FALSE
+    )
+  }
+  if (length(valid_vals) == 0) {
+    stop("Raster AEMET sin clases IPIF 1..6: ", file, call. = FALSE)
+  }
 
   nr <- nrow(m)
   nc <- ncol(m)
   arr <- array(0, dim = c(nr, nc, 4))
 
-  for (v in vals) {
+  # CLAVE: la clase 4 SIEMPRE usa el color 4 de AEMET, aunque las clases 1, 2 o
+  # 3 no aparezcan ese día. La implementación anterior asignaba por posición de
+  # los valores presentes y podía desplazar toda la simbología.
+  for (v in risk_values) {
     idx <- which(m == v, arr.ind = TRUE)
-    if (nrow(idx) > 0) {
-      rgba <- hex_to_rgba(palette[[as.character(v)]], alpha = 0.80)
-      for (k in seq_len(4)) {
-        arr[cbind(idx[, 1], idx[, 2], k)] <- rgba[k]
-      }
+    if (nrow(idx) == 0) next
+    k <- as.character(v)
+    rgba <- hex_to_rgba(style$colours[[k]], alpha = style$alpha[[k]])
+    for (band in seq_len(4)) {
+      arr[cbind(idx[, 1], idx[, 2], band)] <- rgba[[band]]
     }
   }
 
@@ -213,9 +421,10 @@ write_spatraster_png <- function(file, out_png) {
   list(
     url = out_png,
     bounds = extent_to_leaflet_bounds(r_render, crs_hint = target_crs),
-    values = vals,
-    colours = unname(palette),
-    labels = label_for_values(vals),
+    values = valid_vals,
+    colours = unname(style$colours[as.character(risk_values)]),
+    labels = unname(risk_labels[as.character(risk_values)]),
+    style_source = style$source,
     source_crs = crs_txt,
     render_crs = target_crs,
     source_extent = extent_vector(r_source),
@@ -264,6 +473,7 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     bounds <- area_bounds(row$area)
     labels <- risk_labels
     colours <- risk_palette
+    style_source <- "imagen AEMET original"
     layer_kind <- "image"
     source_crs <- NA_character_
     render_crs <- NA_character_
@@ -281,6 +491,7 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     bounds <- raster_info$bounds
     labels <- raster_info$labels
     colours <- raster_info$colours
+    style_source <- raster_info$style_source
     layer_kind <- "image"
     source_crs <- raster_info$source_crs
     render_crs <- raster_info$render_crs
@@ -298,6 +509,7 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     bounds <- area_bounds(row$area)
     labels <- risk_labels
     colours <- risk_palette
+    style_source <- "GeoJSON fallback"
     layer_kind <- "geojson"
     source_crs <- NA_character_
     render_crs <- NA_character_
@@ -336,7 +548,8 @@ prepare_image_layer <- function(row, file = row$file, file_type = row$file_type,
     raster_res_x = raster_res_x,
     raster_res_y = raster_res_y,
     legend_labels = paste(labels, collapse = "|"),
-    legend_colours = paste(colours, collapse = "|")
+    legend_colours = paste(colours, collapse = "|"),
+    style_source = style_source
   )
 }
 

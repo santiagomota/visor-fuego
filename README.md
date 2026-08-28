@@ -1,6 +1,8 @@
 # visor-fuego
 
-## v0.6.15: fechas y actualidad de las fuentes
+## v0.6.17: simbología AEMET IPIF oficial
+
+Esta revisión corrige la representación de los GeoTIFF de peligro de incendios de AEMET. El producto IPIF actual utiliza seis clases discretas, codificadas de 1 a 6. El visor ya no deduce el color según qué clases aparezcan en cada mapa: conserva siempre la correspondencia oficial entre valor, nivel y color.
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,14 +11,17 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.15
+### Cambios principales de v0.6.17
 
-- Distingue en la leyenda AEMET la **fecha válida** de la **fecha de emisión**.
-- Añade al panel de actualidad la marca temporal de generación del propio visor.
-- El estado AEMET se calcula sobre la capa seleccionada y muestra mensajes como `emisión de ayer · válido para hoy`.
-- Una emisión de ayer se considera vigente cuando la capa seleccionada es válida para hoy, evitando marcar como atrasado un producto AEMET todavía operativo.
-- Las fechas y horas exactas de Visor, FIRMS y EFFIS se muestran en horario de Madrid al pasar el cursor.
-- Mantiene el despliegue independiente de Pages y el guardado Git *best-effort* introducidos en v0.6.14.
+- Clases fijas: `1 Muy bajo`, `2 Bajo`, `3 Moderado`, `4 Alto`, `5 Muy alto`, `6 Extremo`.
+- Lectura prioritaria del metadato `ESCALA` RGBA de AEMET.
+- Lectura alternativa de la tabla de color del GeoTIFF cuando esté disponible.
+- Paleta IPIF de respaldo solo si AEMET no expone el estilo; nunca se reenumeran las clases presentes.
+- Campo `style_source` en `assets/aemet/layers.json` para auditar la procedencia del estilo.
+- Los píxeles fuera de 1..6 se publican transparentes y generan un aviso.
+- Se mantienen la separación entre fecha válida/emisión, el panel territorial, la navegación temporal y el despliegue directo de Pages.
+
+> Al comparar con la web oficial de AEMET debe usarse la misma **fecha válida**. La base cartográfica y la transparencia pueden ser distintas, pero la clase IPIF de cada píxel debe coincidir.
 
 Se mantienen las mejoras anteriores:
 

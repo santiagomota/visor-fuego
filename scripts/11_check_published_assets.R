@@ -44,6 +44,39 @@ if (!file.exists(layers_path) || file.info(layers_path)$size <= 2) {
     if (length(missing_published) > 0) {
       fail(paste("Assets AEMET ausentes en docs/:", paste(missing_published, collapse = ", ")))
     }
+
+    expected_aemet_labels <- c("Muy bajo", "Bajo", "Moderado", "Alto", "Muy alto", "Extremo")
+    if (!"legend_labels" %in% names(layers)) {
+      fail("El catálogo AEMET no contiene legend_labels")
+    } else {
+      bad_legend <- vapply(seq_len(nrow(layers)), function(i) {
+        ll <- layers$legend_labels
+        labels <- if (is.matrix(ll) || is.data.frame(ll)) {
+          as.character(ll[i, , drop = TRUE])
+        } else if (is.list(ll)) {
+          as.character(unlist(ll[[i]], use.names = FALSE))
+        } else {
+          as.character(ll[[i]])
+        }
+        !identical(unname(labels), expected_aemet_labels)
+      }, logical(1))
+      if (any(bad_legend)) {
+        fail(paste(
+          "Hay capas AEMET cuya leyenda no conserva las seis clases IPIF 1..6:",
+          paste(as.character(layers$layer_id[bad_legend]), collapse = ", ")
+        ))
+      }
+    }
+
+    if (!"style_source" %in% names(layers)) {
+      fail("El catálogo AEMET no informa style_source; no se puede auditar la simbología")
+    } else {
+      style_sources <- unique(as.character(layers$style_source))
+      message("AEMET: fuentes de simbología: ", paste(style_sources, collapse = ", "))
+      if (all(grepl("fallback", style_sources, ignore.case = TRUE))) {
+        warn("Todas las capas AEMET usan la paleta de respaldo; revisar lectura de ESCALA/colortable")
+      }
+    }
   }
 }
 

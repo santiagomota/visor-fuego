@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.6.17 - simbología AEMET IPIF oficial y clases fijas
+
+- Corrige la conversión de los GeoTIFF AEMET: las clases IPIF se interpretan siempre con su código fijo `1..6` (`Muy bajo` a `Extremo`).
+- Elimina la asignación anterior de colores por posición entre los valores presentes, que podía desplazar las clases cuando un nivel no aparecía en un raster.
+- Lee preferentemente la simbología oficial desde el metadato `ESCALA` del GeoTIFF y, como segunda opción, desde su tabla de color.
+- Mantiene una paleta IPIF de respaldo únicamente si el fichero no expone la simbología, sin alterar nunca la correspondencia numérica entre clase y nivel.
+- Los valores ajenos a `1..6` se tratan como transparentes en lugar de desplazar la leyenda.
+- Añade `style_source` al catálogo AEMET para poder auditar de dónde procede la simbología de cada capa.
+- La leyenda publica siempre las seis clases actuales del IPIF de AEMET.
+
+## v0.6.16 - validación robusta de htmlwidgets
+
+- Corrige un falso positivo en `scripts/11_check_published_assets.R`.
+- La validación ya no exige etiquetas HTML literales dentro del JavaScript serializado por `htmlwidgets`.
+- Comprueba la lógica publicada mediante identificadores JavaScript estables.
+- Verifica por separado en `index.qmd` las etiquetas visibles **Válido**, **Emisión**, **Visor actualizado** y el estado **emisión de ayer · válido para hoy**.
+- No cambia la funcionalidad ni la presentación introducida en v0.6.15.
+
 ## v0.6.15 - fechas y actualidad de las fuentes
 
 - Añade una marca temporal explícita de generación del visor al panel `Actualidad de datos`.
