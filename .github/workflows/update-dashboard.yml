@@ -3,11 +3,13 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 2,10 * * *"
+    - cron: "30 4,12 * * *"
       timezone: "Europe/Madrid"
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: actualizar-visor-fuego
@@ -21,16 +23,22 @@ env:
 jobs:
   update-dashboard:
     runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Los eventos programados solo se ejecutan sobre la rama predeterminada.
           # En las ejecuciones manuales usamos también esa rama para publicar siempre
           # en el mismo destino.
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Mostrar motivo y horario de ejecución
         run: |
@@ -158,8 +166,11 @@ jobs:
           RSCRIPT
 
       - name: Configurar variables del visor
+        env:
+          CARTO_BASEMAP_KEY: ${{ secrets.CARTO_BASEMAP_KEY }}
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
         run: |
-          cat > .Renviron <<EOF
+          cat > .Renviron <<'EOF'
           AEMET_PROVIDER=classic
           AEMET_CLASSIC_VALID_START_OFFSET_DAYS=0
           AEMET_CLASSIC_KEEP_LATEST_ISSUE_ONLY=true
@@ -176,7 +187,6 @@ jobs:
           EFFIS_BA_MIN_AREA_HA=5
           EFFIS_BA_SIMPLIFY_M=100
 
-          FIRMS_MAP_KEY=${{ secrets.FIRMS_MAP_KEY }}
           FIRMS_SOURCES=VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT
           FIRMS_DAYS=2
           FIRMS_BBOX=-19,27,5,44.6
@@ -185,6 +195,16 @@ jobs:
           HISTORY_KEEP_DAYS=90
           HISTORY_MODE=daily_latest
           EOF
+
+          # Las claves se escriben desde variables de entorno para evitar
+          # interpretación accidental de caracteres especiales por el shell.
+          printf 'CARTO_BASEMAP_KEY=%s\n' "$CARTO_BASEMAP_KEY" >> .Renviron
+          printf 'FIRMS_MAP_KEY=%s\n' "$FIRMS_MAP_KEY" >> .Renviron
+
+          if [ -z "$CARTO_BASEMAP_KEY" ]; then
+            echo "::error::Falta el secret CARTO_BASEMAP_KEY. Configúralo en Settings > Secrets and variables > Actions."
+            exit 1
+          fi
 
       - name: Actualizar datos y validar entradas
         run: |
@@ -200,8 +220,12 @@ jobs:
         run: |
           set -euo pipefail
           Rscript scripts/11_check_published_assets.R
+          if ! grep -q "basemaps.cartocdn.com" docs/index.html; then
+            echo "::error::El HTML renderizado no contiene el basemap CARTO. Revisa CARTO_BASEMAP_KEY."
+            exit 1
+          fi
 
-      - name: Commit y publicación de cambios
+      - name: Commit de datos generados
         env:
           TARGET_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
@@ -209,36 +233,49 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # data/raw contiene descargas temporales y está excluido en .gitignore.
-          git add -A -- data/processed assets docs
+          # docs/ contiene el sitio renderizado y la URL pública de CARTO con la API key.
+          # Se despliega como artefacto de Pages, pero no se guarda en el historial Git.
+          git add -A -- data/processed assets
 
           if git diff --cached --quiet; then
-            echo "No hay cambios que publicar."
-            exit 0
-          fi
+            echo "No hay cambios de datos que confirmar."
+          else
+            git commit -m "Actualiza datos del visor automáticamente"
 
-          git commit -m "Actualiza visor automáticamente"
+            # El proceso tarda varios minutos. Durante ese tiempo puede entrar un commit
+            # nuevo en main. Rebasamos el commit generado y reintentamos el push sin
+            # sobrescribir el historial remoto.
+            publicado=false
+            for intento in 1 2 3; do
+              echo "Intento de publicación $intento de 3"
+              git fetch origin "$TARGET_BRANCH"
 
-          # El proceso tarda varios minutos. Durante ese tiempo puede entrar un commit
-          # nuevo en main. Rebasamos el commit generado y reintentamos el push sin
-          # sobrescribir el historial remoto.
-          for intento in 1 2 3; do
-            echo "Intento de publicación $intento de 3"
-            git fetch origin "$TARGET_BRANCH"
+              if ! git rebase "origin/$TARGET_BRANCH"; then
+                git rebase --abort || true
+                echo "::error::No se pudo integrar de forma segura un cambio remoto. Revisa si se modificaron simultáneamente assets o data/processed."
+                exit 1
+              fi
 
-            if ! git rebase "origin/$TARGET_BRANCH"; then
-              git rebase --abort || true
-              echo "::error::No se pudo integrar de forma segura un cambio remoto. Revisa si se modificaron simultáneamente assets, data/processed o docs."
+              if git push origin "HEAD:$TARGET_BRANCH"; then
+                echo "Datos publicados correctamente en Git."
+                publicado=true
+                break
+              fi
+
+              sleep $((intento * 5))
+            done
+
+            if [ "$publicado" != "true" ]; then
+              echo "::error::No se pudo publicar después de tres intentos por cambios concurrentes en la rama remota."
               exit 1
             fi
+          fi
 
-            if git push origin "HEAD:$TARGET_BRANCH"; then
-              echo "Cambios publicados correctamente."
-              exit 0
-            fi
+      - name: Subir artefacto de GitHub Pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs
 
-            sleep $((intento * 5))
-          done
-
-          echo "::error::No se pudo publicar después de tres intentos por cambios concurrentes en la rama remota."
-          exit 1
+      - name: Desplegar GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

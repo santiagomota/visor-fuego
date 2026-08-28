@@ -1,6 +1,6 @@
 # visor-fuego
 
-## v0.6.12: autenticación CARTO Basemaps
+## v0.6.13: despliegue directo en GitHub Pages
 
 Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
 
@@ -9,9 +9,13 @@ Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en E
 - **Copernicus/EFFIS**: áreas quemadas como capa contextual.
 - **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
 
-### Cambios principales de v0.6.12
+### Cambios principales de v0.6.13
 
-- Añade soporte para la nueva API key obligatoria de CARTO Basemaps.
+- Despliega `docs/` directamente en GitHub Pages desde el workflow, evitando que los commits realizados con `GITHUB_TOKEN` dejen la web pública sin actualizar.
+- Corrige el horario automático a las **04:30** y **12:30** con `timezone: Europe/Madrid`.
+- Exige `CARTO_BASEMAP_KEY` en GitHub Actions y valida que el HTML renderizado usa CARTO.
+- Deja de confirmar `docs/` en los commits automáticos; se versionan los datos y assets, mientras el sitio renderizado se publica como artefacto de Pages.
+- Mantiene el soporte para la API key obligatoria de CARTO Basemaps.
 - Lee la clave desde `CARTO_BASEMAP_KEY` en `.Renviron` y desde el secret homónimo en GitHub Actions.
 - Sustituye `providers$CartoDB.Positron` por una URL explícita Positron con `?key=...`.
 - Mantiene las atribuciones obligatorias de OpenStreetMap y CARTO.
@@ -49,4 +53,4 @@ Crea un secret del repositorio llamado `CARTO_BASEMAP_KEY` en **Settings → Sec
 
 ### Publicación
 
-GitHub Actions actualiza los datos, renderiza el sitio en `docs/`, valida los recursos publicados y realiza un commit únicamente cuando existen cambios.
+Desde v0.6.13 GitHub Actions actualiza los datos, renderiza el sitio en `docs/`, valida los recursos y despliega directamente el artefacto mediante `actions/upload-pages-artifact` y `actions/deploy-pages`. En **Settings → Pages → Build and deployment**, la fuente debe ser **GitHub Actions**. Los commits automáticos mantienen `data/processed` y `assets`, pero no `docs/`.

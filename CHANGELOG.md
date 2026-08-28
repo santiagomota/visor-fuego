@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.13 - despliegue directo en GitHub Pages
+
+- Corrige la publicación automática: el workflow despliega `docs/` directamente con `actions/upload-pages-artifact@v4` y `actions/deploy-pages@v4`.
+- Añade los permisos `pages: write` e `id-token: write` y el entorno `github-pages`.
+- Corrige el cron a `30 4,12 * * *` con `timezone: Europe/Madrid`, es decir, 04:30 y 12:30 hora de Madrid.
+- Pasa `CARTO_BASEMAP_KEY` al render y detiene el workflow con un error claro si el secret no está configurado.
+- Valida que `docs/index.html` contiene el dominio de CARTO tras el render.
+- Deja de confirmar `docs/` en los commits automáticos para evitar guardar la URL de teselas con la API key en el historial Git; `data/processed` y `assets` continúan versionados.
+- Actualiza `actions/checkout` a v6.
+
 ## v0.6.12 - API key de CARTO Basemaps
 
 - Integra `CARTO_BASEMAP_KEY` en la base clara del mapa.
