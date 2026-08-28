@@ -118,16 +118,21 @@ if (!is.null(territorial)) {
 
 if (file.exists("docs/index.html")) {
   index_html <- paste(readLines("docs/index.html", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  # Validar el comportamiento publicado mediante identificadores estables.
+  # htmlwidgets serializa el JavaScript dentro de JSON y puede escapar '<' y '>'
+  # como secuencias Unicode, por lo que no debemos exigir etiquetas HTML
+  # literales como <strong>...</strong> en docs/index.html.
   required_fragments <- c(
     "Consulta territorial",
     "territory-panel",
     "n_ultimas_12h",
     "effis_area_ha_90d",
     "Centrar y ampliar",
-    "Visor actualizado:",
-    "emisión de ayer · válido para hoy",
-    "<strong>Válido:</strong>",
-    "<strong>Emisión:</strong>"
+    "data-freshness",
+    "fire-legend-context",
+    "formatMadridTimestamp",
+    "validDateRelation",
+    "aemetTitle"
   )
 
   missing_fragments <- required_fragments[!vapply(
@@ -138,9 +143,35 @@ if (file.exists("docs/index.html")) {
 
   if (length(missing_fragments) > 0) {
     fail(paste(
-      "El HTML principal no contiene elementos del panel territorial:",
+      "El HTML principal no contiene la lógica esperada del panel y la actualidad:",
       paste(missing_fragments, collapse = ", ")
     ))
+  }
+
+  # Los textos visibles sí se verifican en la fuente QMD, donde no interviene
+  # la serialización JSON de htmlwidgets.
+  if (!file.exists("index.qmd")) {
+    fail("No existe index.qmd para validar las etiquetas temporales de AEMET")
+  } else {
+    index_qmd <- paste(readLines("index.qmd", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+    source_fragments <- c(
+      "<strong>Válido:</strong>",
+      "<strong>Emisión:</strong>",
+      "Visor actualizado:",
+      "emisión de ayer · válido para hoy"
+    )
+    missing_source_fragments <- source_fragments[!vapply(
+      source_fragments,
+      function(fragment) grepl(fragment, index_qmd, fixed = TRUE),
+      logical(1)
+    )]
+
+    if (length(missing_source_fragments) > 0) {
+      fail(paste(
+        "index.qmd no contiene las etiquetas temporales esperadas:",
+        paste(missing_source_fragments, collapse = ", ")
+      ))
+    }
   }
 
   if (grepl("__TERRITORIAL_DATA__", index_html, fixed = TRUE)) {
