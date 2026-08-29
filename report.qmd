@@ -14,7 +14,7 @@ execute:
 source("R/page_helpers.R")
 vf_load_packages()
 
-layers <- vf_read_csv(c("data/processed/layers.csv", "assets/aemet/layers.csv"))
+layers <- vf_read_csv("assets/aemet/layers.csv")
 aemet_all <- vf_normalise_aemet_layers(layers)
 aemet_latest <- vf_latest_aemet_layers(layers)
 ```
@@ -78,7 +78,7 @@ if (nrow(aemet_all) > 0) {
 ## FIRMS
 
 ```{r}
-firms <- vf_read_csv(c("data/processed/firms_active_fires.csv", "data/processed/firms.csv", "assets/firms/firms_active_fires.csv"))
+firms <- vf_read_csv("assets/firms/firms_active_fires.csv")
 if (nrow(firms) > 0) {
   date_candidates <- intersect(c("acq_date", "date", "datetime", "observed_at", "last_seen"), names(firms))
   firms_summary <- tibble::tibble(
@@ -104,7 +104,7 @@ if (nrow(firms) > 0) {
 ## Alertas operativas
 
 ```{r}
-alerts <- vf_read_csv(c("data/processed/operational_alerts.csv", "assets/alerts/operational_alerts.csv"))
+alerts <- vf_read_csv("assets/alerts/operational_alerts.csv")
 if (nrow(alerts) > 0) {
   alert_cols <- intersect(c("alert_id", "cluster_id", "ccaa", "province", "admin_name", "n_detections", "max_frp", "last_seen", "priority", "level"), names(alerts))
   if (length(alert_cols) == 0) alert_cols <- names(alerts)[seq_len(min(10, ncol(alerts)))]
@@ -117,7 +117,7 @@ if (nrow(alerts) > 0) {
 ## EFFIS
 
 ```{r}
-effis <- vf_read_csv(c("data/processed/effis_layers.csv", "assets/effis/effis_layers.csv"))
+effis <- vf_read_csv("assets/effis/effis_layers.csv")
 if (nrow(effis) > 0) {
   effis_cols <- intersect(c("layer", "label", "date", "base_url", "version", "format", "bbox", "url"), names(effis))
   vf_kable(effis |> dplyr::select(dplyr::all_of(effis_cols)), caption = "Capas EFFIS publicadas")

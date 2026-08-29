@@ -73,9 +73,62 @@ if (!file.exists(layers_path) || file.info(layers_path)$size <= 2) {
     } else {
       style_sources <- unique(as.character(layers$style_source))
       message("AEMET: fuentes de simbología: ", paste(style_sources, collapse = ", "))
-      if (all(grepl("fallback", style_sources, ignore.case = TRUE))) {
-        warn("Todas las capas AEMET usan la paleta de respaldo; revisar lectura de ESCALA/colortable")
+      fallback_layers <- grepl("fallback", as.character(layers$style_source), ignore.case = TRUE)
+      require_official <- tolower(trimws(Sys.getenv("AEMET_REQUIRE_OFFICIAL_STYLE", unset = "false"))) %in%
+        c("1", "true", "yes", "y", "si", "sí", "on")
+      if (any(fallback_layers)) {
+        msg <- paste(
+          "Hay capas AEMET con simbología de respaldo:",
+          paste(as.character(layers$layer_id[fallback_layers]), collapse = ", ")
+        )
+        if (require_official) fail(msg) else warn(msg)
       }
+    }
+  }
+}
+
+aemet_status_path <- "assets/aemet/status.json"
+if (!file.exists(aemet_status_path) || file.info(aemet_status_path)$size <= 2) {
+  fail(paste("Estado de descarga AEMET ausente:", aemet_status_path))
+} else {
+  aemet_status <- tryCatch(
+    jsonlite::fromJSON(aemet_status_path, simplifyVector = TRUE),
+    error = function(e) NULL
+  )
+  if (is.null(aemet_status)) {
+    fail("No se puede leer assets/aemet/status.json")
+  } else {
+    issue_age <- suppressWarnings(as.integer(aemet_status$issue_age_days %||% NA_integer_))
+    message(
+      "AEMET: emisión ", aemet_status$issue_date %||% "s/d",
+      " · estado ", aemet_status$freshness %||% "s/d",
+      " · intentos ", aemet_status$attempts %||% "s/d"
+    )
+    if (!is.na(issue_age) && issue_age > 1L) {
+      fail(paste("La emisión AEMET tiene", issue_age, "días de antigüedad; máximo operativo: 1"))
+    }
+  }
+}
+
+firms_csv_path <- "assets/firms/firms_active_fires.csv"
+if (!file.exists(firms_csv_path) || file.info(firms_csv_path)$size <= 0) {
+  fail(paste("Snapshot FIRMS canónico ausente:", firms_csv_path))
+}
+firms_status_path <- "assets/firms/status.json"
+if (!file.exists(firms_status_path) || file.info(firms_status_path)$size <= 2) {
+  fail(paste("Estado FIRMS ausente:", firms_status_path))
+} else {
+  firms_status <- tryCatch(jsonlite::fromJSON(firms_status_path, simplifyVector = TRUE), error = function(e) NULL)
+  if (is.null(firms_status)) {
+    fail("No se puede leer assets/firms/status.json")
+  } else {
+    message(
+      "FIRMS: estado ", firms_status$download_status %||% "s/d",
+      " · detecciones ", firms_status$n_detections %||% "s/d",
+      " · última observación ", firms_status$last_observation_utc %||% "s/d"
+    )
+    if (identical(as.character(firms_status$download_status %||% ""), "stale_preserved")) {
+      warn("FIRMS ha conservado el último snapshot válido porque la descarga actual no fue utilizable")
     }
   }
 }
@@ -149,6 +202,20 @@ if (!is.null(territorial)) {
   }
 }
 
+# Ninguna página publicada debe mezclar productos operativos intermedios con
+# el snapshot canónico de assets/. Los límites estáticos también se sirven desde
+# assets/admin en la página principal.
+render_sources <- c("index.qmd", "summary.qmd", "report.qmd", "history.qmd", "copernicus.qmd", "R/page_helpers.R")
+for (source_file in render_sources) {
+  if (!file.exists(source_file)) next
+  source_txt <- paste(readLines(source_file, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  # Se permiten menciones explicativas de data/processed, pero no rutas de lectura
+  # entre comillas que puedan ser consumidas por el render.
+  if (grepl('["\']data/processed/', source_txt, perl = TRUE)) {
+    fail(paste("El render sigue leyendo data/processed en", source_file, "; debe usar assets/ como snapshot canónico"))
+  }
+}
+
 if (file.exists("docs/index.html")) {
   index_html <- paste(readLines("docs/index.html", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
   # Validar el comportamiento publicado mediante identificadores estables.
@@ -191,7 +258,11 @@ if (file.exists("docs/index.html")) {
       "<strong>Válido:</strong>",
       "<strong>Emisión:</strong>",
       "Visor actualizado:",
-      "emisión de ayer · válido para hoy"
+      "emisión de ayer · válido para hoy",
+      "assets/aemet/layers.json",
+      "assets/firms/firms_active_fires.csv",
+      "assets/summary/dashboard_summary.csv",
+      "assets/summary/territorial_summary.json"
     )
     missing_source_fragments <- source_fragments[!vapply(
       source_fragments,
@@ -203,6 +274,29 @@ if (file.exists("docs/index.html")) {
       fail(paste(
         "index.qmd no contiene las etiquetas temporales esperadas:",
         paste(missing_source_fragments, collapse = ", ")
+      ))
+    }
+
+    forbidden_operational_sources <- c(
+      "data/processed/layers.json",
+      "data/processed/firms_active_fires.csv",
+      "data/processed/dashboard_summary.csv",
+      "data/processed/firms_summary_ccaa.csv",
+      "data/processed/firms_summary_provincias.csv",
+      "data/processed/territorial_summary.json",
+      "data/processed/operational_alerts.csv",
+      "data/processed/operational_alerts_summary.csv",
+      "data/processed/effis_burnt_areas_summary.csv"
+    )
+    leaked_sources <- forbidden_operational_sources[vapply(
+      forbidden_operational_sources,
+      function(fragment) grepl(fragment, index_qmd, fixed = TRUE),
+      logical(1)
+    )]
+    if (length(leaked_sources) > 0) {
+      fail(paste(
+        "index.qmd vuelve a mezclar data/processed con el snapshot canónico assets/:",
+        paste(leaked_sources, collapse = ", ")
       ))
     }
   }

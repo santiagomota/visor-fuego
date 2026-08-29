@@ -28,7 +28,18 @@ firms_day_range <- function() {
   max(1L, min(5L, days))
 }
 
-firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.18", timeout = 120, connecttimeout = 30, retries = 2) {
+firms_preserve_last_on_empty <- function() {
+  tolower(trimws(Sys.getenv("FIRMS_PRESERVE_LAST_ON_EMPTY", unset = "true"))) %in%
+    c("1", "true", "yes", "y", "si", "sí", "on")
+}
+
+firms_max_preserved_age_hours <- function() {
+  value <- suppressWarnings(as.numeric(Sys.getenv("FIRMS_MAX_PRESERVED_AGE_HOURS", unset = "72")))
+  if (!is.finite(value) || value < 1) value <- 72
+  value
+}
+
+firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.19", timeout = 120, connecttimeout = 30, retries = 2) {
   if (!requireNamespace("curl", quietly = TRUE)) {
     stop("Falta el paquete R 'curl'. Instala con install.packages('curl').", call. = FALSE)
   }
@@ -66,47 +77,24 @@ build_firms_area_url <- function(map_key, source, bbox, days, date = Sys.getenv(
 
 firms_empty_normalised <- function() {
   tibble::tibble(
-    bright_ti4 = double(),
-    scan = double(),
-    track = double(),
-    acq_date = character(),
-    acq_time = character(),
-    satellite = character(),
-    instrument = character(),
-    confidence = character(),
-    version = character(),
-    bright_ti5 = double(),
-    frp = double(),
-    daynight = character(),
-    source_dataset = character(),
-    acq_datetime_utc = character(),
-    age_hours = double(),
-    longitude = double(),
-    latitude = double()
+    bright_ti4 = double(), scan = double(), track = double(),
+    acq_date = character(), acq_time = character(), satellite = character(),
+    instrument = character(), confidence = character(), version = character(),
+    bright_ti5 = double(), frp = double(), daynight = character(),
+    source_dataset = character(), acq_datetime_utc = character(), age_hours = double(),
+    longitude = double(), latitude = double()
   )
 }
 
 firms_empty_output <- function() {
   tibble::tibble(
-    bright_ti4 = double(),
-    scan = double(),
-    track = double(),
-    acq_date = character(),
-    acq_time = character(),
-    satellite = character(),
-    instrument = character(),
-    confidence = character(),
-    version = character(),
-    bright_ti5 = double(),
-    frp = double(),
-    daynight = character(),
-    source_dataset = character(),
-    acq_datetime_utc = character(),
-    age_hours = double(),
-    confidence_label = character(),
-    popup_label = character(),
-    longitude = double(),
-    latitude = double()
+    bright_ti4 = double(), scan = double(), track = double(),
+    acq_date = character(), acq_time = character(), satellite = character(),
+    instrument = character(), confidence = character(), version = character(),
+    bright_ti5 = double(), frp = double(), daynight = character(),
+    source_dataset = character(), acq_datetime_utc = character(), age_hours = double(),
+    confidence_label = character(), popup_label = character(),
+    longitude = double(), latitude = double()
   )
 }
 
@@ -122,9 +110,6 @@ read_firms_csv_safely <- function(path) {
   }
 
   tryCatch(
-    # Todas las columnas se leen inicialmente como texto. Las respuestas de dos
-    # sensores pueden contener tablas vacías o pequeñas diferencias de inferencia;
-    # la conversión a tipos canónicos se hace después en normalise_firms().
     readr::read_csv(
       path,
       col_types = readr::cols(.default = readr::col_character()),
@@ -198,11 +183,7 @@ normalise_firms <- function(x, source) {
 }
 
 bind_firms_sources <- function(results) {
-  usable <- purrr::keep(
-    results,
-    function(x) is.data.frame(x) && nrow(x) > 0
-  )
-
+  usable <- purrr::keep(results, function(x) is.data.frame(x) && nrow(x) > 0)
   if (length(usable) == 0) return(firms_empty_normalised())
   dplyr::bind_rows(usable)
 }
@@ -218,22 +199,15 @@ confidence_label <- function(x) {
 }
 
 firms_to_geojson <- function(fires) {
-  if (nrow(fires) == 0) {
-    return(list(type = "FeatureCollection", features = list()))
-  }
+  if (nrow(fires) == 0) return(list(type = "FeatureCollection", features = list()))
 
   props_cols <- setdiff(names(fires), c("longitude", "latitude"))
   features <- purrr::map(seq_len(nrow(fires)), function(i) {
     props <- as.list(fires[i, props_cols, drop = FALSE])
-    props <- lapply(props, function(v) {
-      if (length(v) == 0 || is.na(v)) NULL else unname(v)
-    })
+    props <- lapply(props, function(v) if (length(v) == 0 || is.na(v)) NULL else unname(v))
     list(
       type = "Feature",
-      geometry = list(
-        type = "Point",
-        coordinates = c(fires$longitude[i], fires$latitude[i])
-      ),
+      geometry = list(type = "Point", coordinates = c(fires$longitude[i], fires$latitude[i])),
       properties = props
     )
   })
@@ -241,21 +215,141 @@ firms_to_geojson <- function(fires) {
   list(type = "FeatureCollection", features = features)
 }
 
-write_empty_firms_outputs <- function(reason = "Sin datos") {
+refresh_firms_age <- function(fires) {
+  if (!is.data.frame(fires) || nrow(fires) == 0 || !"acq_datetime_utc" %in% names(fires)) return(fires)
+  dt <- as.POSIXct(fires$acq_datetime_utc, tz = "UTC", format = "%Y-%m-%dT%H:%M:%SZ")
+  fires$age_hours <- round(as.numeric(difftime(as.POSIXct(Sys.time(), tz = "UTC"), dt, units = "hours")), 1)
+  fires
+}
+
+normalise_existing_firms_output <- function(x) {
+  if (!is.data.frame(x) || nrow(x) == 0) return(firms_empty_output())
+  template <- firms_empty_output()
+  for (nm in setdiff(names(template), names(x))) x[[nm]] <- NA
+  x <- x[, names(template), drop = FALSE]
+  numeric_cols <- c("bright_ti4", "scan", "track", "bright_ti5", "frp", "age_hours", "longitude", "latitude")
+  for (nm in numeric_cols) x[[nm]] <- suppressWarnings(as.numeric(x[[nm]]))
+  char_cols <- setdiff(names(template), numeric_cols)
+  for (nm in char_cols) x[[nm]] <- as.character(x[[nm]])
+  refresh_firms_age(tibble::as_tibble(x))
+}
+
+read_previous_firms_snapshot <- function() {
+  candidates <- c(
+    "assets/firms/firms_active_fires.csv",
+    "data/processed/firms_active_fires.csv"
+  )
+  for (path in candidates) {
+    if (!file.exists(path) || file.info(path)$size <= 0) next
+    x <- tryCatch(readr::read_csv(path, show_col_types = FALSE), error = function(e) NULL)
+    if (!is.null(x) && nrow(x) > 0 && all(c("longitude", "latitude", "acq_datetime_utc") %in% names(x))) {
+      x <- normalise_existing_firms_output(x)
+      attr(x, "source_path") <- path
+      return(x)
+    }
+  }
+  x <- firms_empty_output()
+  attr(x, "source_path") <- NA_character_
+  x
+}
+
+latest_firms_observation <- function(fires) {
+  if (!is.data.frame(fires) || nrow(fires) == 0 || !"acq_datetime_utc" %in% names(fires)) return(NA_character_)
+  dt <- as.POSIXct(fires$acq_datetime_utc, tz = "UTC", format = "%Y-%m-%dT%H:%M:%SZ")
+  if (all(is.na(dt))) return(NA_character_)
+  format(max(dt, na.rm = TRUE), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+}
+
+write_firms_status <- function(status, source_status = list()) {
+  fs::dir_create("assets/firms")
+  fs::dir_create("data/processed")
+  payload <- c(
+    list(
+      generated_at_utc = format(as.POSIXct(Sys.time(), tz = "UTC"), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+    ),
+    status,
+    list(sources = source_status)
+  )
+  jsonlite::write_json(payload, "assets/firms/status.json", auto_unbox = TRUE, pretty = TRUE, null = "null")
+  jsonlite::write_json(payload, "data/processed/firms_status.json", auto_unbox = TRUE, pretty = TRUE, null = "null")
+  invisible(payload)
+}
+
+write_firms_outputs <- function(fires, note = NULL, status = list(), source_status = list()) {
   fs::dir_create("data/processed")
   fs::dir_create("assets/firms")
-  empty <- firms_empty_output()
-  readr::write_csv(empty, "data/processed/firms_active_fires.csv")
-  geo <- list(type = "FeatureCollection", features = list(), note = reason)
+  fires <- normalise_existing_firms_output(fires)
+
+  readr::write_csv(fires, "data/processed/firms_active_fires.csv")
+  readr::write_csv(fires, "assets/firms/firms_active_fires.csv")
+
+  geo <- firms_to_geojson(fires)
+  if (!is.null(note) && nzchar(note)) geo$note <- note
   jsonlite::write_json(geo, "data/processed/firms_active_fires.geojson", auto_unbox = TRUE, pretty = TRUE, null = "null")
   jsonlite::write_json(geo, "assets/firms/firms_active_fires.geojson", auto_unbox = TRUE, pretty = TRUE, null = "null")
-  invisible(empty)
+
+  status <- c(
+    list(
+      n_detections = nrow(fires),
+      last_observation_utc = latest_firms_observation(fires)
+    ),
+    status
+  )
+  write_firms_status(status, source_status = source_status)
+  invisible(fires)
+}
+
+write_empty_firms_outputs <- function(reason = "Sin datos", source_status = list()) {
+  write_firms_outputs(
+    firms_empty_output(),
+    note = reason,
+    status = list(download_status = "empty", used_previous = FALSE, reason = reason),
+    source_status = source_status
+  )
+}
+
+preserve_previous_firms_if_allowed <- function(previous, reason, source_status = list()) {
+  if (!firms_preserve_last_on_empty() || !is.data.frame(previous) || nrow(previous) == 0) return(NULL)
+
+  previous <- refresh_firms_age(previous)
+  latest_age <- suppressWarnings(min(previous$age_hours, na.rm = TRUE))
+  if (!is.finite(latest_age)) return(NULL)
+  max_age <- firms_max_preserved_age_hours()
+  if (latest_age > max_age) {
+    warning(
+      "NASA FIRMS: el último snapshot válido tiene ", round(latest_age, 1),
+      " h (> ", max_age, " h); no se conserva.", call. = FALSE
+    )
+    return(NULL)
+  }
+
+  source_path <- attr(previous, "source_path") %||% "snapshot anterior"
+  warning(
+    "NASA FIRMS: la descarga actual no contiene detecciones utilizables. ",
+    "Se conserva el último snapshot válido (", nrow(previous), " detecciones; ", source_path, ").",
+    call. = FALSE
+  )
+  write_firms_outputs(
+    previous,
+    note = paste0("Snapshot FIRMS anterior conservado: ", reason),
+    status = list(
+      download_status = "stale_preserved",
+      used_previous = TRUE,
+      reason = reason,
+      previous_source = as.character(source_path),
+      max_preserved_age_hours = max_age
+    ),
+    source_status = source_status
+  )
 }
 
 download_firms_active_fires <- function() {
+  previous <- read_previous_firms_snapshot()
   map_key <- Sys.getenv("FIRMS_MAP_KEY", unset = "")
   if (!nzchar(map_key)) {
-    message("FIRMS_MAP_KEY no definida: se omite NASA FIRMS y se genera capa vacía.")
+    message("FIRMS_MAP_KEY no definida: se omite NASA FIRMS.")
+    preserved <- preserve_previous_firms_if_allowed(previous, "FIRMS_MAP_KEY no definida")
+    if (!is.null(preserved)) return(preserved)
     return(write_empty_firms_outputs("FIRMS_MAP_KEY no definida"))
   }
 
@@ -268,7 +362,7 @@ download_firms_active_fires <- function() {
   fs::dir_create("data/processed")
   fs::dir_create("assets/firms")
 
-  results <- purrr::map(sources, function(source) {
+  source_results <- purrr::map(sources, function(source) {
     message("NASA FIRMS: ", source, " · últimos ", days, " días")
     url <- build_firms_area_url(map_key, source, bbox, days, date = date)
     stamp <- format(Sys.Date(), "%Y%m%d")
@@ -276,29 +370,42 @@ download_firms_active_fires <- function() {
 
     resp <- tryCatch(firms_curl_fetch_raw(url), error = function(e) e)
     if (inherits(resp, "error")) {
-      warning("Fallo descargando FIRMS ", source, ": ", conditionMessage(resp), call. = FALSE)
-      return(firms_empty_normalised())
+      msg <- conditionMessage(resp)
+      warning("Fallo descargando FIRMS ", source, ": ", msg, call. = FALSE)
+      return(list(data = firms_empty_normalised(), status = "network_error", detail = msg))
     }
     if (resp$status_code >= 400) {
-      warning("FIRMS respondió HTTP ", resp$status_code, " para ", source, call. = FALSE)
-      return(firms_empty_normalised())
+      msg <- paste0("HTTP ", resp$status_code)
+      warning("FIRMS respondió ", msg, " para ", source, call. = FALSE)
+      return(list(data = firms_empty_normalised(), status = "http_error", detail = msg))
     }
 
     writeBin(resp$content, raw_path)
-    out <- read_firms_csv_safely(raw_path) |>
-      normalise_firms(source)
-    message("NASA FIRMS: ", source, " · detecciones válidas: ", nrow(out))
-    out
+    raw_tbl <- read_firms_csv_safely(raw_path)
+    out <- normalise_firms(raw_tbl, source)
+    state <- if (nrow(out) > 0) "ok" else "valid_empty"
+    message("NASA FIRMS: ", source, " · detecciones válidas: ", nrow(out), " · estado: ", state)
+    list(data = out, status = state, detail = paste0("HTTP ", resp$status_code), n = nrow(out))
   })
 
+  results <- purrr::map(source_results, "data")
   downloaded <- bind_firms_sources(results)
+  source_status <- stats::setNames(
+    purrr::map(source_results, function(x) list(status = x$status, detail = x$detail, n = x$n %||% 0L)),
+    sources
+  )
 
   if (nrow(downloaded) == 0) {
-    message("NASA FIRMS: no hay detecciones para el área/periodo seleccionado.")
-    return(write_empty_firms_outputs("Sin detecciones FIRMS"))
+    reason <- paste0(
+      "Sin detecciones utilizables en la descarga actual; estados: ",
+      paste(paste0(sources, "=", purrr::map_chr(source_results, "status")), collapse = ", ")
+    )
+    preserved <- preserve_previous_firms_if_allowed(previous, reason, source_status = source_status)
+    if (!is.null(preserved)) return(preserved)
+    message("NASA FIRMS: no hay detecciones para el área/periodo seleccionado y no existe snapshot reciente conservable.")
+    return(write_empty_firms_outputs(reason, source_status = source_status))
   }
 
-  # Deduplicación conservadora: sensor + coordenadas + fecha/hora.
   fires <- downloaded |>
     dplyr::mutate(
       confidence_label = confidence_label(confidence),
@@ -318,11 +425,11 @@ download_firms_active_fires <- function() {
       longitude, latitude
     )
 
-  readr::write_csv(fires, "data/processed/firms_active_fires.csv")
-  geo <- firms_to_geojson(fires)
-  jsonlite::write_json(geo, "data/processed/firms_active_fires.geojson", auto_unbox = TRUE, pretty = TRUE, null = "null")
-  jsonlite::write_json(geo, "assets/firms/firms_active_fires.geojson", auto_unbox = TRUE, pretty = TRUE, null = "null")
-
+  write_firms_outputs(
+    fires,
+    status = list(download_status = "fresh", used_previous = FALSE, reason = "Descarga FIRMS correcta"),
+    source_status = source_status
+  )
   message("NASA FIRMS: detecciones preparadas: ", nrow(fires))
   fires
 }

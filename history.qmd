@@ -14,7 +14,7 @@ execute:
 source("R/page_helpers.R")
 vf_load_packages()
 
-history <- vf_read_csv(c("data/processed/dashboard_history.csv", "assets/history/dashboard_history.csv"))
+history <- vf_read_csv("assets/history/dashboard_history.csv")
 ```
 
 ## Histórico del visor

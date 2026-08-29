@@ -28,70 +28,41 @@ source("R/admin.R", encoding = "UTF-8")
 }
 
 read_layers_json <- function() {
-  candidates <- c(
-    "data/processed/layers.json",
-    "assets/aemet/layers.json",
-    "docs/assets/aemet/layers.json"
+  # Fuente canónica del render web: assets/. No se mezclan productos intermedios
+  # de data/processed con el snapshot que se publica en GitHub Pages.
+  path <- "assets/aemet/layers.json"
+  if (!file.exists(path) || file.info(path)$size <= 2) {
+    stop("Falta el catálogo AEMET canónico: ", path, call. = FALSE)
+  }
+
+  layers <- tryCatch(
+    jsonlite::fromJSON(path, simplifyVector = FALSE),
+    error = function(e) stop("No se puede leer ", path, ": ", conditionMessage(e), call. = FALSE)
   )
-
-  for (path in candidates) {
-    if (file.exists(path) && file.info(path)$size > 2) {
-      layers <- tryCatch(
-        jsonlite::fromJSON(path, simplifyVector = FALSE),
-        error = function(e) list()
-      )
-      if (length(layers) > 0) {
-        attr(layers, "source_path") <- path
-        return(layers)
-      }
-    }
+  if (length(layers) == 0) {
+    stop("El catálogo AEMET canónico está vacío: ", path, call. = FALSE)
   }
 
-  csv_path <- "data/processed/layers.csv"
-  if (file.exists(csv_path) && file.info(csv_path)$size > 0) {
-    layers_csv <- readr::read_csv(csv_path, show_col_types = FALSE)
-    if (nrow(layers_csv) > 0) {
-      layers <- layers_csv |>
-        mutate(
-          bounds = purrr::map(bounds_json, jsonlite::fromJSON),
-          legend_labels = strsplit(legend_labels, "\\|"),
-          legend_colours = strsplit(legend_colours, "\\|")
-        ) |>
-        select(-bounds_json) |>
-        jsonlite::toJSON(dataframe = "rows", auto_unbox = TRUE, null = "null") |>
-        jsonlite::fromJSON(simplifyVector = FALSE)
-
-      attr(layers, "source_path") <- csv_path
-      return(layers)
-    }
-  }
-
-  layers <- list()
-  attr(layers, "source_path") <- NA_character_
+  attr(layers, "source_path") <- path
   layers
 }
 
 read_firms_csv <- function() {
-  candidates <- c(
-    "data/processed/firms_active_fires.csv",
-    "assets/firms/firms_active_fires.csv"
-  )
-
-  for (path in candidates) {
-    if (file.exists(path) && file.info(path)$size > 0) {
-      out <- tryCatch(
-        readr::read_csv(path, show_col_types = FALSE),
-        error = function(e) tibble::tibble()
-      )
-      if (nrow(out) > 0 && all(c("longitude", "latitude") %in% names(out))) {
-        attr(out, "source_path") <- path
-        return(out)
-      }
-    }
+  path <- "assets/firms/firms_active_fires.csv"
+  if (!file.exists(path) || file.info(path)$size <= 0) {
+    out <- tibble::tibble()
+    attr(out, "source_path") <- NA_character_
+    return(out)
   }
 
-  out <- tibble::tibble()
-  attr(out, "source_path") <- NA_character_
+  out <- tryCatch(
+    readr::read_csv(path, show_col_types = FALSE),
+    error = function(e) tibble::tibble()
+  )
+  if (nrow(out) > 0 && !all(c("longitude", "latitude") %in% names(out))) {
+    stop("El snapshot FIRMS canónico no contiene longitude/latitude: ", path, call. = FALSE)
+  }
+  attr(out, "source_path") <- path
   out
 }
 
@@ -113,42 +84,27 @@ read_csv_optional <- function(paths) {
 }
 
 read_dashboard_overview <- function() {
-  read_csv_optional(c(
-    "data/processed/dashboard_summary.csv",
-    "assets/summary/dashboard_summary.csv"
-  ))
+  read_csv_optional("assets/summary/dashboard_summary.csv")
 }
 
 read_summary_ccaa <- function() {
-  read_csv_optional(c(
-    "data/processed/firms_summary_ccaa.csv",
-    "assets/summary/firms_summary_ccaa.csv"
-  ))
+  read_csv_optional("assets/summary/firms_summary_ccaa.csv")
 }
 
 read_summary_provincias <- function() {
-  read_csv_optional(c(
-    "data/processed/firms_summary_provincias.csv",
-    "assets/summary/firms_summary_provincias.csv"
-  ))
+  read_csv_optional("assets/summary/firms_summary_provincias.csv")
 }
 
 read_territorial_summary <- function() {
-  candidates <- c(
-    "data/processed/territorial_summary.json",
-    "assets/summary/territorial_summary.json"
-  )
-
-  for (path in candidates) {
-    if (file.exists(path) && file.info(path)$size > 2) {
-      out <- tryCatch(
-        jsonlite::fromJSON(path, simplifyVector = FALSE),
-        error = function(e) NULL
-      )
-      if (!is.null(out)) {
-        attr(out, "source_path") <- path
-        return(out)
-      }
+  path <- "assets/summary/territorial_summary.json"
+  if (file.exists(path) && file.info(path)$size > 2) {
+    out <- tryCatch(
+      jsonlite::fromJSON(path, simplifyVector = FALSE),
+      error = function(e) NULL
+    )
+    if (!is.null(out)) {
+      attr(out, "source_path") <- path
+      return(out)
     }
   }
 
@@ -163,17 +119,11 @@ read_territorial_summary <- function() {
 }
 
 read_operational_alerts <- function() {
-  read_csv_optional(c(
-    "data/processed/operational_alerts.csv",
-    "assets/alerts/operational_alerts.csv"
-  ))
+  read_csv_optional("assets/alerts/operational_alerts.csv")
 }
 
 read_alerts_summary <- function() {
-  read_csv_optional(c(
-    "data/processed/operational_alerts_summary.csv",
-    "assets/alerts/operational_alerts_summary.csv"
-  ))
+  read_csv_optional("assets/alerts/operational_alerts_summary.csv")
 }
 
 safe_value <- function(x, default = "—") {
@@ -232,16 +182,6 @@ read_effis_ba_summary <- function() {
         attr(out, "source_path") <- path
         return(out)
       }
-    }
-  }
-
-  csv_path <- "data/processed/effis_burnt_areas_summary.csv"
-  if (file.exists(csv_path) && file.info(csv_path)$size > 0) {
-    out <- tryCatch(readr::read_csv(csv_path, show_col_types = FALSE), error = function(e) NULL)
-    if (!is.null(out) && nrow(out) > 0) {
-      out <- as.list(out[1, ])
-      attr(out, "source_path") <- csv_path
-      return(out)
     }
   }
 
@@ -556,14 +496,14 @@ overlay_groups <- c(overlay_groups, effis_groups)
 
 map <- map |>
   add_admin_boundaries(
-    "data/processed/admin_nuts2_ccaa.geojson",
+    "assets/admin/admin_nuts2_ccaa.geojson",
     "CCAA (NUTS2)",
     weight = 1.2,
     colour = "#2b5d87",
     fill_opacity = 0.015
   ) |>
   add_admin_boundaries(
-    "data/processed/admin_nuts3_provincias.geojson",
+    "assets/admin/admin_nuts3_provincias.geojson",
     "Provincias (NUTS3)",
     weight = 0.7,
     colour = "#555555",

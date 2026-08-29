@@ -5,7 +5,7 @@ source("R/prepare_layers.R", encoding = "UTF-8")
 
 check_required_packages(c(
   "jsonlite", "readr", "dplyr", "purrr", "stringr", "tibble",
-  "fs", "terra", "png"
+  "fs", "terra", "png", "xml2"
 ))
 
 layers <- prepare_layers_for_web("data/raw/aemet/manifest.csv")

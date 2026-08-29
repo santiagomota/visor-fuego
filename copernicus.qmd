@@ -24,13 +24,11 @@ suppressPackageStartupMessages({
   library(jsonlite)
 })
 
-summary_path <- "data/processed/effis_burnt_areas_summary.csv"
+summary_path <- "assets/effis_ba/summary.json"
 ba_geojson_path <- "assets/effis_ba/effis_burnt_areas.geojson"
 
 summary <- if (file.exists(summary_path)) {
-  read_csv(summary_path, show_col_types = FALSE)
-} else if (file.exists("assets/effis_ba/summary.json")) {
-  as_tibble(fromJSON("assets/effis_ba/summary.json", simplifyVector = TRUE))
+  as_tibble(fromJSON(summary_path, simplifyVector = TRUE))
 } else {
   tibble(
     source = "Copernicus/EFFIS Burnt Areas",
@@ -94,7 +92,6 @@ summary |>
 ```{r}
 files <- tibble(
   fichero = c(
-    "data/processed/effis_burnt_areas_summary.csv",
     "assets/effis_ba/effis_burnt_areas.geojson",
     "assets/effis_ba/summary.json"
   ),

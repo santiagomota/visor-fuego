@@ -137,6 +137,11 @@ normalise_alpha <- function(a) {
   max(0, min(1, a))
 }
 
+aemet_require_official_style <- function() {
+  tolower(trimws(Sys.getenv("AEMET_REQUIRE_OFFICIAL_STYLE", unset = "true"))) %in%
+    c("1", "true", "yes", "y", "si", "sí", "on")
+}
+
 aemet_metadata_text <- function(file, r_source) {
   chunks <- character()
 
@@ -145,12 +150,8 @@ aemet_metadata_text <- function(file, r_source) {
   } else {
     NULL
   }
-  if (!is.null(desc)) {
-    chunks <- c(chunks, as.character(unlist(desc, use.names = TRUE)))
-  }
+  if (!is.null(desc)) chunks <- c(chunks, as.character(unlist(desc, use.names = TRUE)))
 
-  # terra::metags está disponible en versiones recientes. Se consulta de forma
-  # defensiva para mantener compatibilidad con instalaciones algo anteriores.
   if ("metags" %in% getNamespaceExports("terra")) {
     mt <- tryCatch(terra::metags(r_source), error = function(e) NULL)
     if (!is.null(mt)) {
@@ -166,69 +167,154 @@ aemet_metadata_text <- function(file, r_source) {
   paste(chunks, collapse = "\n")
 }
 
-parse_aemet_escala <- function(metadata_text) {
-  if (!nzchar(metadata_text)) return(NULL)
+style_from_rgba <- function(rgba, source) {
+  if (is.null(rgba)) return(NULL)
+  rgba <- as.matrix(rgba)
+  if (nrow(rgba) != 6 || ncol(rgba) < 3) return(NULL)
+  suppressWarnings(storage.mode(rgba) <- "numeric")
+  if (any(!is.finite(rgba[, 1:3, drop = FALSE]))) return(NULL)
 
+  rgb <- rgba[, 1:3, drop = FALSE]
+  if (max(rgb, na.rm = TRUE) <= 1) rgb <- rgb * 255
+  if (any(rgb < 0 | rgb > 255, na.rm = TRUE)) return(NULL)
+
+  alpha_raw <- if (ncol(rgba) >= 4) rgba[, 4] else rep(255, 6)
+  alpha <- vapply(alpha_raw, normalise_alpha, numeric(1))
+  colours <- vapply(seq_len(6), function(i) rgba_to_hex(rgb[i, 1], rgb[i, 2], rgb[i, 3]), character(1))
+  names(colours) <- names(alpha) <- as.character(risk_values)
+  list(colours = colours, alpha = alpha, source = source)
+}
+
+parse_aemet_escala_value <- function(value, source = "AEMET GeoTIFF ESCALA") {
+  if (is.null(value) || length(value) == 0) return(NULL)
+  txt <- paste(as.character(unlist(value, use.names = FALSE)), collapse = " ")
+  if (!nzchar(trimws(txt))) return(NULL)
+
+  # Caso hexadecimal: seis colores en orden de clase o con clase explícita.
+  hex_matches <- stringr::str_match_all(
+    txt,
+    stringr::regex("#([0-9a-f]{6})([0-9a-f]{2})?", ignore_case = TRUE)
+  )[[1]]
+  if (nrow(hex_matches) >= 6) {
+    colours <- paste0("#", toupper(hex_matches[seq_len(6), 2]))
+    alpha <- vapply(hex_matches[seq_len(6), 3], function(a) {
+      if (is.na(a) || !nzchar(a)) 1 else strtoi(a, base = 16L) / 255
+    }, numeric(1))
+    names(colours) <- names(alpha) <- as.character(risk_values)
+    return(list(colours = colours, alpha = alpha, source = source))
+  }
+
+  # Caso clase explícita: 1=(R,G,B,A), 2=(...), etc. Se permite cualquier
+  # separador no numérico para cubrir JSON, listas GDAL y metadatos compactos.
+  explicit <- stringr::str_match_all(
+    txt,
+    stringr::regex(
+      "(?:^|[^0-9])([1-6])[^0-9.-]+(-?[0-9.]+)[^0-9.-]+(-?[0-9.]+)[^0-9.-]+(-?[0-9.]+)(?:[^0-9.-]+(-?[0-9.]+))?",
+      ignore_case = TRUE
+    )
+  )[[1]]
+  if (nrow(explicit) >= 6) {
+    rgba <- matrix(NA_real_, nrow = 6, ncol = 4)
+    for (i in seq_len(nrow(explicit))) {
+      k <- suppressWarnings(as.integer(explicit[i, 2]))
+      if (is.na(k) || !(k %in% risk_values)) next
+      vals <- suppressWarnings(as.numeric(explicit[i, 3:6]))
+      if (all(is.finite(vals[1:3]))) {
+        rgba[k, 1:3] <- vals[1:3]
+        rgba[k, 4] <- if (is.finite(vals[4])) vals[4] else 255
+      }
+    }
+    style <- style_from_rgba(rgba, source)
+    if (!is.null(style)) return(style)
+  }
+
+  # Último caso: ESCALA puede ser una secuencia numérica plana. AEMET ha usado
+  # variantes con [clase,R,G,B,A] repetido y con solo [R,G,B,A] en orden 1..6.
+  nums <- suppressWarnings(as.numeric(stringr::str_extract_all(txt, "-?[0-9]+(?:\\.[0-9]+)?")[[1]]))
+  nums <- nums[is.finite(nums)]
+
+  if (length(nums) >= 30) {
+    for (offset in seq_len(length(nums) - 29L)) {
+      block <- nums[offset:(offset + 29L)]
+      m <- matrix(block, ncol = 5, byrow = TRUE)
+      classes <- as.integer(round(m[, 1]))
+      if (identical(classes, risk_values)) {
+        style <- style_from_rgba(m[, 2:5, drop = FALSE], source)
+        if (!is.null(style)) return(style)
+      }
+      if (identical(classes, 0:5)) {
+        style <- style_from_rgba(m[, 2:5, drop = FALSE], source)
+        if (!is.null(style)) return(style)
+      }
+    }
+  }
+
+  if (length(nums) == 24) {
+    style <- style_from_rgba(matrix(nums, ncol = 4, byrow = TRUE), source)
+    if (!is.null(style)) return(style)
+  }
+  if (length(nums) == 18) {
+    rgb <- matrix(nums, ncol = 3, byrow = TRUE)
+    style <- style_from_rgba(cbind(rgb, 255), source)
+    if (!is.null(style)) return(style)
+  }
+
+  NULL
+}
+
+parse_aemet_escala <- function(metadata_text, source = "AEMET GeoTIFF ESCALA (terra)") {
+  if (!nzchar(metadata_text)) return(NULL)
   lines <- strsplit(metadata_text, "\n", fixed = TRUE)[[1]]
   idx <- grep("ESCALA", lines, ignore.case = TRUE)
   if (length(idx) == 0) return(NULL)
 
-  # El valor ESCALA puede llegar en una sola línea o continuar en varias.
-  take <- unique(unlist(lapply(idx, function(i) seq.int(i, min(length(lines), i + 12L)))))
+  take <- unique(unlist(lapply(idx, function(i) seq.int(i, min(length(lines), i + 20L)))))
   txt <- paste(lines[take], collapse = " ")
+  parse_aemet_escala_value(txt, source = source)
+}
 
-  colours <- rep(NA_character_, 6)
-  alpha <- rep(NA_real_, 6)
-  names(colours) <- names(alpha) <- as.character(risk_values)
-
-  # Formato 1:#RRGGBB o 1:#RRGGBBAA
-  hm <- stringr::str_match_all(
-    txt,
-    stringr::regex("(?:^|[^0-9])([1-6])\\s*[:=]\\s*[\"']?#([0-9a-f]{6})([0-9a-f]{2})?", ignore_case = TRUE)
-  )[[1]]
-  if (nrow(hm) > 0) {
-    for (i in seq_len(nrow(hm))) {
-      k <- hm[i, 2]
-      colours[[k]] <- paste0("#", toupper(hm[i, 3]))
-      alpha[[k]] <- if (!is.na(hm[i, 4]) && nzchar(hm[i, 4])) {
-        strtoi(hm[i, 4], base = 16L) / 255
-      } else {
-        1
-      }
+collect_named_values <- function(x, target = "ESCALA") {
+  out <- list()
+  walk <- function(obj) {
+    if (!is.list(obj)) return(invisible(NULL))
+    nm <- names(obj)
+    if (is.null(nm)) nm <- rep("", length(obj))
+    for (i in seq_along(obj)) {
+      if (toupper(nm[[i]]) == toupper(target)) out[[length(out) + 1L]] <<- obj[[i]]
+      walk(obj[[i]])
     }
+    invisible(NULL)
+  }
+  walk(x)
+  out
+}
+
+aemet_gdal_escala_style <- function(file) {
+  gdalinfo <- Sys.which("gdalinfo")
+  if (!nzchar(gdalinfo) || !requireNamespace("jsonlite", quietly = TRUE)) return(NULL)
+
+  output <- tryCatch(
+    system2(gdalinfo, c("-json", file), stdout = TRUE, stderr = TRUE),
+    error = function(e) character()
+  )
+  if (length(output) == 0) return(NULL)
+  obj <- tryCatch(jsonlite::fromJSON(paste(output, collapse = "\n"), simplifyVector = FALSE), error = function(e) NULL)
+  if (is.null(obj)) return(NULL)
+
+  values <- collect_named_values(obj, "ESCALA")
+  if (length(values) == 0) return(NULL)
+  for (value in values) {
+    style <- parse_aemet_escala_value(value, source = "AEMET GeoTIFF ESCALA (GDAL)")
+    if (!is.null(style)) return(style)
   }
 
-  # Formato 1:(R,G,B,A), 1=[R G B A], etc.
-  rm <- stringr::str_match_all(
-    txt,
-    stringr::regex(
-      "(?:^|[^0-9])([1-6])\\s*[:=]\\s*[\\[\\(]?\\s*([0-9.]+)\\s*[,; ]+\\s*([0-9.]+)\\s*[,; ]+\\s*([0-9.]+)(?:\\s*[,; ]+\\s*([0-9.]+))?",
-      ignore_case = TRUE
-    )
-  )[[1]]
-  if (nrow(rm) > 0) {
-    for (i in seq_len(nrow(rm))) {
-      k <- rm[i, 2]
-      r <- suppressWarnings(as.numeric(rm[i, 3]))
-      g <- suppressWarnings(as.numeric(rm[i, 4]))
-      b <- suppressWarnings(as.numeric(rm[i, 5]))
-      a <- suppressWarnings(as.numeric(rm[i, 6]))
-      if (all(is.finite(c(r, g, b)))) {
-        # Algunos metadatos expresan RGB en 0..1.
-        if (max(c(r, g, b), na.rm = TRUE) <= 1) {
-          r <- r * 255; g <- g * 255; b <- b * 255
-        }
-        colours[[k]] <- rgba_to_hex(r, g, b)
-        alpha[[k]] <- normalise_alpha(a)
-      }
-    }
-  }
-
-  if (all(!is.na(colours))) {
-    alpha[is.na(alpha)] <- 1
-    return(list(colours = colours, alpha = alpha, source = "AEMET GeoTIFF ESCALA"))
-  }
-
+  preview <- paste(as.character(unlist(values[[1]], use.names = FALSE)), collapse = " ")
+  preview <- substr(gsub("[\r\n\t]+", " ", preview), 1, 500)
+  warning(
+    "AEMET: se encontró el campo ESCALA mediante GDAL, pero no se pudo interpretar. ESCALA=",
+    preview,
+    call. = FALSE
+  )
   NULL
 }
 
@@ -250,38 +336,79 @@ aemet_colortable_style <- function(r_source) {
     if (length(hit) == 0) NA_integer_ else hit[[1]]
   }
   iv <- find_col(c("value", "values", "id", "index"))
-  ir <- find_col(c("red", "r"))
-  ig <- find_col(c("green", "g"))
-  ib <- find_col(c("blue", "b"))
-  ia <- find_col(c("alpha", "a"))
+  ir <- find_col(c("red", "r")); ig <- find_col(c("green", "g")); ib <- find_col(c("blue", "b")); ia <- find_col(c("alpha", "a"))
   if (any(is.na(c(ir, ig, ib)))) return(NULL)
 
-  values <- if (!is.na(iv)) {
-    suppressWarnings(as.integer(ct[[iv]]))
-  } else {
-    suppressWarnings(as.integer(rownames(ct)))
-  }
+  values <- if (!is.na(iv)) suppressWarnings(as.integer(ct[[iv]])) else suppressWarnings(as.integer(rownames(ct)))
   if (length(values) != nrow(ct) || all(is.na(values))) return(NULL)
 
-  colours <- rep(NA_character_, 6)
-  alpha <- rep(NA_real_, 6)
-  names(colours) <- names(alpha) <- as.character(risk_values)
+  rgba <- matrix(NA_real_, nrow = 6, ncol = 4)
   for (k in risk_values) {
     j <- which(values == k)
     if (length(j) == 0) next
     j <- j[[1]]
-    colours[[as.character(k)]] <- rgba_to_hex(ct[[ir]][j], ct[[ig]][j], ct[[ib]][j])
-    alpha[[as.character(k)]] <- if (!is.na(ia)) normalise_alpha(ct[[ia]][j]) else 1
+    rgba[k, 1:3] <- c(ct[[ir]][j], ct[[ig]][j], ct[[ib]][j])
+    rgba[k, 4] <- if (!is.na(ia)) ct[[ia]][j] else 255
+  }
+  style_from_rgba(rgba, "AEMET GeoTIFF colour table")
+}
+
+aemet_xml_style <- function(path) {
+  if (!requireNamespace("xml2", quietly = TRUE) || !file.exists(path)) return(NULL)
+  doc <- tryCatch(xml2::read_xml(path), error = function(e) NULL)
+  if (is.null(doc)) return(NULL)
+
+  ext <- tolower(tools::file_ext(path))
+  nodes <- if (ext == "sld") {
+    xml2::xml_find_all(doc, "//*[local-name()='ColorMapEntry']")
+  } else {
+    xml2::xml_find_all(doc, "//*[@value and @color]")
+  }
+  if (length(nodes) == 0) return(NULL)
+
+  rgba <- matrix(NA_real_, nrow = 6, ncol = 4)
+  for (node in nodes) {
+    value <- if (ext == "sld") xml2::xml_attr(node, "quantity") else xml2::xml_attr(node, "value")
+    k <- suppressWarnings(as.integer(round(as.numeric(value))))
+    if (is.na(k) || !(k %in% risk_values)) next
+    colour <- xml2::xml_attr(node, "color")
+    if (is.na(colour) || !nzchar(colour)) next
+    rgb <- tryCatch(grDevices::col2rgb(colour)[, 1], error = function(e) NULL)
+    if (is.null(rgb)) next
+    opacity <- xml2::xml_attr(node, if (ext == "sld") "opacity" else "alpha")
+    a <- suppressWarnings(as.numeric(opacity))
+    if (!is.finite(a)) a <- if (ext == "qml") 255 else 1
+    rgba[k, ] <- c(rgb, if (a <= 1) a * 255 else a)
   }
 
-  if (all(!is.na(colours))) {
-    alpha[is.na(alpha)] <- 1
-    return(list(colours = colours, alpha = alpha, source = "GeoTIFF colour table"))
+  source <- if (ext == "sld") "AEMET SLD" else "AEMET QML"
+  style_from_rgba(rgba, source)
+}
+
+aemet_packaged_style <- function(style_dir = "data/raw/aemet/styles") {
+  if (!fs::dir_exists(style_dir)) return(NULL)
+  files <- tryCatch(
+    fs::dir_ls(style_dir, type = "file", regexp = "\\.([sS][lL][dD]|[qQ][mM][lL])$"),
+    error = function(e) character()
+  )
+  if (length(files) == 0) return(NULL)
+
+  # SLD primero: suele describir de forma más explícita quantity/color/opacity.
+  files <- files[order(ifelse(tolower(tools::file_ext(files)) == "sld", 1L, 2L), basename(files))]
+  for (path in files) {
+    style <- aemet_xml_style(path)
+    if (!is.null(style)) {
+      style$source <- paste0(style$source, " · ", basename(path))
+      return(style)
+    }
   }
   NULL
 }
 
 aemet_risk_style <- function(file, r_source) {
+  style <- aemet_gdal_escala_style(file)
+  if (!is.null(style)) return(style)
+
   meta <- aemet_metadata_text(file, r_source)
   style <- parse_aemet_escala(meta)
   if (!is.null(style)) return(style)
@@ -289,8 +416,19 @@ aemet_risk_style <- function(file, r_source) {
   style <- aemet_colortable_style(r_source)
   if (!is.null(style)) return(style)
 
+  style <- aemet_packaged_style()
+  if (!is.null(style)) return(style)
+
+  if (aemet_require_official_style()) {
+    stop(
+      "No se pudo extraer la simbología oficial AEMET (ESCALA, tabla de color, SLD o QML) para ",
+      basename(file), ". Se aborta para no publicar una paleta aproximada.",
+      call. = FALSE
+    )
+  }
+
   warning(
-    "No se pudo leer ESCALA ni la tabla de color AEMET en ", basename(file),
+    "No se pudo leer la simbología oficial AEMET en ", basename(file),
     ". Se usa la paleta IPIF de respaldo con clases fijas 1..6.",
     call. = FALSE
   )
@@ -708,6 +846,7 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
     return(tibble::tibble())
   }
 
+  preparation_errors <- character()
   layers <- purrr::map_dfr(seq_len(nrow(supported)), function(i) {
     tryCatch(
       prepare_image_layer(
@@ -716,11 +855,24 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
         file_type = supported$candidate_type[i]
       ),
       error = function(e) {
-        warning("No se pudo preparar ", supported$candidate_file[i], ": ", conditionMessage(e))
+        msg <- paste0(basename(supported$candidate_file[i]), ": ", conditionMessage(e))
+        preparation_errors <<- c(preparation_errors, msg)
+        warning("No se pudo preparar ", msg, call. = FALSE)
         NULL
       }
     )
   })
+
+  if (aemet_require_official_style() && length(preparation_errors) > 0) {
+    stop(
+      "AEMET_REQUIRE_OFFICIAL_STYLE=true y falló la preparación de ",
+      length(preparation_errors), " capa(s): ", paste(preparation_errors, collapse = " | "),
+      call. = FALSE
+    )
+  }
+  if (nrow(layers) == 0) {
+    stop("No se pudo preparar ninguna capa AEMET publicable.", call. = FALSE)
+  }
 
   fs::dir_create("data/processed")
   fs::dir_create("assets/aemet")
@@ -748,6 +900,7 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
     dplyr::select(-area_display_rank, -valid_date_display_rank, -tipo_display_rank)
 
   readr::write_csv(layers, "data/processed/layers.csv")
+  readr::write_csv(layers, "assets/aemet/layers.csv")
 
   json_layers <- layers |>
     dplyr::mutate(
@@ -757,9 +910,8 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
     ) |>
     dplyr::select(-bounds_json)
 
-  # Guardamos el catálogo fuera de docs/. Quarto puede limpiar docs/ durante el render,
-  # así que index.qmd debe leer de data/processed/layers.json y los assets fuente
-  # deben vivir en assets/aemet/. El directorio docs/ se genera después.
+  # assets/aemet/ es la fuente canónica del render web. data/processed se
+  # conserva solo para diagnóstico/análisis, nunca como fallback de index.qmd.
   jsonlite::write_json(
     json_layers,
     "data/processed/layers.json",

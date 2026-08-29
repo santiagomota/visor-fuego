@@ -193,10 +193,7 @@ vf_aemet_overview <- function(layers) {
 vf_read_effis_ba_summary <- function() {
   vf_load_packages()
 
-  json_path <- vf_first_existing(c(
-    "assets/effis_ba/summary.json",
-    "docs/assets/effis_ba/summary.json"
-  ))
+  json_path <- vf_first_existing("assets/effis_ba/summary.json")
   if (!is.na(json_path)) {
     out <- tryCatch(
       tibble::as_tibble(jsonlite::fromJSON(json_path, simplifyVector = TRUE)),
@@ -206,18 +203,18 @@ vf_read_effis_ba_summary <- function() {
     return(out)
   }
 
-  vf_read_csv("data/processed/effis_burnt_areas_summary.csv")
+  tibble::tibble()
 }
 
 vf_status_table <- function() {
   vf_load_packages()
-  aemet <- vf_read_csv(c("data/processed/layers.csv", "assets/aemet/layers.csv"))
+  aemet <- vf_read_csv("assets/aemet/layers.csv")
   aemet_latest <- vf_latest_aemet_layers(aemet)
-  firms <- vf_read_csv(c("data/processed/firms_active_fires.csv", "data/processed/firms.csv", "assets/firms/firms_active_fires.csv"))
-  alerts <- vf_read_csv(c("data/processed/operational_alerts.csv", "assets/alerts/operational_alerts.csv"))
-  effis_wms <- vf_read_csv(c("data/processed/effis_layers.csv", "assets/effis/effis_layers.csv"))
+  firms <- vf_read_csv("assets/firms/firms_active_fires.csv")
+  alerts <- vf_read_csv("assets/alerts/operational_alerts.csv")
+  effis_wms <- vf_read_csv("assets/effis/effis_layers.csv")
   effis_ba <- vf_read_effis_ba_summary()
-  history <- vf_read_csv(c("data/processed/dashboard_history.csv", "assets/history/dashboard_history.csv"))
+  history <- vf_read_csv("assets/history/dashboard_history.csv")
 
   n_effis_ba <- if (nrow(effis_ba) > 0 && "n_features" %in% names(effis_ba)) {
     suppressWarnings(as.integer(effis_ba$n_features[1]))

@@ -4,7 +4,7 @@ AEMET_CLASSIC_BASE <- "https://www.aemet.es"
 AEMET_CLASSIC_INCENDIOS <- "https://www.aemet.es/es/eltiempo/prediccion/incendios"
 AEMET_CLASSIC_DOWNLOAD <- "https://www.aemet.es/es/api-eltiempo/incendios/download"
 
-classic_handle <- function(user_agent = "visor-fuego-aemet-classic/0.5.14") {
+classic_handle <- function(user_agent = "visor-fuego-aemet-classic/0.6.19") {
   if (!requireNamespace("curl", quietly = TRUE)) {
     stop("Falta el paquete R 'curl'. Instala con install.packages('curl').", call. = FALSE)
   }
@@ -114,7 +114,7 @@ parse_classic_tif_filename <- function(file) {
   )
 }
 
-classic_download_archive <- function(out_dir = "data/raw/aemet_classic") {
+classic_download_archive <- function(out_dir = "data/raw/aemet_classic", attempt = 1L) {
   fs::dir_create(out_dir)
   fs::dir_create(file.path(out_dir, "responses"))
 
@@ -132,13 +132,36 @@ classic_download_archive <- function(out_dir = "data/raw/aemet_classic") {
     silent = TRUE
   )
 
-  message("Descargando paquete SIG AEMET clásico...")
-  resp <- classic_fetch_memory(
-    AEMET_CLASSIC_DOWNLOAD,
-    handle = h,
-    referer = AEMET_CLASSIC_INCENDIOS,
-    accept = "application/gzip,application/x-gzip,application/tar,image/tiff,image/geotiff,application/geotiff,application/octet-stream,*/*;q=0.2"
+  # Evitamos que un proxy/CDN entregue el mismo paquete almacenado de una
+  # ejecución anterior. El endpoint ignora parámetros desconocidos y la marca
+  # temporal fuerza una URL distinta en cada intento.
+  cache_buster <- sprintf("%s-%s", as.integer(Sys.time()), as.integer(attempt))
+  download_url <- paste0(AEMET_CLASSIC_DOWNLOAD, "?_visor_fuego=", cache_buster)
+
+  message("Descargando paquete SIG AEMET clásico (intento ", attempt, ")...")
+  accept_header <- "application/gzip,application/x-gzip,application/tar,image/tiff,image/geotiff,application/geotiff,application/octet-stream,*/*;q=0.2"
+  resp <- tryCatch(
+    classic_fetch_memory(
+      download_url,
+      handle = h,
+      referer = AEMET_CLASSIC_INCENDIOS,
+      accept = accept_header
+    ),
+    error = function(e) e
   )
+
+  # Defensa: si AEMET deja de aceptar parámetros extra en el endpoint, usamos
+  # inmediatamente la URL limpia. No renunciamos al cache-busting por un cambio
+  # de servidor, pero tampoco rompemos la descarga por ese motivo.
+  if (inherits(resp, "error") || resp$status_code >= 400) {
+    warning("AEMET: el intento con cache-busting no fue aceptado; se prueba la URL directa.", call. = FALSE)
+    resp <- classic_fetch_memory(
+      AEMET_CLASSIC_DOWNLOAD,
+      handle = h,
+      referer = AEMET_CLASSIC_INCENDIOS,
+      accept = accept_header
+    )
+  }
 
   if (resp$status_code >= 400) {
     stop("AEMET clásico respondió HTTP ", resp$status_code, ": ", raw_preview_text(resp$content, 500), call. = FALSE)
@@ -210,6 +233,84 @@ extract_classic_geotiffs <- function(archive_path, out_dir = "data/raw/aemet_cla
     dplyr::distinct(area, dia, .keep_all = TRUE)
 }
 
+
+aemet_today_madrid <- function() {
+  as.Date(format(Sys.time(), tz = "Europe/Madrid", format = "%Y-%m-%d"))
+}
+
+classic_integer_env <- function(name, default, minimum = 0L, maximum = Inf) {
+  value <- suppressWarnings(as.integer(Sys.getenv(name, unset = as.character(default))))
+  if (is.na(value)) value <- as.integer(default)
+  value <- max(as.integer(minimum), value)
+  if (is.finite(maximum)) value <- min(as.integer(maximum), value)
+  value
+}
+
+classic_true_env <- function(name, default = TRUE) {
+  value <- tolower(trimws(Sys.getenv(name, unset = if (isTRUE(default)) "true" else "false")))
+  value %in% c("1", "true", "yes", "y", "si", "sí", "on")
+}
+
+copy_classic_style_files <- function(extract_root, raw_dir = "data/raw/aemet") {
+  style_dir <- file.path(raw_dir, "styles")
+  if (fs::dir_exists(style_dir)) fs::dir_delete(style_dir)
+  fs::dir_create(style_dir)
+
+  if (!fs::dir_exists(extract_root)) return(character())
+  style_files <- tryCatch(
+    fs::dir_ls(extract_root, recurse = TRUE, type = "file", regexp = "\\.([sS][lL][dD]|[qQ][mM][lL])$"),
+    error = function(e) character()
+  )
+  if (length(style_files) == 0) {
+    message("AEMET clásico: el paquete no contiene ficheros SLD/QML detectables.")
+    return(character())
+  }
+
+  copied <- character()
+  for (file in unique(style_files)) {
+    dest <- file.path(style_dir, basename(file))
+    if (file.exists(dest)) {
+      stem <- tools::file_path_sans_ext(basename(file))
+      ext <- tools::file_ext(file)
+      dest <- file.path(style_dir, paste0(stem, "_", length(copied) + 1L, ".", ext))
+    }
+    fs::file_copy(file, dest, overwrite = TRUE)
+    copied <- c(copied, dest)
+  }
+  message("AEMET clásico: estilos SLD/QML copiados: ", length(copied))
+  copied
+}
+
+write_aemet_download_status <- function(issue_date, attempts, raw_dir = "data/raw/aemet") {
+  today <- aemet_today_madrid()
+  issue <- suppressWarnings(as.Date(issue_date))
+  age_days <- if (is.na(issue)) NA_integer_ else as.integer(today - issue)
+  freshness <- if (is.na(age_days)) {
+    "unknown"
+  } else if (age_days <= 0L) {
+    "today"
+  } else if (age_days == 1L) {
+    "yesterday"
+  } else {
+    "stale"
+  }
+
+  payload <- list(
+    generated_at_utc = format(as.POSIXct(Sys.time(), tz = "UTC"), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
+    today_madrid = as.character(today),
+    issue_date = if (is.na(issue)) NA_character_ else as.character(issue),
+    issue_age_days = age_days,
+    freshness = freshness,
+    attempts = as.integer(attempts),
+    provider = "classic"
+  )
+  fs::dir_create("data/processed")
+  fs::dir_create("assets/aemet")
+  jsonlite::write_json(payload, "data/processed/aemet_status.json", auto_unbox = TRUE, pretty = TRUE, null = "null")
+  jsonlite::write_json(payload, "assets/aemet/status.json", auto_unbox = TRUE, pretty = TRUE, null = "null")
+  payload
+}
+
 install_classic_geotiffs <- function(tif_meta, raw_dir = "data/raw/aemet") {
   fs::dir_create(raw_dir)
 
@@ -274,18 +375,76 @@ install_classic_geotiffs <- function(tif_meta, raw_dir = "data/raw/aemet") {
 }
 
 download_aemet_classic_incendios <- function(out_dir = "data/raw/aemet_classic", raw_dir = "data/raw/aemet") {
-  archive_path <- classic_download_archive(out_dir = out_dir)
-  message("Paquete descargado: ", archive_path, " [", infer_file_type(archive_path), "]")
+  max_attempts <- classic_integer_env("AEMET_CLASSIC_RETRIES", 3L, minimum = 1L, maximum = 6L)
+  retry_seconds <- classic_integer_env("AEMET_CLASSIC_RETRY_SECONDS", 45L, minimum = 0L, maximum = 600L)
+  max_issue_age <- classic_integer_env("AEMET_CLASSIC_MAX_ISSUE_AGE_DAYS", 1L, minimum = 0L, maximum = 7L)
+  prefer_today <- classic_true_env("AEMET_CLASSIC_PREFER_TODAY_ISSUE", TRUE)
+  today <- aemet_today_madrid()
 
-  tif_meta <- extract_classic_geotiffs(
-    archive_path,
-    out_dir = file.path(out_dir, "extracted", tools::file_path_sans_ext(basename(archive_path)))
-  )
+  tif_meta <- NULL
+  extract_root <- NULL
+  used_attempt <- 0L
+
+  for (attempt in seq_len(max_attempts)) {
+    used_attempt <- attempt
+    archive_path <- classic_download_archive(out_dir = out_dir, attempt = attempt)
+    message("Paquete descargado: ", archive_path, " [", infer_file_type(archive_path), "]")
+
+    extract_root <- file.path(out_dir, "extracted", tools::file_path_sans_ext(basename(archive_path)))
+    candidate_meta <- extract_classic_geotiffs(archive_path, out_dir = extract_root)
+    latest_issue <- max(as.Date(candidate_meta$issue_date), na.rm = TRUE)
+    issue_age <- as.integer(today - latest_issue)
+
+    message(
+      "AEMET emisión descargada: ", latest_issue,
+      " · hoy Madrid: ", today,
+      " · antigüedad: ", issue_age, " día(s)"
+    )
+
+    tif_meta <- candidate_meta
+    if (!prefer_today || is.na(issue_age) || issue_age <= 0L || attempt >= max_attempts) break
+
+    message(
+      "AEMET: todavía no se ha obtenido una emisión de hoy. ",
+      "Se reintentará en ", retry_seconds, " s (", attempt + 1L, "/", max_attempts, ")."
+    )
+    if (retry_seconds > 0L) Sys.sleep(retry_seconds)
+  }
+
+  if (is.null(tif_meta) || nrow(tif_meta) == 0) {
+    stop("No se obtuvieron GeoTIFFs AEMET válidos tras los reintentos.", call. = FALSE)
+  }
+
+  latest_issue <- max(as.Date(tif_meta$issue_date), na.rm = TRUE)
+  issue_age <- as.integer(today - latest_issue)
+  if (!is.na(issue_age) && issue_age > max_issue_age) {
+    stop(
+      "La última emisión AEMET descargada es demasiado antigua: ", latest_issue,
+      " (", issue_age, " días; máximo permitido ", max_issue_age, ").",
+      call. = FALSE
+    )
+  }
+  if (!is.na(issue_age) && issue_age == 1L) {
+    warning(
+      "AEMET: la última salida disponible del paquete SIG sigue siendo de ayer (", latest_issue,
+      "). Se publica porque contiene mapas válidos para hoy, pero se registra el aviso.",
+      call. = FALSE
+    )
+  }
+
+  copy_classic_style_files(extract_root, raw_dir = raw_dir)
   message("GeoTIFFs AEMET encontrados: ", nrow(tif_meta))
 
   manifest <- install_classic_geotiffs(tif_meta, raw_dir = raw_dir)
   readr::write_csv(manifest, file.path(raw_dir, "manifest.csv"))
   message("Manifest guardado en ", file.path(raw_dir, "manifest.csv"))
+
+  status <- write_aemet_download_status(latest_issue, attempts = used_attempt, raw_dir = raw_dir)
+  message(
+    "AEMET estado: emisión ", status$issue_date,
+    " · actualidad ", status$freshness,
+    " · intentos ", status$attempts
+  )
 
   summary <- manifest |>
     dplyr::count(area_label, valid_date, dia, file_type) |>
