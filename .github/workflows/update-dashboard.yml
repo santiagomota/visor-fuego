@@ -3,10 +3,15 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
+    # Ejecuciones principales. GitHub puede retrasar o, en ocasiones, descartar
+    # eventos schedule bajo carga. Las entradas de :50 actúan como respaldo.
     - cron: "30 4,12 * * *"
+      timezone: "Europe/Madrid"
+    - cron: "50 4,12 * * *"
       timezone: "Europe/Madrid"
 
 permissions:
+  actions: read
   contents: write
   pages: write
   id-token: write
@@ -21,7 +26,109 @@ env:
   MAKEFLAGS: -j2
 
 jobs:
+  schedule-gate:
+    runs-on: ubuntu-24.04
+    outputs:
+      should_run: ${{ steps.gate.outputs.should_run }}
+      reason: ${{ steps.gate.outputs.reason }}
+      slot: ${{ steps.gate.outputs.slot }}
+
+    steps:
+      - name: Decidir si debe ejecutarse el pipeline
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE_EXPR: ${{ github.event.schedule }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          madrid_now=$(TZ=Europe/Madrid date '+%Y-%m-%d %H:%M:%S %Z')
+          madrid_hm=$(TZ=Europe/Madrid date '+%H:%M')
+          echo "Evento: $EVENT_NAME"
+          echo "Hora Madrid: $madrid_now"
+          echo "Expresión schedule: ${SCHEDULE_EXPR:-manual}"
+
+          # Las ejecuciones manuales siempre deben ejecutar el pipeline.
+          if [ "$EVENT_NAME" != "schedule" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "reason=ejecución manual" >> "$GITHUB_OUTPUT"
+            echo "slot=manual" >> "$GITHUB_OUTPUT"
+            echo "Ejecución manual: se ejecutará el pipeline completo."
+            exit 0
+          fi
+
+          case "$SCHEDULE_EXPR" in
+            "30 4,12 * * *")
+              echo "should_run=true" >> "$GITHUB_OUTPUT"
+              echo "reason=ejecución principal programada" >> "$GITHUB_OUTPUT"
+              echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+              echo "Ejecución principal $madrid_hm: se ejecutará el pipeline completo."
+              exit 0
+              ;;
+            "50 4,12 * * *")
+              echo "Comprobando si existe una ejecución programada correcta reciente..."
+              ;;
+            *)
+              # Defensa ante cambios futuros: un schedule desconocido no se descarta.
+              echo "should_run=true" >> "$GITHUB_OUTPUT"
+              echo "reason=schedule no reconocido; ejecución por seguridad" >> "$GITHUB_OUTPUT"
+              echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+              echo "::warning::Schedule no reconocido: $SCHEDULE_EXPR. Se ejecutará por seguridad."
+              exit 0
+              ;;
+          esac
+
+          api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/update-dashboard.yml/runs?event=schedule&per_page=20"
+          if ! runs_json=$(curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$api"); then
+            echo "::warning::No se pudo consultar el historial de Actions; el respaldo se ejecutará por seguridad."
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "reason=respaldo sin historial disponible" >> "$GITHUB_OUTPUT"
+            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          now_epoch=$(date -u +%s)
+          # 45 minutos cubren retrasos normales de la ejecución principal.
+          # Se excluye la ejecución actual y solo cuentan runs schedule concluidos con éxito.
+          recent_success=$(printf '%s' "$runs_json" | jq \
+            --argjson now "$now_epoch" \
+            --argjson current "$RUN_ID" \
+            '[.workflow_runs[]
+              | select(.id != $current)
+              | select(.conclusion == "success")
+              | (.run_started_at // .created_at)
+              | fromdateiso8601
+              | select(($now - .) >= 0 and ($now - .) <= 2700)]
+             | length')
+
+          if [ "$recent_success" -gt 0 ]; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "reason=respaldo omitido: ya existe una ejecución programada correcta en los últimos 45 minutos" >> "$GITHUB_OUTPUT"
+            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+            echo "Ejecución de respaldo $madrid_hm: ya hay una actualización programada correcta reciente; no se ejecuta el pipeline."
+          else
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "reason=respaldo activado: no existe una ejecución programada correcta en los últimos 45 minutos" >> "$GITHUB_OUTPUT"
+            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+            echo "Ejecución de respaldo $madrid_hm: no existe actualización correcta reciente; ejecutando pipeline."
+          fi
+
+      - name: Resumen de decisión
+        run: |
+          echo "should_run=${{ steps.gate.outputs.should_run }}"
+          echo "slot=${{ steps.gate.outputs.slot }}"
+          echo "reason=${{ steps.gate.outputs.reason }}"
+
   update-dashboard:
+    needs: schedule-gate
+    if: needs.schedule-gate.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
@@ -43,6 +150,8 @@ jobs:
       - name: Mostrar motivo y horario de ejecución
         run: |
           echo "Evento: $GITHUB_EVENT_NAME"
+          echo "Tipo de ejecución: ${{ needs.schedule-gate.outputs.reason }}"
+          echo "Franja: ${{ needs.schedule-gate.outputs.slot }}"
           echo "Rama de publicación: ${{ github.event.repository.default_branch }}"
           echo "Hora UTC: $(date -u '+%Y-%m-%d %H:%M:%S %Z')"
           echo "Hora Madrid: $(TZ=Europe/Madrid date '+%Y-%m-%d %H:%M:%S %Z')"

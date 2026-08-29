@@ -1,5 +1,19 @@
 # visor-fuego
 
+## v0.6.18: ejecuciones programadas con respaldo
+
+El workflow mantiene las actualizaciones principales a las **04:30** y **12:30** (Europe/Madrid) y añade ejecuciones de respaldo a las **04:50** y **12:50**. El respaldo consulta el historial de GitHub Actions antes de instalar dependencias: si ya existe una ejecución programada correcta en los últimos 45 minutos, termina sin ejecutar el pipeline; si la principal no se creó o falló, realiza la actualización completa. Las ejecuciones manuales siempre se ejecutan.
+
+### Cambios principales de v0.6.18
+
+- Horarios principales: 04:30 y 12:30, hora Madrid.
+- Horarios de respaldo: 04:50 y 12:50, hora Madrid.
+- Comprobación temprana mediante la API de GitHub Actions y `GITHUB_TOKEN`.
+- El respaldo se activa si no hay una ejecución `schedule` correcta en los 45 minutos anteriores.
+- Si la API de Actions no está disponible, el respaldo ejecuta el pipeline por seguridad.
+- Las ejecuciones manuales no se filtran.
+- Permiso `actions: read` añadido al token del workflow.
+
 ## v0.6.17: simbología AEMET IPIF oficial
 
 Esta revisión corrige la representación de los GeoTIFF de peligro de incendios de AEMET. El producto IPIF actual utiliza seis clases discretas, codificadas de 1 a 6. El visor ya no deduce el color según qué clases aparezcan en cada mapa: conserva siempre la correspondencia oficial entre valor, nivel y color.

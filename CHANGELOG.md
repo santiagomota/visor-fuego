@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.6.18 - respaldo de ejecuciones programadas
+
+- Mantiene las ejecuciones principales a las 04:30 y 12:30 en `Europe/Madrid`.
+- Añade ejecuciones de respaldo a las 04:50 y 12:50.
+- El job `schedule-gate` consulta las ejecuciones recientes del mismo workflow antes de iniciar el pipeline pesado.
+- Un respaldo se omite cuando existe una ejecución programada correcta en los últimos 45 minutos.
+- Si la principal fue descartada o terminó con error, el respaldo ejecuta el pipeline completo.
+- Las ejecuciones `workflow_dispatch` siempre continúan.
+- Si la consulta a la API de GitHub falla, el respaldo se ejecuta por seguridad.
+- Añade permiso `actions: read` para consultar el historial del workflow.
+
 ## v0.6.17 - simbología AEMET IPIF oficial y clases fijas
 
 - Corrige la conversión de los GeoTIFF AEMET: las clases IPIF se interpretan siempre con su código fijo `1..6` (`Muy bajo` a `Extremo`).
