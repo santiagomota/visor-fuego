@@ -1,20 +1,20 @@
 {
-  "generated_at_utc": "2026-08-30T16:18:41Z",
-  "n_detections": 0,
-  "last_observation_utc": null,
-  "download_status": "empty",
+  "generated_at_utc": "2026-08-30T16:41:28Z",
+  "n_detections": 651,
+  "last_observation_utc": "2026-08-30T13:59:00Z",
+  "download_status": "fresh",
   "used_previous": false,
-  "reason": "Sin detecciones utilizables en la descarga actual; estados: VIIRS_SNPP_NRT=network_error, VIIRS_NOAA20_NRT=network_error",
+  "reason": "Descarga FIRMS correcta",
   "sources": {
     "VIIRS_SNPP_NRT": {
-      "status": "network_error",
-      "detail": "Timeout was reached: [firms.modaps.eosdis.nasa.gov] Failed to connect to firms.modaps.eosdis.nasa.gov port 443 after 30001 ms: Timeout was reached",
-      "n": 0
+      "status": "ok",
+      "detail": "HTTP 200",
+      "n": 316
     },
     "VIIRS_NOAA20_NRT": {
-      "status": "network_error",
-      "detail": "Timeout was reached: [firms.modaps.eosdis.nasa.gov] Failed to connect to firms.modaps.eosdis.nasa.gov port 443 after 30000 ms: Timeout was reached",
-      "n": 0
+      "status": "ok",
+      "detail": "HTTP 200",
+      "n": 335
     }
   }
 }
