@@ -514,7 +514,7 @@ function(el, x) {
   // Los JSON embebidos son únicamente un respaldo para ejecución local/offline.
   // En producción, AEMET, FIRMS, el resumen territorial y el build se recargan
   // desde assets/ con cache=no-store para desacoplar los datos de index.html.
-  const embeddedLayers = __LAYERS_JSON__;
+  const embeddedLayers = []; // v0.6.22: no fallback AEMET embebido.
   const embeddedSiteBuild = __SITE_BUILD__;
   let layers = [];
   let freshness = __FRESHNESS_CONFIG__;
@@ -809,17 +809,18 @@ function(el, x) {
         return true;
       })
       .catch(error => {
-        runtimeLoadState.aemet = 'fallback';
-        console.warn('No se pudo cargar layers.json en vivo; se usa el respaldo embebido:', error);
-        try {
-          applyRuntimeAemetLayers(embeddedLayers, 'fallback');
-          return false;
-        } catch (fallbackError) {
-          console.error('Tampoco se pudo usar el catálogo AEMET embebido:', fallbackError);
-          populateAemetSelector();
-          updateLegend(null);
-          return false;
+        // Nunca mostramos un catálogo AEMET embebido y potencialmente obsoleto.
+        runtimeLoadState.aemet = 'error';
+        console.error('No se pudo cargar layers.json en vivo:', error);
+        layers = [];
+        currentLayerIndex = 0;
+        if (currentOverlay) {
+          try { map.removeLayer(currentOverlay); } catch (e) {}
+          currentOverlay = null;
         }
+        populateAemetSelector();
+        updateLegend(null);
+        return false;
       });
 
     const firmsTask = Promise.all([
@@ -1798,8 +1799,7 @@ replace_js_token <- function(text, token, value) {
   paste0(parts[1], value, parts[2])
 }
 
-js <- replace_js_token(js_template, "__LAYERS_JSON__", layers_json)
-js <- replace_js_token(js, "__EFFIS_BA_CONFIG__", effis_ba_config_json)
+js <- replace_js_token(js_template, "__EFFIS_BA_CONFIG__", effis_ba_config_json)
 js <- replace_js_token(js, "__FRESHNESS_CONFIG__", freshness_config_json)
 js <- replace_js_token(js, "__TERRITORIAL_DATA__", territorial_json)
 js <- replace_js_token(js, "__SITE_BUILD__", site_build_json)
@@ -1818,22 +1818,14 @@ Este visor combina:
 - **Eurostat/GISCO NUTS**: límites de CCAA y provincias para resumen territorial.
 
 ```{r}
-cat("Build:", as.character(site_build$build_id %||% "s/d"), "· Generado:", as.character(site_build$generated_at_utc %||% "s/d"), "· Manifiesto:", site_build_source, "\n")
-cat("Capas AEMET:", n_layers)
-if (n_layers > 0) {
-  cat(" · Validez máxima:", last_update, "· Emisión:", latest_layer_value(layers_data, "issue_date"), "· Catálogo:", layers_source)
-}
-
-cat("\nFocos NASA FIRMS:", n_firms)
-if (n_firms > 0) cat(" · Catálogo:", firms_source)
-
-cat("\nAlertas operativas:", n_alerts, "· Altas:", n_alerts_high, "· Medias:", n_alerts_medium)
-
-cat("\nEFFIS Burnt Areas:", n_effis_ba)
+cat("Datos operativos: AEMET, FIRMS, alertas y resumen territorial se cargan en vivo desde assets/ al abrir esta página.")
+cat("
+Build embebido de respaldo:", as.character(site_build$build_id %||% "s/d"))
+cat("
+EFFIS Burnt Areas:", n_effis_ba)
 if (n_effis_ba > 0) cat(" · Catálogo:", effis_ba_source)
-
-cat("\nEFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") else "desactivado")
-if (effis_enabled() && nrow(effis_cfg) > 0) cat(" · TIME:", effis_cfg$date[1])
+cat("
+EFFIS WMS:", if (effis_enabled()) paste(effis_groups, collapse = ", ") else "desactivado")
 ```
 :::
 

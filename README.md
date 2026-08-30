@@ -1,5 +1,18 @@
 # visor-fuego
 
+## v0.6.22: AEMET runtime obligatorio y sin fallback obsoleto
+
+Esta versión corrige el despliegue incompleto detectado el 30 de agosto de 2026: `assets/aemet/layers.json` estaba actualizado, pero el `index.qmd` publicado en `main` seguía usando un catálogo embebido anterior.
+
+### Cambios principales de v0.6.22
+
+- AEMET se carga en tiempo de ejecución desde `assets/aemet/layers.json` con `cache: no-store`.
+- Si el catálogo AEMET runtime falla, el visor muestra AEMET como no disponible; nunca recurre a un catálogo embebido antiguo.
+- El bloque «Fuente y actualización» deja de imprimir fechas y recuentos operativos congelados en el HTML.
+- El workflow valida antes del pipeline que `index.qmd` contiene `loadRuntimeData()` y el `fetch` AEMET dinámico.
+- Tras renderizar, se exige que `docs/index.html` contenga la arquitectura runtime.
+
+
 ## v0.6.21: datos operativos cargados en vivo desde `assets/`
 
 Esta revisión desacopla los datos del `index.html`. El mapa puede haber quedado en caché, pero al abrirse vuelve a consultar con `cache: no-store` los catálogos y estados operativos publicados en `assets/`. Así una copia antigua del HTML no puede volver a iniciar AEMET en una fecha pasada ni mantener focos FIRMS de un snapshot anterior.

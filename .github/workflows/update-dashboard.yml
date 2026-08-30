@@ -323,6 +323,31 @@ jobs:
             exit 1
           fi
 
+      - name: Verificar arquitectura runtime del visor
+        run: |
+          set -euo pipefail
+          required=(
+            "async function loadRuntimeData()"
+            "fetchJsonNoStore('assets/aemet/layers.json')"
+            "cache: 'no-store'"
+            "Cargando datos actuales"
+          )
+          for marker in "${required[@]}"; do
+            if ! grep -Fq "$marker" index.qmd; then
+              echo "::error::index.qmd no contiene la arquitectura dinámica requerida: $marker"
+              exit 1
+            fi
+          done
+          if grep -Fq "const layers = __LAYERS_JSON__;" index.qmd; then
+            echo "::error::index.qmd sigue usando el catálogo AEMET embebido antiguo."
+            exit 1
+          fi
+          if grep -Fq "applyRuntimeAemetLayers(embeddedLayers" index.qmd; then
+            echo "::error::index.qmd conserva un fallback AEMET embebido que puede mostrar fechas obsoletas."
+            exit 1
+          fi
+          echo "Arquitectura runtime AEMET verificada antes del pipeline."
+
       - name: Actualizar datos y validar entradas
         run: |
           set -euo pipefail
@@ -345,6 +370,13 @@ jobs:
             echo "::error::El HTML renderizado no contiene el basemap CARTO. Revisa CARTO_BASEMAP_KEY."
             exit 1
           fi
+          for marker in "loadRuntimeData" "assets/aemet/layers.json" "runtime-source-status"; do
+            if ! grep -Fq "$marker" docs/index.html; then
+              echo "::error::docs/index.html no contiene el runtime dinámico esperado: $marker"
+              exit 1
+            fi
+          done
+          echo "HTML runtime verificado: AEMET se cargará desde assets/ en el navegador."
 
       # El sitio se publica antes de cualquier operación de escritura en Git.
       # De este modo un conflicto al guardar snapshots de datos no puede impedir

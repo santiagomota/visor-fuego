@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.22 - AEMET runtime obligatorio
+
+- Corrige una publicación en la que los assets AEMET estaban actualizados pero `index.qmd` seguía usando un snapshot embebido anterior.
+- AEMET se carga obligatoriamente desde `assets/aemet/layers.json` con `cache: no-store`.
+- Se elimina el fallback AEMET embebido: un fallo de red muestra indisponibilidad en vez de una fecha obsoleta.
+- El workflow valida la arquitectura runtime antes del pipeline y vuelve a comprobarla en `docs/index.html` tras el render.
+- El bloque de fuente deja de publicar fechas/recuentos operativos estáticos.
+
+
 ## v0.6.21 - carga dinámica de datos operativos
 
 - Desacopla AEMET de `index.html`: el navegador consulta `assets/aemet/layers.json` con `cache: no-store` y cache-busting en cada apertura.

@@ -392,6 +392,13 @@ if (file.exists("docs/index.html")) {
     if (grepl("addCircleMarkers\\(\\s*data\\s*=\\s*alerts_data", index_qmd, perl = TRUE)) {
       fail("index.qmd vuelve a incrustar alertas FIRMS en el HTML; deben cargarse en vivo desde assets/alerts/operational_alerts.geojson")
     }
+
+    if (grepl("const layers = __LAYERS_JSON__;", index_qmd, fixed = TRUE)) {
+      fail("index.qmd vuelve a fijar AEMET al snapshot embebido; debe cargar assets/aemet/layers.json en vivo")
+    }
+    if (grepl("applyRuntimeAemetLayers(embeddedLayers", index_qmd, fixed = TRUE)) {
+      fail("index.qmd conserva un fallback AEMET embebido que puede mostrar fechas obsoletas")
+    }
   }
 
   if (grepl("__TERRITORIAL_DATA__", index_html, fixed = TRUE)) {
