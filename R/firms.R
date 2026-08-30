@@ -39,7 +39,7 @@ firms_max_preserved_age_hours <- function() {
   value
 }
 
-firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.20", timeout = 120, connecttimeout = 30, retries = 2) {
+firms_curl_fetch_raw <- function(url, user_agent = "visor-fuego/0.6.21", timeout = 120, connecttimeout = 30, retries = 2) {
   if (!requireNamespace("curl", quietly = TRUE)) {
     stop("Falta el paquete R 'curl'. Instala con install.packages('curl').", call. = FALSE)
   }

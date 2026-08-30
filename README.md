@@ -1,5 +1,22 @@
 # visor-fuego
 
+## v0.6.21: datos operativos cargados en vivo desde `assets/`
+
+Esta revisión desacopla los datos del `index.html`. El mapa puede haber quedado en caché, pero al abrirse vuelve a consultar con `cache: no-store` los catálogos y estados operativos publicados en `assets/`. Así una copia antigua del HTML no puede volver a iniciar AEMET en una fecha pasada ni mantener focos FIRMS de un snapshot anterior.
+
+### Cambios principales de v0.6.21
+
+- **AEMET en tiempo de ejecución:** el selector se construye desde `assets/aemet/layers.json` mediante `fetch(..., {cache: "no-store"})`, con un parámetro de cache-busting. Las fechas válidas anteriores a hoy en Madrid se excluyen también en el navegador.
+- **PNG AEMET sin caché antigua:** cada `imageOverlay` usa una URL con identificador de runtime/build, por lo que una imagen regenerada para el mismo día no reutiliza una copia anterior del navegador.
+- **FIRMS en vivo:** los puntos del mapa ya no se incrustan en el HTML. Se cargan desde `assets/firms/firms_active_fires.geojson`; su estado se toma de `assets/firms/status.json`.
+- **Panel territorial en vivo:** `assets/summary/territorial_summary.json` se recarga al abrir el visor y actualiza la consulta territorial.
+- **Build en vivo:** `assets/site-build.json` actualiza la marca temporal y el identificador del build. Si el HTML pertenece a otro build, se solicita una única recarga con `?build=<id>`.
+- **Fallback local:** los JSON embebidos por Quarto se conservan solo como respaldo para ejecución local/offline si una petición runtime falla.
+- **Diagnóstico visible:** el panel indica si los datos operativos se cargaron en vivo o si alguna fuente tuvo que utilizar el respaldo embebido.
+- **EFFIS cache-busting:** la capa bajo demanda también se solicita sin reutilizar una respuesta antigua.
+
+Se mantienen `freeze: false`, la eliminación de `_freeze/` en Actions, la verificación post-deployment, la simbología oficial IPIF extraída de AEMET y la protección FIRMS frente a falsos ceros.
+
 ## v0.6.20: render siempre fresco y build verificable
 
 Esta revisión corrige el problema por el que los datos de `assets/` podían estar actualizados mientras GitHub Pages seguía mostrando un `index.html` antiguo. La causa era `freeze: auto`: Quarto podía reutilizar la ejecución de `index.qmd` cuando el QMD no había cambiado, aunque sí hubieran cambiado los ficheros AEMET, FIRMS y EFFIS que consume.

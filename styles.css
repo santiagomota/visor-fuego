@@ -1,4 +1,4 @@
-/* Diseño panorámico de la página Mapa v0.6.10.
+/* Diseño panorámico de la página Mapa v0.6.11.
    En escritorio se elimina la columna reservada al TOC y se aprovecha casi
    todo el ancho de la ventana. En móvil se conserva el flujo normal. */
 @media (min-width: 992px) {
@@ -569,4 +569,31 @@ body:has(section#mapa) .callout-note {
   .territory-panel.is-empty {
     width: min(270px, 76vw);
   }
+}
+
+/* Estado de carga dinámica de assets (v0.6.21). */
+.runtime-source-status {
+  margin-top: 5px;
+  margin-bottom: 2px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  background: rgba(100, 116, 139, 0.10);
+  color: #475569;
+}
+
+.runtime-source-status.is-loading {
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+}
+
+.runtime-source-status.is-fresh {
+  background: rgba(46, 139, 87, 0.10);
+  color: #246b45;
+}
+
+.runtime-source-status.is-warning {
+  background: rgba(217, 149, 0, 0.12);
+  color: #8a5a00;
 }

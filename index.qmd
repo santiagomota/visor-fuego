@@ -416,97 +416,35 @@ if (n_effis_ba > 0 && file.exists(effis_ba_url)) {
   overlay_groups <- c(overlay_groups, "EFFIS Burnt Areas")
 }
 
-if (n_firms > 0) {
-  firms_data <- firms_data |>
-    mutate(
-      age_hours = suppressWarnings(as.numeric(age_hours)),
-      frp = suppressWarnings(as.numeric(frp))
-    )
+# NASA FIRMS se carga en tiempo de ejecución desde assets/firms/*. El marcador
+# transparente registra el grupo en el control Leaflet sin incrustar el snapshot
+# del momento del render dentro de index.html.
+map <- map |>
+  addCircleMarkers(
+    lng = 0,
+    lat = 0,
+    group = "NASA FIRMS - focos activos",
+    radius = 0,
+    stroke = FALSE,
+    fillOpacity = 0,
+    options = pathOptions(pane = "firmsPane", interactive = FALSE)
+  )
+overlay_groups <- c(overlay_groups, "NASA FIRMS - focos activos")
 
-  if (!"popup_label" %in% names(firms_data)) {
-    firms_data <- firms_data |>
-      mutate(
-        popup_label = paste0(
-          "NASA FIRMS<br>",
-          "Sensor: ", source_dataset, "<br>",
-          "Fecha UTC: ", acq_datetime_utc, "<br>",
-          "FRP: ", ifelse(is.na(frp), "s/d", paste0(frp, " MW"))
-        )
-      )
-  }
-
-  firms_data <- firms_data |>
-    mutate(
-      firms_colour = case_when(
-        is.na(age_hours) ~ "#666666",
-        age_hours <= 6 ~ "#d7191c",
-        age_hours <= 24 ~ "#fdae61",
-        age_hours <= 48 ~ "#ffffbf",
-        TRUE ~ "#999999"
-      ),
-      firms_radius = pmax(4, pmin(10, ifelse(is.na(frp), 5, sqrt(frp) + 3))),
-      popup = popup_label
-    )
-
-  map <- map |>
-    addCircleMarkers(
-      data = firms_data,
-      lng = ~longitude,
-      lat = ~latitude,
-      group = "NASA FIRMS - focos activos",
-      radius = ~firms_radius,
-      color = ~firms_colour,
-      fillColor = ~firms_colour,
-      fillOpacity = 0.82,
-      weight = 1,
-      popup = ~popup,
-      label = ~paste0("FIRMS · ", acq_datetime_utc),
-      options = pathOptions(pane = "firmsPane")
-    )
-  overlay_groups <- c(overlay_groups, "NASA FIRMS - focos activos")
-}
-
-if (n_alerts > 0) {
-  if (!"popup_label" %in% names(alerts_data)) {
-    alerts_data <- alerts_data |>
-      mutate(popup_label = paste0(cluster_id, "<br>Nivel: ", alerta_operativa))
-  }
-
-  alerts_data <- alerts_data |>
-    mutate(
-      longitude = suppressWarnings(as.numeric(longitude)),
-      latitude = suppressWarnings(as.numeric(latitude)),
-      score = suppressWarnings(as.numeric(score)),
-      alert_colour = case_when(
-        alerta_operativa == "alta" ~ "#7b3294",
-        alerta_operativa == "media" ~ "#d7191c",
-        alerta_operativa == "seguimiento" ~ "#fdae61",
-        TRUE ~ "#666666"
-      ),
-      alert_radius = pmax(7, pmin(16, sqrt(pmax(1, score)) + 5)),
-      popup = as.character(popup_label)
-    ) |>
-    filter(!is.na(longitude), !is.na(latitude))
-
-  if (nrow(alerts_data) > 0) {
-    map <- map |>
-      addCircleMarkers(
-        data = alerts_data,
-        lng = ~longitude,
-        lat = ~latitude,
-        group = "Alertas operativas FIRMS",
-        radius = ~alert_radius,
-        color = ~alert_colour,
-        fillColor = ~alert_colour,
-        fillOpacity = 0.42,
-        weight = 3,
-        popup = ~popup,
-        label = ~paste0(cluster_id, " · ", alerta_operativa),
-        options = pathOptions(pane = "alertsPane")
-      )
-    overlay_groups <- c(overlay_groups, "Alertas operativas FIRMS")
-  }
-}
+# Las alertas operativas derivadas de FIRMS también se cargan en vivo. El
+# placeholder conserva el grupo dentro del control de capas sin fijar un
+# snapshot de alertas en el HTML.
+map <- map |>
+  addCircleMarkers(
+    lng = 0,
+    lat = 0,
+    group = "Alertas operativas FIRMS",
+    radius = 0,
+    stroke = FALSE,
+    fillOpacity = 0,
+    options = pathOptions(pane = "alertsPane", interactive = FALSE)
+  )
+overlay_groups <- c(overlay_groups, "Alertas operativas FIRMS")
 
 map <- add_effis_wms_layers(map)
 overlay_groups <- c(overlay_groups, effis_groups)
@@ -556,30 +494,34 @@ map <- map |>
     position = "bottomleft"
   )
 
-if (n_firms > 0) {
-  map <- map |>
-    addControl(
-      html = HTML(
-        "<b>NASA FIRMS</b><br>
-        <span style='color:#d7191c'>●</span> &lt; 6 h<br>
-        <span style='color:#fdae61'>●</span> 6–24 h<br>
-        <span style='color:#bdb76b'>●</span> 24–48 h<br>
-        <span style='color:#999999'>●</span> &gt; 48 h<br>
-        <b>Alertas</b><br>
-        <span style='color:#7b3294'>●</span> alta<br>
-        <span style='color:#d7191c'>●</span> media"
-      ),
-      position = "bottomright"
-    )
-}
+map <- map |>
+  addControl(
+    html = HTML(
+      "<b>NASA FIRMS</b><br>
+      <span style='color:#d7191c'>●</span> &lt; 6 h<br>
+      <span style='color:#fdae61'>●</span> 6–24 h<br>
+      <span style='color:#bdb76b'>●</span> 24–48 h<br>
+      <span style='color:#999999'>●</span> &gt; 48 h<br>
+      <b>Alertas</b><br>
+      <span style='color:#7b3294'>●</span> alta<br>
+      <span style='color:#d7191c'>●</span> media"
+    ),
+    position = "bottomright"
+  )
 
 js_template <- r"(
 function(el, x) {
-  const layers = __LAYERS_JSON__;
+  // Los JSON embebidos son únicamente un respaldo para ejecución local/offline.
+  // En producción, AEMET, FIRMS, el resumen territorial y el build se recargan
+  // desde assets/ con cache=no-store para desacoplar los datos de index.html.
+  const embeddedLayers = __LAYERS_JSON__;
+  const embeddedSiteBuild = __SITE_BUILD__;
+  let layers = [];
+  let freshness = __FRESHNESS_CONFIG__;
+  let territorial = __TERRITORIAL_DATA__;
+  let siteBuild = embeddedSiteBuild;
+  let firmsRuntimeStatus = null;
   const effisBurntAreas = __EFFIS_BA_CONFIG__;
-  const freshness = __FRESHNESS_CONFIG__;
-  const territorial = __TERRITORIAL_DATA__;
-  const siteBuild = __SITE_BUILD__;
   const map = this;
 
   if (map.createPane && !map.getPane('aemetPane')) {
@@ -602,29 +544,331 @@ function(el, x) {
   const adminLayersByKey = new Map();
   const aemetImageCache = new Map();
   const playbackIntervalMs = 1800;
+  const runtimeGroupFirms = 'NASA FIRMS - focos activos';
+  const runtimeGroupAlerts = 'Alertas operativas FIRMS';
+  const runtimeLoadState = {
+    aemet: 'loading',
+    firms: 'loading',
+    alerts: 'loading',
+    territorial: 'loading',
+    build: 'loading'
+  };
 
-  function verifyPublishedBuild() {
-    const embeddedBuildId = siteBuild && siteBuild.build_id ? String(siteBuild.build_id) : '';
-    if (!embeddedBuildId || typeof window.fetch !== 'function') return;
+  function runtimeAssetUrl(path) {
+    const url = new URL(String(path || ''), window.location.href);
+    const buildId = siteBuild && siteBuild.build_id ? String(siteBuild.build_id) : '';
+    url.searchParams.set('_runtime', (buildId ? (buildId + '-') : '') + String(Date.now()));
+    return url.toString();
+  }
 
-    const manifestUrl = 'assets/site-build.json?cache_bust=' + Date.now();
-    window.fetch(manifestUrl, {cache: 'no-store'})
-      .then(response => {
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        return response.json();
-      })
+  async function fetchJsonNoStore(path) {
+    const url = new URL(String(path || ''), window.location.href);
+    url.searchParams.set('_runtime', String(Date.now()));
+    const response = await window.fetch(url.toString(), {
+      cache: 'no-store',
+      credentials: 'same-origin'
+    });
+    if (!response.ok) throw new Error(path + ' · HTTP ' + response.status);
+    return response.json();
+  }
+
+  function runtimeAemetLayerRank(layer) {
+    const areaRank = layer && layer.area === 'p' ? 1 : (layer && layer.area === 'b' ? 2 : (layer && layer.area === 'c' ? 3 : 99));
+    const typeRank = layer && layer.tipo === 'previsto' ? 1 : (layer && layer.tipo === 'estimado' ? 2 : 99);
+    const validDate = String((layer && (layer.valid_date || layer.date)) || '9999-99-99');
+    const dayRank = Number((layer && (layer.forecast_day || layer.dia)) || 0);
+    return [areaRank, validDate, typeRank, dayRank];
+  }
+
+  function prepareRuntimeAemetLayers(raw) {
+    const source = Array.isArray(raw) ? raw : ((raw && Array.isArray(raw.layers)) ? raw.layers : []);
+    const today = madridDateKey(new Date());
+    const valid = source.filter(layer => layer && layer.url && (layer.valid_date || layer.date));
+    const currentAndFuture = valid.filter(layer => String(layer.valid_date || layer.date) >= today);
+    const selected = currentAndFuture.length > 0 ? currentAndFuture : valid;
+
+    return selected.slice().sort((a, b) => {
+      const ar = runtimeAemetLayerRank(a);
+      const br = runtimeAemetLayerRank(b);
+      for (let i = 0; i < ar.length; i++) {
+        if (ar[i] < br[i]) return -1;
+        if (ar[i] > br[i]) return 1;
+      }
+      return 0;
+    });
+  }
+
+  function setRuntimeSourceStatus(message, status) {
+    const node = document.getElementById('runtime-source-status');
+    if (!node) return;
+    node.textContent = message || '';
+    node.className = 'runtime-source-status ' + (status ? ('is-' + status) : '');
+  }
+
+  function populateAemetSelector() {
+    const select = document.getElementById('fire-layer-select');
+    if (!select) return;
+    select.innerHTML = '';
+
+    if (!layers || layers.length === 0) {
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = 'Sin capas AEMET disponibles';
+      select.appendChild(option);
+      select.disabled = true;
+      return;
+    }
+
+    layers.forEach((layer, index) => {
+      const option = document.createElement('option');
+      option.value = String(index);
+      option.textContent = labelForLayer(layer);
+      select.appendChild(option);
+    });
+    select.disabled = false;
+    select.value = String(currentLayerIndex);
+  }
+
+  function applyRuntimeAemetLayers(raw, sourceLabel) {
+    const prepared = prepareRuntimeAemetLayers(raw);
+    if (prepared.length === 0) throw new Error('El catálogo AEMET no contiene capas utilizables.');
+
+    stopPlayback();
+    currentLayerRequest += 1;
+    if (currentOverlay) {
+      map.removeLayer(currentOverlay);
+      currentOverlay = null;
+    }
+    layers = prepared;
+    currentLayerIndex = 0;
+    runtimeLoadState.aemet = sourceLabel || 'live';
+    populateAemetSelector();
+    setLayer(0);
+  }
+
+  function firmsColour(ageHours) {
+    const age = Number(ageHours);
+    if (!Number.isFinite(age)) return '#666666';
+    if (age <= 6) return '#d7191c';
+    if (age <= 24) return '#fdae61';
+    if (age <= 48) return '#ffffbf';
+    return '#999999';
+  }
+
+  function firmsRadius(frp) {
+    const value = Number(frp);
+    if (!Number.isFinite(value)) return 5;
+    return Math.max(4, Math.min(10, Math.sqrt(Math.max(0, value)) + 3));
+  }
+
+  function firmsPopup(properties) {
+    const p = properties || {};
+    const source = p.source_dataset || p.source || 's/d';
+    const datetime = p.acq_datetime_utc || p.acq_datetime || 's/d';
+    const frp = Number(p.frp);
+    return '<strong>NASA FIRMS</strong>' +
+      '<br>Sensor: ' + escapeHtml(source) +
+      '<br>Fecha UTC: ' + escapeHtml(datetime) +
+      '<br>FRP: ' + escapeHtml(Number.isFinite(frp) ? (frp + ' MW') : 's/d');
+  }
+
+  function applyRuntimeFirmsGeoJson(data) {
+    if (!map.layerManager || typeof map.layerManager.clearGroup !== 'function') {
+      throw new Error('Leaflet layerManager no disponible para FIRMS.');
+    }
+    map.layerManager.clearGroup(runtimeGroupFirms);
+
+    const features = data && Array.isArray(data.features) ? data.features : [];
+    features.forEach((feature, index) => {
+      const geometry = feature && feature.geometry;
+      const coords = geometry && geometry.type === 'Point' ? geometry.coordinates : null;
+      if (!coords || coords.length < 2) return;
+      const lon = Number(coords[0]);
+      const lat = Number(coords[1]);
+      if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
+
+      const p = feature.properties || {};
+      const marker = L.circleMarker([lat, lon], {
+        pane: 'firmsPane',
+        radius: firmsRadius(p.frp),
+        color: firmsColour(p.age_hours),
+        fillColor: firmsColour(p.age_hours),
+        fillOpacity: 0.82,
+        weight: 1
+      });
+      marker.bindPopup(firmsPopup(p));
+      marker.bindTooltip('FIRMS · ' + String(p.acq_datetime_utc || p.acq_datetime || 'sin fecha'));
+      map.layerManager.addLayer(marker, 'marker', 'firms-runtime-' + index, runtimeGroupFirms);
+    });
+    runtimeLoadState.firms = 'live';
+    return features.length;
+  }
+
+  function alertColour(level) {
+    if (level === 'alta') return '#7b3294';
+    if (level === 'media') return '#d7191c';
+    if (level === 'seguimiento') return '#fdae61';
+    return '#666666';
+  }
+
+  function applyRuntimeAlertsGeoJson(data) {
+    if (!map.layerManager || typeof map.layerManager.clearGroup !== 'function') {
+      throw new Error('Leaflet layerManager no disponible para alertas.');
+    }
+    map.layerManager.clearGroup(runtimeGroupAlerts);
+    const features = data && Array.isArray(data.features) ? data.features : [];
+
+    features.forEach((feature, index) => {
+      const geometry = feature && feature.geometry;
+      const coords = geometry && geometry.type === 'Point' ? geometry.coordinates : null;
+      if (!coords || coords.length < 2) return;
+      const lon = Number(coords[0]);
+      const lat = Number(coords[1]);
+      if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
+
+      const p = feature.properties || {};
+      const score = Number(p.score);
+      const radius = Math.max(7, Math.min(16, Math.sqrt(Math.max(1, Number.isFinite(score) ? score : 1)) + 5));
+      const colour = alertColour(String(p.alerta_operativa || ''));
+      const marker = L.circleMarker([lat, lon], {
+        pane: 'alertsPane',
+        radius: radius,
+        color: colour,
+        fillColor: colour,
+        fillOpacity: 0.42,
+        weight: 3
+      });
+      marker.bindPopup(p.popup_label || (
+        '<strong>' + escapeHtml(p.cluster_id || ('Alerta ' + (index + 1))) + '</strong>' +
+        '<br>Nivel: ' + escapeHtml(p.alerta_operativa || 's/d')
+      ));
+      marker.bindTooltip(String(p.cluster_id || 'Alerta') + ' · ' + String(p.alerta_operativa || 's/d'));
+      map.layerManager.addLayer(marker, 'marker', 'alerts-runtime-' + index, runtimeGroupAlerts);
+    });
+    runtimeLoadState.alerts = 'live';
+    return features.length;
+  }
+
+  function applyRuntimeFirmsStatus(status) {
+    firmsRuntimeStatus = status || null;
+    if (!status) return;
+    freshness = Object.assign({}, freshness || {}, {
+      firms_latest_detection_utc: status.last_observation_utc || freshness.firms_latest_detection_utc,
+      firms_generated_at_utc: status.generated_at_utc || freshness.firms_generated_at_utc
+    });
+  }
+
+  function applyRuntimeTerritorial(data) {
+    if (!data || typeof data !== 'object') return;
+    territorial = data;
+    runtimeLoadState.territorial = 'live';
+    refreshTerritoryPanel();
+  }
+
+  function applyRuntimeSiteBuild(remote) {
+    if (!remote || !remote.build_id) return;
+    const embeddedBuildId = embeddedSiteBuild && embeddedSiteBuild.build_id ? String(embeddedSiteBuild.build_id) : '';
+    const remoteBuildId = String(remote.build_id);
+    siteBuild = remote;
+    freshness = Object.assign({}, freshness || {}, {
+      site_generated_at_utc: remote.generated_at_utc || freshness.site_generated_at_utc
+    });
+    runtimeLoadState.build = 'live';
+
+    // Si el HTML pertenece a otro build, los datos ya están actualizados en vivo.
+    // Además pedimos una única recarga con cache-busting para obtener también el
+    // código/CSS más reciente, sin bloquear la visualización de los datos.
+    if (embeddedBuildId && remoteBuildId !== embeddedBuildId) {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('build') !== remoteBuildId) {
+        window.setTimeout(function() {
+          url.searchParams.set('build', remoteBuildId);
+          window.location.replace(url.toString());
+        }, 1800);
+      }
+    }
+  }
+
+  async function loadRuntimeData() {
+    setRuntimeSourceStatus('Cargando datos actuales desde assets/…', 'loading');
+
+    const buildTask = fetchJsonNoStore('assets/site-build.json')
       .then(remote => {
-        const remoteBuildId = remote && remote.build_id ? String(remote.build_id) : '';
-        if (!remoteBuildId || remoteBuildId === embeddedBuildId) return;
-
-        const url = new URL(window.location.href);
-        if (url.searchParams.get('build') === remoteBuildId) return;
-        url.searchParams.set('build', remoteBuildId);
-        window.location.replace(url.toString());
+        applyRuntimeSiteBuild(remote);
+        return true;
       })
       .catch(error => {
-        console.warn('No se pudo verificar el build publicado:', error);
+        runtimeLoadState.build = 'fallback';
+        console.warn('No se pudo cargar site-build.json en vivo:', error);
+        return false;
       });
+
+    const aemetTask = fetchJsonNoStore('assets/aemet/layers.json')
+      .then(remote => {
+        applyRuntimeAemetLayers(remote, 'live');
+        return true;
+      })
+      .catch(error => {
+        runtimeLoadState.aemet = 'fallback';
+        console.warn('No se pudo cargar layers.json en vivo; se usa el respaldo embebido:', error);
+        try {
+          applyRuntimeAemetLayers(embeddedLayers, 'fallback');
+          return false;
+        } catch (fallbackError) {
+          console.error('Tampoco se pudo usar el catálogo AEMET embebido:', fallbackError);
+          populateAemetSelector();
+          updateLegend(null);
+          return false;
+        }
+      });
+
+    const firmsTask = Promise.all([
+      fetchJsonNoStore('assets/firms/firms_active_fires.geojson'),
+      fetchJsonNoStore('assets/firms/status.json')
+    ]).then(values => {
+      const count = applyRuntimeFirmsGeoJson(values[0]);
+      applyRuntimeFirmsStatus(values[1]);
+      return count;
+    }).catch(error => {
+      runtimeLoadState.firms = 'fallback';
+      console.warn('No se pudo recargar FIRMS en vivo:', error);
+      return null;
+    });
+
+    const alertsTask = fetchJsonNoStore('assets/alerts/operational_alerts.geojson')
+      .then(remote => applyRuntimeAlertsGeoJson(remote))
+      .catch(error => {
+        runtimeLoadState.alerts = 'fallback';
+        console.warn('No se pudieron recargar las alertas FIRMS en vivo:', error);
+        return null;
+      });
+
+    const territorialTask = fetchJsonNoStore('assets/summary/territorial_summary.json')
+      .then(remote => {
+        applyRuntimeTerritorial(remote);
+        return true;
+      })
+      .catch(error => {
+        runtimeLoadState.territorial = 'fallback';
+        console.warn('No se pudo recargar el resumen territorial en vivo:', error);
+        return false;
+      });
+
+    await Promise.allSettled([buildTask, aemetTask, firmsTask, alertsTask, territorialTask]);
+    updateFreshnessIndicator();
+
+    const liveCount = Object.values(runtimeLoadState).filter(value => value === 'live').length;
+    if (runtimeLoadState.aemet === 'live' && runtimeLoadState.firms === 'live') {
+      setRuntimeSourceStatus('Datos operativos cargados en vivo · ' + liveCount + '/5 fuentes dinámicas', 'fresh');
+    } else {
+      setRuntimeSourceStatus('Datos cargados con algún respaldo local · revisa Actualidad de datos', 'warning');
+    }
+  }
+
+  function verifyPublishedBuild() {
+    // Compatibilidad con validaciones/versiones anteriores. La verificación y
+    // la recarga se realizan ahora dentro de loadRuntimeData().
+    return true;
   }
 
   function escapeHtml(value) {
@@ -675,7 +919,7 @@ function(el, x) {
       return;
     }
 
-    fetch(effisBurntAreas.url)
+    window.fetch(runtimeAssetUrl(effisBurntAreas.url), {cache: 'no-store'})
       .then(response => {
         if (!response.ok) throw new Error('HTTP ' + response.status);
         return response.json();
@@ -800,6 +1044,7 @@ function(el, x) {
   function updateTimelineControls() {
     const select = document.getElementById('fire-layer-select');
     const previous = document.getElementById('fire-layer-previous');
+    const play = document.getElementById('fire-layer-play');
     const next = document.getElementById('fire-layer-next');
     const position = document.getElementById('fire-layer-position');
     const sequence = seriesIndices(currentLayerIndex);
@@ -807,6 +1052,7 @@ function(el, x) {
 
     if (select) select.value = String(currentLayerIndex);
     if (previous) previous.disabled = sequencePosition <= 0;
+    if (play) play.disabled = sequence.length <= 1;
     if (next) next.disabled = sequencePosition < 0 || sequencePosition >= sequence.length - 1;
     if (position) position.textContent = sequencePosition >= 0 ? ((sequencePosition + 1) + ' de ' + sequence.length) : '—';
   }
@@ -933,11 +1179,13 @@ function(el, x) {
     } else {
       const siteHours = Math.max(0, (Date.now() - siteDate.getTime()) / 3600000);
       const siteStatus = siteHours <= 6 ? 'fresh' : (siteHours <= 24 ? 'warning' : 'stale');
+      const buildId = siteBuild && siteBuild.build_id ? String(siteBuild.build_id) : '';
+      const shortBuild = buildId ? (' · build ' + buildId.slice(0, 17)) : '';
       html += freshnessRow(
         'Visor',
-        'actualizado ' + relativeAge(siteDate),
+        'actualizado ' + relativeAge(siteDate) + shortBuild,
         siteStatus,
-        'Visor actualizado: ' + formatMadridTimestamp(siteDate)
+        'Visor actualizado: ' + formatMadridTimestamp(siteDate) + (buildId ? ' · Build: ' + buildId : '')
       );
     }
 
@@ -962,12 +1210,26 @@ function(el, x) {
     }
 
     const firmsDate = parseUtcTimestamp(freshness && freshness.firms_latest_detection_utc);
+    const firmsDownloadStatus = firmsRuntimeStatus && firmsRuntimeStatus.download_status
+      ? String(firmsRuntimeStatus.download_status)
+      : '';
     if (!firmsDate) {
       html += freshnessRow('FIRMS', 'sin detecciones disponibles', 'unavailable');
     } else {
       const firmsHours = Math.max(0, (Date.now() - firmsDate.getTime()) / 3600000);
-      const firmsStatus = firmsHours <= 6 ? 'fresh' : (firmsHours <= 24 ? 'warning' : 'stale');
-      html += freshnessRow('FIRMS', 'última detección ' + relativeAge(firmsDate), firmsStatus, 'Última detección FIRMS: ' + formatMadridTimestamp(firmsDate));
+      let firmsStatus = firmsHours <= 6 ? 'fresh' : (firmsHours <= 24 ? 'warning' : 'stale');
+      let firmsText = 'última detección ' + relativeAge(firmsDate);
+      if (firmsDownloadStatus === 'stale_preserved') {
+        firmsStatus = 'warning';
+        firmsText = 'snapshot anterior conservado · ' + firmsText;
+      }
+      html += freshnessRow(
+        'FIRMS',
+        firmsText,
+        firmsStatus,
+        'Última detección FIRMS: ' + formatMadridTimestamp(firmsDate) +
+          (firmsDownloadStatus ? ' · Estado: ' + firmsDownloadStatus : '')
+      );
     }
 
     const effisDate = parseUtcTimestamp(freshness && freshness.effis_generated_at_utc);
@@ -1393,7 +1655,7 @@ function(el, x) {
     }
 
     if (layer.layer_kind === 'geojson') {
-      fetch(layer.url)
+      window.fetch(runtimeAssetUrl(layer.url), {cache: 'no-store'})
         .then(response => response.json())
         .then(data => {
           if (requestId !== currentLayerRequest) return;
@@ -1427,7 +1689,7 @@ function(el, x) {
           if (requestId === currentLayerRequest) console.error('No se pudo cargar la capa AEMET:', error);
         });
     } else {
-      currentOverlay = L.imageOverlay(layer.url, layer.bounds, {
+      currentOverlay = L.imageOverlay(runtimeAssetUrl(layer.url), layer.bounds, {
         opacity: currentOpacity,
         interactive: false,
         pane: 'aemetPane'
@@ -1444,30 +1706,21 @@ function(el, x) {
   const panel = L.control({position: 'topright'});
   panel.onAdd = function(map) {
     const div = L.DomUtil.create('div', 'fire-panel');
-    if (!layers || layers.length === 0) {
-      div.innerHTML = '<b>Visor Fuego</b><br>No hay capas AEMET descargadas.<br><code>Rscript scripts/99_run_all.R</code>';
-      return div;
-    }
-
-    let options = '';
-    for (let i = 0; i < layers.length; i++) {
-      options += '<option value="' + i + '">' + labelForLayer(layers[i]) + '</option>';
-    }
-
     div.innerHTML =
       '<b>Visor Fuego</b>' +
+      '<div id="runtime-source-status" class="runtime-source-status is-loading">Cargando datos actuales…</div>' +
       '<label>Capa AEMET</label>' +
-      '<select id="fire-layer-select">' + options + '</select>' +
+      '<select id="fire-layer-select" disabled><option>Cargando catálogo AEMET…</option></select>' +
       '<div class="fire-timeline" role="group" aria-label="Navegación temporal AEMET">' +
-        '<button id="fire-layer-previous" type="button" title="Día anterior" aria-label="Día anterior">&#9664;</button>' +
-        '<button id="fire-layer-play" type="button" title="Reproducir la secuencia temporal" aria-label="Reproducir la secuencia temporal">&#9654;</button>' +
-        '<button id="fire-layer-next" type="button" title="Día siguiente" aria-label="Día siguiente">&#9654;</button>' +
+        '<button id="fire-layer-previous" type="button" title="Día anterior" aria-label="Día anterior" disabled>&#9664;</button>' +
+        '<button id="fire-layer-play" type="button" title="Reproducir la secuencia temporal" aria-label="Reproducir la secuencia temporal" disabled>&#9654;</button>' +
+        '<button id="fire-layer-next" type="button" title="Día siguiente" aria-label="Día siguiente" disabled>&#9654;</button>' +
         '<span id="fire-layer-position" class="fire-layer-position">—</span>' +
       '</div>' +
       '<label>Opacidad AEMET</label>' +
       '<input id="fire-opacity" type="range" min="0" max="1" step="0.05" value="0.68" />' +
       '<div id="data-freshness" class="data-freshness" aria-live="polite"></div>' +
-      '<small>Copernicus, FIRMS y límites se activan desde el control de capas de Leaflet.</small>';
+      '<small>AEMET, FIRMS y el resumen territorial se recargan directamente desde <code>assets/</code>. Copernicus y límites se activan desde el control de capas.</small>';
 
     L.DomEvent.disableClickPropagation(div);
     return div;
@@ -1496,49 +1749,45 @@ function(el, x) {
   };
   legend.addTo(map);
 
-  if (layers && layers.length > 0) {
-    setLayer(0);
+  const select = document.getElementById('fire-layer-select');
+  const opacity = document.getElementById('fire-opacity');
+  const previous = document.getElementById('fire-layer-previous');
+  const play = document.getElementById('fire-layer-play');
+  const next = document.getElementById('fire-layer-next');
 
-    const select = document.getElementById('fire-layer-select');
-    const opacity = document.getElementById('fire-opacity');
-    const previous = document.getElementById('fire-layer-previous');
-    const play = document.getElementById('fire-layer-play');
-    const next = document.getElementById('fire-layer-next');
-
-    if (select) {
-      select.addEventListener('change', function(e) {
-        stopPlayback();
-        setLayer(parseInt(e.target.value, 10));
-      });
-    }
-
-    if (previous) {
-      previous.addEventListener('click', function() {
-        stopPlayback();
-        stepLayer(-1, false);
-      });
-    }
-
-    if (play) play.addEventListener('click', togglePlayback);
-
-    if (next) {
-      next.addEventListener('click', function() {
-        stopPlayback();
-        stepLayer(1, false);
-      });
-    }
-
-    if (opacity) {
-      opacity.addEventListener('input', function(e) {
-        currentOpacity = parseFloat(e.target.value);
-        setOverlayOpacity(currentOpacity);
-      });
-    }
+  if (select) {
+    select.addEventListener('change', function(e) {
+      stopPlayback();
+      setLayer(parseInt(e.target.value, 10));
+    });
   }
 
-  verifyPublishedBuild();
+  if (previous) {
+    previous.addEventListener('click', function() {
+      stopPlayback();
+      stepLayer(-1, false);
+    });
+  }
+
+  if (play) play.addEventListener('click', togglePlayback);
+
+  if (next) {
+    next.addEventListener('click', function() {
+      stopPlayback();
+      stepLayer(1, false);
+    });
+  }
+
+  if (opacity) {
+    opacity.addEventListener('input', function(e) {
+      currentOpacity = parseFloat(e.target.value);
+      setOverlayOpacity(currentOpacity);
+    });
+  }
+
   attachTerritorialInteractions();
   updateFreshnessIndicator();
+  loadRuntimeData();
   window.setInterval(updateFreshnessIndicator, 60000);
 }
 )"

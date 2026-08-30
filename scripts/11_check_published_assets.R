@@ -300,6 +300,16 @@ if (file.exists("docs/index.html")) {
     "validDateRelation",
     "aemetTitle",
     "verifyPublishedBuild",
+    "loadRuntimeData",
+    "fetchJsonNoStore",
+    "applyRuntimeAemetLayers",
+    "applyRuntimeFirmsGeoJson",
+    "runtime-source-status",
+    "assets/aemet/layers.json",
+    "assets/firms/firms_active_fires.geojson",
+    "assets/firms/status.json",
+    "assets/alerts/operational_alerts.geojson",
+    "assets/summary/territorial_summary.json",
     "assets/site-build.json"
   )
 
@@ -328,10 +338,15 @@ if (file.exists("docs/index.html")) {
       "Visor actualizado:",
       "emisión de ayer · válido para hoy",
       "assets/aemet/layers.json",
-      "assets/firms/firms_active_fires.csv",
-      "assets/summary/dashboard_summary.csv",
+      "assets/firms/firms_active_fires.geojson",
+      "assets/firms/status.json",
+      "assets/alerts/operational_alerts.geojson",
       "assets/summary/territorial_summary.json",
       "assets/site-build.json",
+      "fetchJsonNoStore",
+      "cache: 'no-store'",
+      "loadRuntimeData",
+      "applyRuntimeFirmsGeoJson",
       "__SITE_BUILD__"
     )
     missing_source_fragments <- source_fragments[!vapply(
@@ -368,6 +383,14 @@ if (file.exists("docs/index.html")) {
         "index.qmd vuelve a mezclar data/processed con el snapshot canónico assets/:",
         paste(leaked_sources, collapse = ", ")
       ))
+    }
+
+    if (grepl("addCircleMarkers\\(\\s*data\\s*=\\s*firms_data", index_qmd, perl = TRUE)) {
+      fail("index.qmd vuelve a incrustar FIRMS en el HTML; debe cargarlos en vivo desde assets/firms/firms_active_fires.geojson")
+    }
+
+    if (grepl("addCircleMarkers\\(\\s*data\\s*=\\s*alerts_data", index_qmd, perl = TRUE)) {
+      fail("index.qmd vuelve a incrustar alertas FIRMS en el HTML; deben cargarse en vivo desde assets/alerts/operational_alerts.geojson")
     }
   }
 
