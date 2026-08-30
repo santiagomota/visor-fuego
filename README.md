@@ -1,10 +1,13 @@
 # visor-fuego
 
-## v0.6.22: AEMET runtime obligatorio y sin fallback obsoleto
+> **v0.6.23:** el workflow valida inmediatamente tras el checkout que `index.qmd` contiene el runtime dinámico AEMET. Si falta, aborta antes de instalar dependencias o publicar.
+
+
+## v0.6.23: AEMET runtime obligatorio y sin fallback obsoleto
 
 Esta versión corrige el despliegue incompleto detectado el 30 de agosto de 2026: `assets/aemet/layers.json` estaba actualizado, pero el `index.qmd` publicado en `main` seguía usando un catálogo embebido anterior.
 
-### Cambios principales de v0.6.22
+### Cambios principales de v0.6.23
 
 - AEMET se carga en tiempo de ejecución desde `assets/aemet/layers.json` con `cache: no-store`.
 - Si el catálogo AEMET runtime falla, el visor muestra AEMET como no disponible; nunca recurre a un catálogo embebido antiguo.

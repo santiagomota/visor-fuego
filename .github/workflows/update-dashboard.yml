@@ -144,6 +144,33 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
+      - name: Preflight de fuente v0.6.23
+        run: |
+          set -euo pipefail
+          echo "Commit checkout: $(git rev-parse HEAD)"
+          echo "Versión declarada: $(awk -F': ' '$1=="Version" {print $2}' DESCRIPTION)"
+          echo "SHA256 index.qmd: $(sha256sum index.qmd | awk '{print $1}')"
+          required=(
+            "async function loadRuntimeData()"
+            "fetchJsonNoStore('assets/aemet/layers.json')"
+            "cache: 'no-store'"
+            "Cargando datos actuales"
+          )
+          for marker in "${required[@]}"; do
+            if ! grep -Fq "$marker" index.qmd; then
+              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.23. Falta: $marker"
+              echo "::error::No se instalará R ni se publicará un snapshot antiguo."
+              exit 1
+            fi
+          done
+          if grep -Fq "const layers = __LAYERS_JSON__;" index.qmd; then
+            echo "::error::El checkout contiene el index.qmd antiguo con catálogo AEMET embebido."
+            exit 1
+          fi
+          grep -n -F "async function loadRuntimeData()" index.qmd | head -1
+          grep -n -F "fetchJsonNoStore('assets/aemet/layers.json')" index.qmd | head -1
+          echo "Preflight runtime v0.6.23 OK."
+
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
 
@@ -323,7 +350,7 @@ jobs:
             exit 1
           fi
 
-      - name: Verificar arquitectura runtime del visor
+      - name: Verificar arquitectura runtime antes del pipeline
         run: |
           set -euo pipefail
           required=(

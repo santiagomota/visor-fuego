@@ -1,6 +1,14 @@
 # Changelog
 
-## v0.6.22 - AEMET runtime obligatorio
+## v0.6.23 - Preflight de fuente y hotfix runtime verificable
+
+- Fuerza que `index.qmd` use la carga dinámica de AEMET desde `assets/aemet/layers.json`.
+- Añade un preflight inmediatamente después del checkout, antes de instalar R/Quarto.
+- El preflight muestra el commit y SHA256 de `index.qmd` y falla si reaparece `const layers = __LAYERS_JSON__;`.
+- Impide una ejecución verde cuando el repositorio solo actualiza `DESCRIPTION` pero conserva `index.qmd` o workflow antiguos.
+
+
+## v0.6.23 - AEMET runtime obligatorio
 
 - Corrige una publicación en la que los assets AEMET estaban actualizados pero `index.qmd` seguía usando un snapshot embebido anterior.
 - AEMET se carga obligatoriamente desde `assets/aemet/layers.json` con `cache: no-store`.
