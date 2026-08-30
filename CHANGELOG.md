@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.6.20 - render siempre fresco y build verificable
+
+- Corrige la causa raíz del HTML obsoleto: elimina `freeze: auto` y fija `freeze: false` en `_quarto.yml`, porque los QMD pueden no cambiar aunque sí cambien AEMET/FIRMS/EFFIS.
+- El workflow elimina `_freeze/` y `docs/` antes de cada render, evitando reutilizar una ejecución anterior de Quarto.
+- Publica `assets/**` completo como recurso del sitio, en lugar de declarar solo subconjuntos de AEMET y EFFIS.
+- Omite del catálogo web las capas AEMET cuya `valid_date` ya es anterior al día actual en `Europe/Madrid`; una emisión de ayer puede seguir siendo válida, pero el selector comienza siempre en hoy o en el siguiente día disponible.
+- Añade `assets/site-build.json` con un `build_id` único, fecha de generación, snapshot AEMET, FIRMS y EFFIS.
+- Inserta el mismo `build_id` dentro de `docs/index.html` y valida localmente que el HTML y el manifiesto pertenecen al mismo build.
+- Añade una comprobación posterior al despliegue: GitHub Actions consulta el `site-build.json` y el `index.html` públicos con cache-busting y solo queda verde si ambos contienen el `build_id` recién generado.
+- El navegador comprueba también el manifiesto publicado y, si detecta un HTML antiguo, recarga la página con el identificador del build actual.
+- Mantiene la simbología AEMET oficial extraída de `ESCALA`, la protección FIRMS frente a falsos ceros y las ejecuciones de respaldo de v0.6.18.
+
+## v0.6.19 - snapshot canónico, AEMET estricto y FIRMS resiliente
+
+- Hace de `assets/` la fuente canónica del render web y elimina los fallbacks operativos a `data/processed/` en `index.qmd`.
+- Añade cache-busting al paquete SIG clásico de AEMET y hasta tres intentos para obtener la emisión del día.
+- Registra `assets/aemet/status.json` con fecha de emisión, antigüedad e intentos; aborta si la emisión tiene más de un día.
+- Amplía la extracción de simbología AEMET: `ESCALA` vía `gdalinfo -json`, metadatos `terra`, tabla de color interna y ficheros SLD/QML del paquete.
+- En GitHub Actions activa `AEMET_REQUIRE_OFFICIAL_STYLE=true`: no se publica una paleta aproximada si no se puede obtener la simbología oficial.
+- Publica `assets/firms/firms_active_fires.csv` como snapshot canónico y `assets/firms/status.json` para auditar el estado de la descarga.
+- Si FIRMS devuelve vacío o falla, conserva durante un máximo de 72 horas el último snapshot válido y lo marca `stale_preserved`; evita sustituir cientos de detecciones por un falso cero.
+- Refuerza `scripts/11_check_published_assets.R` para validar actualidad AEMET, estado FIRMS, fuente oficial de estilo y ausencia de mezclas `data/processed`/`assets` en el render.
+
 ## v0.6.18 - respaldo de ejecuciones programadas
 
 - Mantiene las ejecuciones principales a las 04:30 y 12:30 en `Europe/Madrid`.

@@ -1,4 +1,4 @@
-# visor-fuego v0.6.18
+# visor-fuego v0.6.20
 # Copiar este fichero como .Renviron en la raíz del proyecto.
 # No incluir .Renviron en Git si contiene claves reales.
 
@@ -25,6 +25,15 @@ AEMET_BOUNDS_NUDGE_LAT=0
 AEMET_CLASSIC_VALID_START_OFFSET_DAYS=0
 AEMET_CLASSIC_KEEP_LATEST_ISSUE_ONLY=true
 AEMET_CLASSIC_CLEAN_RAW_BEFORE_INSTALL=true
+# Intenta obtener la emisión del día; si AEMET aún no la ha publicado, reintenta.
+AEMET_CLASSIC_PREFER_TODAY_ISSUE=true
+AEMET_CLASSIC_RETRIES=3
+AEMET_CLASSIC_RETRY_SECONDS=45
+# Se acepta como máximo la emisión de ayer; una más antigua aborta el pipeline.
+AEMET_CLASSIC_MAX_ISSUE_AGE_DAYS=1
+# En producción no se permite una paleta aproximada: ESCALA/colortable/SLD/QML.
+AEMET_REQUIRE_OFFICIAL_STYLE=true
+AEMET_HIDE_PAST_VALID_DATES=true
 AEMET_INCLUDE_ORPHAN_RAW=false
 AEMET_CLEAN_WEB_ASSETS=true
 
@@ -44,6 +53,10 @@ FIRMS_MAP_KEY=
 FIRMS_SOURCES=VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT
 FIRMS_DAYS=2
 FIRMS_BBOX=-19,27,5,44.6
+# Si la descarga actual queda vacía, conserva el último snapshot reciente en vez
+# de convertir una incidencia de servicio en "0 focos".
+FIRMS_PRESERVE_LAST_ON_EMPTY=true
+FIRMS_MAX_PRESERVED_AGE_HOURS=72
 
 # -----------------------------------------------------------------------------
 # Alertas e histórico

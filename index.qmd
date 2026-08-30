@@ -126,6 +126,19 @@ read_alerts_summary <- function() {
   read_csv_optional("assets/alerts/operational_alerts_summary.csv")
 }
 
+read_site_build <- function() {
+  path <- "assets/site-build.json"
+  if (!file.exists(path) || file.info(path)$size <= 2) {
+    stop("Falta el manifiesto canónico del build: ", path, call. = FALSE)
+  }
+  out <- tryCatch(
+    jsonlite::fromJSON(path, simplifyVector = FALSE),
+    error = function(e) stop("No se puede leer ", path, ": ", conditionMessage(e), call. = FALSE)
+  )
+  attr(out, "source_path") <- path
+  out
+}
+
 safe_value <- function(x, default = "—") {
   if (length(x) == 0 || is.na(x) || identical(x, "")) default else as.character(x)
 }
@@ -190,6 +203,10 @@ read_effis_ba_summary <- function() {
   out
 }
 
+site_build <- read_site_build()
+site_build_source <- attr(site_build, "source_path")
+site_build_json <- jsonlite::toJSON(site_build, auto_unbox = TRUE, null = "null", na = "null")
+
 layers_data <- read_layers_json()
 layers_source <- attr(layers_data, "source_path")
 
@@ -197,7 +214,7 @@ layers_source <- attr(layers_data, "source_path")
 # El paquete SIG clásico usa nombres down_YYYYMMDD...D00..D07,
 # donde YYYYMMDD es la fecha civil del primer mapa y Dxx el horizonte.
 # En el catálogo se guarda valid_date = issue_date + D.
-aemet_valid_date_rank <- function(date_chr, today = Sys.Date()) {
+aemet_valid_date_rank <- function(date_chr, today = as.Date(format(Sys.time(), tz = "Europe/Madrid", format = "%Y-%m-%d"))) {
   d <- suppressWarnings(as.Date(date_chr))
   if (is.na(d)) return(999999L)
   if (!is.na(d) && d == today) return(0L)
@@ -300,7 +317,7 @@ first_overview_value <- function(data, field) {
 
 freshness_config_json <- jsonlite::toJSON(
   list(
-    site_generated_at_utc = format(Sys.time(), tz = "UTC", format = "%Y-%m-%dT%H:%M:%SZ"),
+    site_generated_at_utc = as.character(site_build$generated_at_utc %||% format(Sys.time(), tz = "UTC", format = "%Y-%m-%dT%H:%M:%SZ")),
     aemet_issue_date = latest_layer_value(layers_data, "issue_date"),
     firms_latest_detection_utc = first_overview_value(overview_data, "ultima_deteccion_utc"),
     firms_generated_at_utc = first_overview_value(overview_data, "generated_at_utc"),
@@ -562,6 +579,7 @@ function(el, x) {
   const effisBurntAreas = __EFFIS_BA_CONFIG__;
   const freshness = __FRESHNESS_CONFIG__;
   const territorial = __TERRITORIAL_DATA__;
+  const siteBuild = __SITE_BUILD__;
   const map = this;
 
   if (map.createPane && !map.getPane('aemetPane')) {
@@ -584,6 +602,30 @@ function(el, x) {
   const adminLayersByKey = new Map();
   const aemetImageCache = new Map();
   const playbackIntervalMs = 1800;
+
+  function verifyPublishedBuild() {
+    const embeddedBuildId = siteBuild && siteBuild.build_id ? String(siteBuild.build_id) : '';
+    if (!embeddedBuildId || typeof window.fetch !== 'function') return;
+
+    const manifestUrl = 'assets/site-build.json?cache_bust=' + Date.now();
+    window.fetch(manifestUrl, {cache: 'no-store'})
+      .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(remote => {
+        const remoteBuildId = remote && remote.build_id ? String(remote.build_id) : '';
+        if (!remoteBuildId || remoteBuildId === embeddedBuildId) return;
+
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('build') === remoteBuildId) return;
+        url.searchParams.set('build', remoteBuildId);
+        window.location.replace(url.toString());
+      })
+      .catch(error => {
+        console.warn('No se pudo verificar el build publicado:', error);
+      });
+  }
 
   function escapeHtml(value) {
     return String(value === null || value === undefined ? '' : value)
@@ -1494,6 +1536,7 @@ function(el, x) {
     }
   }
 
+  verifyPublishedBuild();
   attachTerritorialInteractions();
   updateFreshnessIndicator();
   window.setInterval(updateFreshnessIndicator, 60000);
@@ -1510,6 +1553,7 @@ js <- replace_js_token(js_template, "__LAYERS_JSON__", layers_json)
 js <- replace_js_token(js, "__EFFIS_BA_CONFIG__", effis_ba_config_json)
 js <- replace_js_token(js, "__FRESHNESS_CONFIG__", freshness_config_json)
 js <- replace_js_token(js, "__TERRITORIAL_DATA__", territorial_json)
+js <- replace_js_token(js, "__SITE_BUILD__", site_build_json)
 htmlwidgets::onRender(map, js)
 ```
 
@@ -1525,6 +1569,7 @@ Este visor combina:
 - **Eurostat/GISCO NUTS**: límites de CCAA y provincias para resumen territorial.
 
 ```{r}
+cat("Build:", as.character(site_build$build_id %||% "s/d"), "· Generado:", as.character(site_build$generated_at_utc %||% "s/d"), "· Manifiesto:", site_build_source, "\n")
 cat("Capas AEMET:", n_layers)
 if (n_layers > 0) {
   cat(" · Validez máxima:", last_update, "· Emisión:", latest_layer_value(layers_data, "issue_date"), "· Catálogo:", layers_source)

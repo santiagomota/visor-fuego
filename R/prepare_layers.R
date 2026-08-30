@@ -61,6 +61,15 @@ include_orphan_aemet_raw <- function() {
   tolower(Sys.getenv("AEMET_INCLUDE_ORPHAN_RAW", unset = "false")) %in% c("1", "true", "yes", "si", "sí")
 }
 
+aemet_hide_past_valid_dates <- function() {
+  tolower(trimws(Sys.getenv("AEMET_HIDE_PAST_VALID_DATES", unset = "true"))) %in%
+    c("1", "true", "yes", "y", "si", "sí", "on")
+}
+
+madrid_today <- function() {
+  as.Date(format(Sys.time(), tz = "Europe/Madrid", format = "%Y-%m-%d"))
+}
+
 clean_aemet_web_assets <- function(out_dirs = c("assets/aemet", "docs/assets/aemet")) {
   clean <- tolower(Sys.getenv("AEMET_CLEAN_WEB_ASSETS", unset = "true")) %in% c("1", "true", "yes", "si", "sí")
   if (!clean) return(invisible(FALSE))
@@ -96,7 +105,7 @@ aemet_area_display_rank <- function(area) {
   as.integer(rank)
 }
 
-valid_date_sort_rank <- function(valid_date, today = Sys.Date()) {
+valid_date_sort_rank <- function(valid_date, today = madrid_today()) {
   d <- suppressWarnings(as.Date(valid_date))
   ifelse(
     is.na(d),
@@ -880,7 +889,25 @@ prepare_layers_for_web <- function(manifest_file = "data/raw/aemet/manifest.csv"
 
   layers <- layers |>
     dplyr::mutate(
-      valid_date = dplyr::coalesce(valid_date, date),
+      valid_date = dplyr::coalesce(valid_date, date)
+    )
+
+  if (aemet_hide_past_valid_dates()) {
+    today_madrid <- madrid_today()
+    before <- nrow(layers)
+    layers <- layers |>
+      dplyr::filter(!is.na(valid_date), as.Date(valid_date) >= today_madrid)
+    removed <- before - nrow(layers)
+    if (removed > 0) {
+      message("AEMET: se omiten ", removed, " capa(s) con fecha válida anterior a ", today_madrid)
+    }
+    if (nrow(layers) == 0) {
+      stop("Todas las capas AEMET tienen fecha válida pasada; se aborta para no publicar un selector obsoleto.", call. = FALSE)
+    }
+  }
+
+  layers <- layers |>
+    dplyr::mutate(
       area_display_rank = aemet_area_display_rank(area),
       valid_date_display_rank = valid_date_sort_rank(valid_date),
       tipo_display_rank = dplyr::case_when(

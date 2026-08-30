@@ -2,8 +2,7 @@ project:
   type: website
   output-dir: docs
   resources:
-    - "assets/aemet/**"
-    - "assets/effis_ba/**"
+    - "assets/**"
   render:
     - index.qmd
     - summary.qmd
@@ -57,4 +56,4 @@ execute:
   echo: false
   warning: false
   message: false
-  freeze: auto
+  freeze: false

@@ -23,6 +23,54 @@ for (path in required_pages) {
   }
 }
 
+# Manifiesto único de build: permite detectar un render congelado aunque los
+# assets se hayan actualizado correctamente.
+site_build_source_path <- "assets/site-build.json"
+site_build_published_path <- "docs/assets/site-build.json"
+site_build <- NULL
+
+if (!file.exists(site_build_source_path) || file.info(site_build_source_path)$size <= 2) {
+  fail(paste("Manifiesto de build ausente:", site_build_source_path))
+} else {
+  site_build <- tryCatch(
+    jsonlite::fromJSON(site_build_source_path, simplifyVector = TRUE),
+    error = function(e) {
+      fail(paste("No se puede leer", site_build_source_path, ":", conditionMessage(e)))
+      NULL
+    }
+  )
+}
+
+if (!file.exists(site_build_published_path) || file.info(site_build_published_path)$size <= 2) {
+  fail(paste("Manifiesto de build no publicado por Quarto:", site_build_published_path))
+} else if (!is.null(site_build)) {
+  site_build_published <- tryCatch(
+    jsonlite::fromJSON(site_build_published_path, simplifyVector = TRUE),
+    error = function(e) {
+      fail(paste("No se puede leer", site_build_published_path, ":", conditionMessage(e)))
+      NULL
+    }
+  )
+  if (!is.null(site_build_published)) {
+    source_id <- as.character(site_build$build_id %||% "")
+    published_id <- as.character(site_build_published$build_id %||% "")
+    if (!nzchar(source_id)) fail("assets/site-build.json no contiene build_id")
+    if (!identical(source_id, published_id)) {
+      fail(paste("El manifiesto publicado no corresponde al build actual:", published_id, "!=", source_id))
+    }
+  }
+}
+
+if (!is.null(site_build)) {
+  today_madrid <- format(Sys.time(), tz = "Europe/Madrid", format = "%Y-%m-%d")
+  build_date <- as.character(site_build$generated_date_madrid %||% "")
+  require_today <- tolower(trimws(Sys.getenv("SITE_BUILD_REQUIRE_TODAY", unset = "true"))) %in%
+    c("1", "true", "yes", "y", "si", "sí", "on")
+  if (require_today && nzchar(build_date) && !identical(build_date, today_madrid)) {
+    fail(paste("El build fue generado el", build_date, "pero hoy en Madrid es", today_madrid))
+  }
+}
+
 layers_path <- "assets/aemet/layers.json"
 if (!file.exists(layers_path) || file.info(layers_path)$size <= 2) {
   fail(paste("Catálogo AEMET ausente o vacío:", layers_path))
@@ -106,6 +154,24 @@ if (!file.exists(aemet_status_path) || file.info(aemet_status_path)$size <= 2) {
     )
     if (!is.na(issue_age) && issue_age > 1L) {
       fail(paste("La emisión AEMET tiene", issue_age, "días de antigüedad; máximo operativo: 1"))
+    }
+  }
+}
+
+# En el sitio operativo no se publican fechas AEMET ya pasadas. Esto evita que
+# una emisión de ayer empiece el selector por D00 cuando ese día ya terminó.
+if (exists("layers") && is.data.frame(layers) && nrow(layers) > 0 && "valid_date" %in% names(layers)) {
+  hide_past <- tolower(trimws(Sys.getenv("AEMET_HIDE_PAST_VALID_DATES", unset = "true"))) %in%
+    c("1", "true", "yes", "y", "si", "sí", "on")
+  if (hide_past) {
+    today_madrid_date <- as.Date(format(Sys.time(), tz = "Europe/Madrid", format = "%Y-%m-%d"))
+    valid_dates <- suppressWarnings(as.Date(layers$valid_date))
+    past_layers <- !is.na(valid_dates) & valid_dates < today_madrid_date
+    if (any(past_layers)) {
+      fail(paste(
+        "El catálogo AEMET contiene fechas válidas pasadas:",
+        paste(unique(as.character(valid_dates[past_layers])), collapse = ", ")
+      ))
     }
   }
 }
@@ -232,7 +298,9 @@ if (file.exists("docs/index.html")) {
     "fire-legend-context",
     "formatMadridTimestamp",
     "validDateRelation",
-    "aemetTitle"
+    "aemetTitle",
+    "verifyPublishedBuild",
+    "assets/site-build.json"
   )
 
   missing_fragments <- required_fragments[!vapply(
@@ -262,7 +330,9 @@ if (file.exists("docs/index.html")) {
       "assets/aemet/layers.json",
       "assets/firms/firms_active_fires.csv",
       "assets/summary/dashboard_summary.csv",
-      "assets/summary/territorial_summary.json"
+      "assets/summary/territorial_summary.json",
+      "assets/site-build.json",
+      "__SITE_BUILD__"
     )
     missing_source_fragments <- source_fragments[!vapply(
       source_fragments,
@@ -304,7 +374,18 @@ if (file.exists("docs/index.html")) {
   if (grepl("__TERRITORIAL_DATA__", index_html, fixed = TRUE)) {
     fail("El token __TERRITORIAL_DATA__ no fue sustituido en docs/index.html")
   }
-
+  if (grepl("__SITE_BUILD__", index_html, fixed = TRUE)) {
+    fail("El token __SITE_BUILD__ no fue sustituido en docs/index.html")
+  }
+  if (!is.null(site_build)) {
+    expected_build_id <- as.character(site_build$build_id %||% "")
+    if (nzchar(expected_build_id) && !grepl(expected_build_id, index_html, fixed = TRUE)) {
+      fail(paste(
+        "docs/index.html no contiene el build_id actual", expected_build_id,
+        "; el render puede haberse reutilizado desde _freeze"
+      ))
+    }
+  }
 
   carto_key <- trimws(Sys.getenv("CARTO_BASEMAP_KEY", unset = ""))
   if (nzchar(carto_key)) {
@@ -402,6 +483,7 @@ if (length(failures) > 0) {
 }
 
 cat("Sitio validado correctamente.\n")
+if (!is.null(site_build)) cat("Build:", as.character(site_build$build_id %||% "s/d"), "\n")
 cat("Páginas:", length(required_pages), "\n")
 if (!is.null(territorial)) {
   cat("Territorios: CCAA=", nrow(territorial$ccaa), "; provincias=", nrow(territorial$provincias), "\n", sep = "")

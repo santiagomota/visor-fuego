@@ -31,7 +31,7 @@ admin_files <- c(
 update_admin <- is_true("UPDATE_ADMIN_BOUNDARIES", FALSE) || !all(file.exists(admin_files))
 effis_optional <- is_true("EFFIS_BA_OPTIONAL", TRUE)
 
-total <- 11L
+total <- 12L
 run_script(1, total, "Descargando capas AEMET", "scripts/01_download_aemet_incendios.R")
 run_script(2, total, "Preparando assets web AEMET", "scripts/02_prepare_web_assets.R")
 run_script(3, total, "Descargando focos activos NASA FIRMS", "scripts/05_download_firms_active_fires.R")
@@ -39,7 +39,7 @@ run_script(3, total, "Descargando focos activos NASA FIRMS", "scripts/05_downloa
 if (update_admin) {
   run_script(4, total, "Descargando límites administrativos GISCO/NUTS", "scripts/06_download_admin_boundaries.R")
 } else {
-  message("4/11 Límites administrativos ya disponibles; se omite la descarga")
+  message("4/12 Límites administrativos ya disponibles; se omite la descarga")
 }
 
 # EFFIS se actualiza antes del resumen territorial para que las superficies
@@ -51,5 +51,6 @@ run_script(8, total, "Construyendo alertas operativas", "scripts/08_build_operat
 run_script(9, total, "Actualizando histórico del dashboard", "scripts/09_update_dashboard_history.R")
 run_script(10, total, "Comprobando entradas del dashboard", "scripts/04_check_dashboard_inputs.R")
 run_script(11, total, "Validando fechas AEMET", "scripts/24_check_aemet_valid_dates.R")
+run_script(12, total, "Generando manifiesto del build publicado", "scripts/12_build_site_manifest.R")
 
-message("Pipeline v0.6.19 completado")
+message("Pipeline v0.6.20 completado")

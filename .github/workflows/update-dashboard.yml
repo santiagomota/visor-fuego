@@ -289,6 +289,7 @@ jobs:
           AEMET_CLASSIC_RETRY_SECONDS=45
           AEMET_CLASSIC_MAX_ISSUE_AGE_DAYS=1
           AEMET_REQUIRE_OFFICIAL_STYLE=true
+          AEMET_HIDE_PAST_VALID_DATES=true
           AEMET_INCLUDE_ORPHAN_RAW=false
           AEMET_CLEAN_WEB_ASSETS=true
 
@@ -327,10 +328,14 @@ jobs:
           set -euo pipefail
           Rscript scripts/99_run_all.R
 
-      - name: Renderizar sitio
+      - name: Renderizar sitio desde cero
         run: |
           set -euo pipefail
-          quarto render --execute
+          # Los datos operativos cambian sin modificar necesariamente los QMD.
+          # Eliminamos cualquier resultado congelado y el docs/ anterior para
+          # garantizar que el artefacto se construye con el snapshot actual.
+          rm -rf _freeze docs
+          quarto render
 
       - name: Validar sitio publicado
         run: |
@@ -352,6 +357,71 @@ jobs:
       - name: Desplegar GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verificar build servido por GitHub Pages
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+
+          expected=$(jq -r '.build_id // empty' assets/site-build.json)
+          if [ -z "$expected" ]; then
+            echo "::error::assets/site-build.json no contiene build_id"
+            exit 1
+          fi
+
+          if [ -z "${PAGE_URL:-}" ]; then
+            echo "::error::deploy-pages no devolvió page_url"
+            exit 1
+          fi
+
+          base="${PAGE_URL%/}"
+          echo "Build esperado: $expected"
+          echo "URL Pages: $base/"
+
+          matched=false
+          for intento in $(seq 1 18); do
+            bust="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${intento}-$(date +%s)"
+            remote_manifest=$(mktemp)
+            remote_html=$(mktemp)
+
+            manifest_ok=false
+            html_ok=false
+
+            if curl --fail --silent --show-error --location \
+              -H 'Cache-Control: no-cache, no-store, max-age=0' \
+              "$base/assets/site-build.json?build=$bust" -o "$remote_manifest"; then
+              remote=$(jq -r '.build_id // empty' "$remote_manifest" 2>/dev/null || true)
+              if [ "$remote" = "$expected" ]; then
+                manifest_ok=true
+              fi
+            fi
+
+            if curl --fail --silent --show-error --location \
+              -H 'Cache-Control: no-cache, no-store, max-age=0' \
+              "$base/index.html?build=$bust" -o "$remote_html"; then
+              if grep -Fq "$expected" "$remote_html"; then
+                html_ok=true
+              fi
+            fi
+
+            rm -f "$remote_manifest" "$remote_html"
+
+            echo "Verificación $intento: manifest=$manifest_ok html=$html_ok"
+            if [ "$manifest_ok" = "true" ] && [ "$html_ok" = "true" ]; then
+              matched=true
+              break
+            fi
+            sleep 10
+          done
+
+          if [ "$matched" != "true" ]; then
+            echo "::error::GitHub Pages no está sirviendo el build $expected tras el despliegue."
+            echo "::error::La ejecución se marca como fallida para no ocultar un HTML o un manifiesto obsoletos."
+            exit 1
+          fi
+
+          echo "GitHub Pages sirve correctamente el build $expected."
 
       - name: Guardar datos generados en Git
         env:
