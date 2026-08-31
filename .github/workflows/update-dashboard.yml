@@ -149,7 +149,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
-      - name: Preflight de fuente v0.6.29
+      - name: Preflight de fuente v0.6.30
         run: |
           set -euo pipefail
 
@@ -159,8 +159,8 @@ jobs:
           echo "SHA256 index.qmd: $(sha256sum index.qmd | awk '{print $1}')"
           echo "SHA256 sw.js: $(sha256sum sw.js | awk '{print $1}')"
 
-          if [ "$declared_version" != "0.6.29" ]; then
-            echo "::error::DESCRIPTION debe declarar Version: 0.6.29 y declara: $declared_version"
+          if [ "$declared_version" != "0.6.30" ]; then
+            echo "::error::DESCRIPTION debe declarar Version: 0.6.30 y declara: $declared_version"
             exit 1
           fi
 
@@ -174,7 +174,7 @@ jobs:
           )
           for marker in "${source_markers[@]}"; do
             if ! grep -Fqi "$marker" index.qmd; then
-              echo "::error::index.qmd no contiene la arquitectura runtime v0.6.29. Falta: $marker"
+              echo "::error::index.qmd no contiene la arquitectura runtime v0.6.30. Falta: $marker"
               exit 1
             fi
           done
@@ -189,20 +189,20 @@ jobs:
           fi
 
           cache_markers=(
-            'const VERSION = "0.6.29"'
+            'const VERSION = "0.6.30"'
             'navigator.serviceWorker.register'
             'updateViaCache: "none"'
-            'VISOR_FUEGO_SW_VERSION = "0.6.29"'
+            'VISOR_FUEGO_SW_VERSION = "0.6.30"'
             'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"'
           )
           for marker in "${cache_markers[@]}"; do
             if ! grep -Fq "$marker" browser-cache.html sw.js; then
-              echo "::error::Control de caché incoherente en v0.6.29. Falta: $marker"
+              echo "::error::Control de caché incoherente en v0.6.30. Falta: $marker"
               exit 1
             fi
           done
 
-          echo "Preflight runtime/cache v0.6.29 OK."
+          echo "Preflight runtime/cache v0.6.30 OK."
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -397,7 +397,7 @@ jobs:
           valid_min=$(jq -r '.aemet.valid_min // empty' assets/site-build.json)
 
           if [ -z "$build_id" ] || [ -z "$runtime_aemet" ] || [ -z "$expected_sha" ]; then
-            echo "::error::site-build.json no contiene el snapshot runtime v0.6.29."
+            echo "::error::site-build.json no contiene el snapshot runtime v0.6.30."
             cat assets/site-build.json
             exit 1
           fi
@@ -437,11 +437,11 @@ jobs:
             exit 1
           }
           grep -Fq "navigator.serviceWorker.register" docs/index.html || {
-            echo "::error::docs/index.html no registra el service worker v0.6.29"
+            echo "::error::docs/index.html no registra el service worker v0.6.30"
             exit 1
           }
-          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.29"' docs/sw.js || {
-            echo "::error::docs/sw.js no corresponde a v0.6.29"
+          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.30"' docs/sw.js || {
+            echo "::error::docs/sw.js no corresponde a v0.6.30"
             exit 1
           }
           grep -Fq 'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"' docs/sw.js || {
@@ -576,17 +576,17 @@ jobs:
           sw_bust="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-sw-$(date +%s)"
           remote_sw=$(mktemp)
           if curl --fail --silent --show-error --location             -H 'Cache-Control: no-cache, no-store, max-age=0'             "$base/sw.js?build=$sw_bust" -o "$remote_sw"; then
-            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.29"' "$remote_sw"; then
+            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.30"' "$remote_sw"; then
               sw_ok=true
             fi
           fi
           rm -f "$remote_sw"
           if [ "$sw_ok" != "true" ]; then
-            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.29."
+            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.30."
             exit 1
           fi
 
-          echo "GitHub Pages sirve correctamente el build $expected, su snapshot AEMET inmutable y sw.js v0.6.29."
+          echo "GitHub Pages sirve correctamente el build $expected, su snapshot AEMET inmutable y sw.js v0.6.30."
 
       - name: Guardar datos generados en Git
         env:

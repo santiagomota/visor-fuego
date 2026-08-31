@@ -155,3 +155,19 @@ Desde v0.6.13 GitHub Actions actualiza los datos, renderiza el sitio en `docs/`,
 - Elimina la validación runtime duplicada que seguía buscando la llamada antigua directa a `assets/aemet/layers.json`.
 - Evita `grep` diagnósticos capaces de abortar el workflow bajo `set -euo pipefail`.
 - Alinea `browser-cache.html`, `sw.js`, validación local y validación remota en la misma versión 0.6.29.
+
+## v0.6.30: reconciliación del estado fuente
+
+Esta versión no introduce una nueva arquitectura: consolida en un único commit los
+ficheros que habían quedado desalineados en `main`.
+
+- `index.qmd` usa obligatoriamente `loadRuntimeData()` y el snapshot inmutable
+  indicado por `assets/site-build.json`.
+- El workflow usa el preflight único compatible con `runtimePath()` y
+  `fetchJsonNoStore(aemetPath)`.
+- `_quarto.yml` publica `assets/**` y `sw.js`, incluye el bootstrap de caché y
+  mantiene `freeze: false`.
+- `sw.js` y `browser-cache.html` quedan versionados de forma coherente.
+- `R/site_build.R` genera `assets/runtime/<build_id>/` con checksums SHA-256.
+- El objetivo de esta revisión es impedir commits parciales en los que cambie la
+  versión declarada pero no `index.qmd` o el workflow.

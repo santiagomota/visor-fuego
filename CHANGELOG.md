@@ -1,3 +1,16 @@
+## [0.6.30] - 2026-08-31
+
+### Fixed
+
+- Reconcilia en un único hotfix `index.qmd`, workflow, `_quarto.yml`, service worker,
+  bootstrap de caché, `R/site_build.R` y validación.
+- Corrige el estado parcial de `main`, donde `DESCRIPTION` era 0.6.29 pero
+  `index.qmd` seguía usando `const layers = __LAYERS_JSON__` y el workflow seguía
+  buscando la llamada directa antigua a `assets/aemet/layers.json`.
+- Hace que el preflight falle inmediatamente si cualquiera de esos ficheros vuelve
+  a quedar desalineado.
+
+
 ## [0.6.29] - 2026-08-31
 
 ### Fixed
