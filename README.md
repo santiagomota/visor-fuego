@@ -1,6 +1,20 @@
 # visor-fuego
 
-> **v0.6.23:** el workflow valida inmediatamente tras el checkout que `index.qmd` contiene el runtime dinámico AEMET. Si falta, aborta antes de instalar dependencias o publicar.
+> **v0.6.24:** mantiene 04:30 y 12:30 como horas objetivo y añade tres respaldos por franja. Los respaldos consultan el `site-build.json` realmente publicado y solo ejecutan el pipeline si Pages sigue sin actualizar.
+
+
+## v0.6.24: programación redundante basada en el build publicado
+
+GitHub Actions puede retrasar o descartar eventos `schedule`. Esta versión mantiene las actualizaciones objetivo de las **04:30** y **12:30** (Europe/Madrid), pero añade respaldos a las **04:47, 05:13 y 05:41**, y a las **12:47, 13:13 y 13:41**.
+
+### Cambios principales de v0.6.24
+
+- Las ejecuciones principales siguen siendo 04:30 y 12:30.
+- Se añaden tres oportunidades de respaldo por franja para reducir la probabilidad de perder una actualización si GitHub descarta un evento programado.
+- Los respaldos ya no confían en una ejecución `success` del historial de Actions: consultan `assets/site-build.json` de GitHub Pages con `no-cache`.
+- Si Pages contiene un build generado después del objetivo de la franja, el respaldo termina en pocos segundos sin instalar R/Quarto.
+- Si Pages no está actualizado, si el manifiesto no puede leerse o si la ejecución principal no llegó a crearse, el respaldo ejecuta el pipeline completo.
+- Se conserva `concurrency` con `cancel-in-progress: false`: si una principal retrasada termina antes de un respaldo en cola, el respaldo comprobará Pages y se omitirá.
 
 
 ## v0.6.23: AEMET runtime obligatorio y sin fallback obsoleto

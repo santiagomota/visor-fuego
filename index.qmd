@@ -514,7 +514,7 @@ function(el, x) {
   // Los JSON embebidos son únicamente un respaldo para ejecución local/offline.
   // En producción, AEMET, FIRMS, el resumen territorial y el build se recargan
   // desde assets/ con cache=no-store para desacoplar los datos de index.html.
-  const embeddedLayers = []; // v0.6.23: no fallback AEMET embebido.
+  const embeddedLayers = []; // v0.6.24: no fallback AEMET embebido.
   const embeddedSiteBuild = __SITE_BUILD__;
   let layers = [];
   let freshness = __FRESHNESS_CONFIG__;

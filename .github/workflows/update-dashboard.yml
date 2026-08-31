@@ -3,11 +3,16 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
-    # Ejecuciones principales. GitHub puede retrasar o, en ocasiones, descartar
-    # eventos schedule bajo carga. Las entradas de :50 actúan como respaldo.
+    # Objetivos: 04:30 y 12:30 Europe/Madrid.
+    # GitHub puede retrasar o descartar eventos schedule; por eso se añaden
+    # tres respaldos por franja en minutos distintos y alejados del inicio de hora.
     - cron: "30 4,12 * * *"
       timezone: "Europe/Madrid"
-    - cron: "50 4,12 * * *"
+    - cron: "47 4,12 * * *"
+      timezone: "Europe/Madrid"
+    - cron: "13 5,13 * * *"
+      timezone: "Europe/Madrid"
+    - cron: "41 5,13 * * *"
       timezone: "Europe/Madrid"
 
 permissions:
@@ -37,88 +42,88 @@ jobs:
       - name: Decidir si debe ejecutarse el pipeline
         id: gate
         env:
-          GH_TOKEN: ${{ github.token }}
           EVENT_NAME: ${{ github.event_name }}
           SCHEDULE_EXPR: ${{ github.event.schedule }}
-          REPOSITORY: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
+          PAGES_BASE_URL: https://santiagomota.github.io/visor-fuego
         run: |
           set -euo pipefail
 
           madrid_now=$(TZ=Europe/Madrid date '+%Y-%m-%d %H:%M:%S %Z')
+          madrid_date=$(TZ=Europe/Madrid date '+%Y-%m-%d')
           madrid_hm=$(TZ=Europe/Madrid date '+%H:%M')
           echo "Evento: $EVENT_NAME"
           echo "Hora Madrid: $madrid_now"
           echo "Expresión schedule: ${SCHEDULE_EXPR:-manual}"
 
-          # Las ejecuciones manuales siempre deben ejecutar el pipeline.
+          # Las ejecuciones manuales siempre ejecutan el pipeline completo.
           if [ "$EVENT_NAME" != "schedule" ]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             echo "reason=ejecución manual" >> "$GITHUB_OUTPUT"
             echo "slot=manual" >> "$GITHUB_OUTPUT"
-            echo "Ejecución manual: se ejecutará el pipeline completo."
             exit 0
           fi
 
+          # La entrada principal de cada franja siempre intenta actualizar.
+          if [ "$SCHEDULE_EXPR" = "30 4,12 * * *" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "reason=ejecución principal programada" >> "$GITHUB_OUTPUT"
+            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+            echo "Ejecución principal $madrid_hm: se ejecutará el pipeline completo."
+            exit 0
+          fi
+
+          # Los respaldos se agrupan por objetivo de actualización.
           case "$SCHEDULE_EXPR" in
-            "30 4,12 * * *")
-              echo "should_run=true" >> "$GITHUB_OUTPUT"
-              echo "reason=ejecución principal programada" >> "$GITHUB_OUTPUT"
-              echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-              echo "Ejecución principal $madrid_hm: se ejecutará el pipeline completo."
-              exit 0
+            "47 4,12 * * *")
+              if [ "${madrid_hm%%:*}" -lt 10 ]; then target_hm="04:30"; else target_hm="12:30"; fi
               ;;
-            "50 4,12 * * *")
-              echo "Comprobando si existe una ejecución programada correcta reciente..."
+            "13 5,13 * * *"|"41 5,13 * * *")
+              if [ "${madrid_hm%%:*}" -lt 10 ]; then target_hm="04:30"; else target_hm="12:30"; fi
               ;;
             *)
-              # Defensa ante cambios futuros: un schedule desconocido no se descarta.
+              echo "::warning::Schedule no reconocido: $SCHEDULE_EXPR. Se ejecutará por seguridad."
               echo "should_run=true" >> "$GITHUB_OUTPUT"
               echo "reason=schedule no reconocido; ejecución por seguridad" >> "$GITHUB_OUTPUT"
               echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-              echo "::warning::Schedule no reconocido: $SCHEDULE_EXPR. Se ejecutará por seguridad."
               exit 0
               ;;
           esac
 
-          api="https://api.github.com/repos/${REPOSITORY}/actions/workflows/update-dashboard.yml/runs?event=schedule&per_page=20"
-          if ! runs_json=$(curl --fail --silent --show-error --location \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "$api"); then
-            echo "::warning::No se pudo consultar el historial de Actions; el respaldo se ejecutará por seguridad."
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            echo "reason=respaldo sin historial disponible" >> "$GITHUB_OUTPUT"
-            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          target_epoch=$(TZ=Europe/Madrid date -d "$madrid_date $target_hm:00" +%s)
+          bust=$(date -u +%s)
+          manifest=$(mktemp)
+          url="${PAGES_BASE_URL%/}/assets/site-build.json?gate=$bust"
 
-          now_epoch=$(date -u +%s)
-          # 45 minutos cubren retrasos normales de la ejecución principal.
-          # Se excluye la ejecución actual y solo cuentan runs schedule concluidos con éxito.
-          recent_success=$(printf '%s' "$runs_json" | jq \
-            --argjson now "$now_epoch" \
-            --argjson current "$RUN_ID" \
-            '[.workflow_runs[]
-              | select(.id != $current)
-              | select(.conclusion == "success")
-              | (.run_started_at // .created_at)
-              | fromdateiso8601
-              | select(($now - .) >= 0 and ($now - .) <= 2700)]
-             | length')
+          echo "Respaldo $madrid_hm para objetivo $target_hm."
+          echo "Comprobando el build realmente publicado en: $url"
 
-          if [ "$recent_success" -gt 0 ]; then
-            echo "should_run=false" >> "$GITHUB_OUTPUT"
-            echo "reason=respaldo omitido: ya existe una ejecución programada correcta en los últimos 45 minutos" >> "$GITHUB_OUTPUT"
-            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-            echo "Ejecución de respaldo $madrid_hm: ya hay una actualización programada correcta reciente; no se ejecuta el pipeline."
+          if curl --fail --silent --show-error --location \
+            --connect-timeout 10 --max-time 30 \
+            -H 'Cache-Control: no-cache, no-store, max-age=0' \
+            "$url" -o "$manifest"; then
+            published_at=$(jq -r '.generated_at_utc // empty' "$manifest" 2>/dev/null || true)
+            build_id=$(jq -r '.build_id // empty' "$manifest" 2>/dev/null || true)
           else
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            echo "reason=respaldo activado: no existe una ejecución programada correcta en los últimos 45 minutos" >> "$GITHUB_OUTPUT"
-            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-            echo "Ejecución de respaldo $madrid_hm: no existe actualización correcta reciente; ejecutando pipeline."
+            published_at=""
+            build_id=""
           fi
+
+          if [ -n "$published_at" ] && published_epoch=$(date -u -d "$published_at" +%s 2>/dev/null); then
+            echo "Build público: ${build_id:-s/d}"
+            echo "Generado UTC: $published_at"
+            if [ "$published_epoch" -ge "$target_epoch" ]; then
+              echo "should_run=false" >> "$GITHUB_OUTPUT"
+              echo "reason=respaldo omitido: Pages ya contiene un build posterior al objetivo $target_hm" >> "$GITHUB_OUTPUT"
+              echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+              echo "Pages ya está actualizado para la franja $target_hm; no se repite el pipeline."
+              exit 0
+            fi
+          fi
+
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+          echo "reason=respaldo activado: Pages no contiene un build posterior al objetivo $target_hm" >> "$GITHUB_OUTPUT"
+          echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
+          echo "::warning::La web aún no está actualizada para $target_hm; se ejecutará el pipeline completo."
 
       - name: Resumen de decisión
         run: |
@@ -144,7 +149,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
-      - name: Preflight de fuente v0.6.23
+      - name: Preflight de fuente v0.6.24
         run: |
           set -euo pipefail
           echo "Commit checkout: $(git rev-parse HEAD)"
@@ -158,7 +163,7 @@ jobs:
           )
           for marker in "${required[@]}"; do
             if ! grep -Fq "$marker" index.qmd; then
-              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.23. Falta: $marker"
+              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.24. Falta: $marker"
               echo "::error::No se instalará R ni se publicará un snapshot antiguo."
               exit 1
             fi
@@ -169,7 +174,7 @@ jobs:
           fi
           grep -n -F "async function loadRuntimeData()" index.qmd | head -1
           grep -n -F "fetchJsonNoStore('assets/aemet/layers.json')" index.qmd | head -1
-          echo "Preflight runtime v0.6.23 OK."
+          echo "Preflight runtime v0.6.24 OK."
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5

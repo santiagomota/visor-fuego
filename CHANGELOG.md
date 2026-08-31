@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.24 - programación redundante validada contra Pages
+
+- Mantiene las horas objetivo 04:30 y 12:30 en `Europe/Madrid`.
+- Añade respaldos a 04:47, 05:13 y 05:41, y a 12:47, 13:13 y 13:41.
+- Sustituye la comprobación de “workflow reciente con éxito” por una comprobación directa de `assets/site-build.json` en GitHub Pages.
+- Un respaldo solo ejecuta el pipeline pesado si el build público es anterior a la hora objetivo de su franja o no puede verificarse.
+- Reduce la dependencia de un único evento `schedule`, que GitHub puede retrasar o descartar bajo carga.
+- Actualiza el preflight y los identificadores internos a v0.6.24.
+
+
 ## v0.6.23 - Preflight de fuente y hotfix runtime verificable
 
 - Fuerza que `index.qmd` use la carga dinámica de AEMET desde `assets/aemet/layers.json`.
