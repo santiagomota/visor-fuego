@@ -3,16 +3,13 @@ name: Actualizar visor fuego
 on:
   workflow_dispatch:
   schedule:
-    # Objetivos: 04:30 y 12:30 Europe/Madrid.
-    # GitHub puede retrasar o descartar eventos schedule; por eso se añaden
-    # tres respaldos por franja en minutos distintos y alejados del inicio de hora.
+    # Objetivos de actualización: 04:30 y 12:30, siempre en hora de Madrid.
+    # Se mantienen los disparos exactos y se añade un watchdog cada 20 minutos.
+    # Si GitHub pierde o retrasa un evento, el siguiente watchdog recupera la
+    # franja pendiente comprobando el build que realmente está publicado.
     - cron: "30 4,12 * * *"
       timezone: "Europe/Madrid"
-    - cron: "47 4,12 * * *"
-      timezone: "Europe/Madrid"
-    - cron: "13 5,13 * * *"
-      timezone: "Europe/Madrid"
-    - cron: "41 5,13 * * *"
+    - cron: "7,27,47 4-23 * * *"
       timezone: "Europe/Madrid"
 
 permissions:
@@ -50,80 +47,85 @@ jobs:
 
           madrid_now=$(TZ=Europe/Madrid date '+%Y-%m-%d %H:%M:%S %Z')
           madrid_date=$(TZ=Europe/Madrid date '+%Y-%m-%d')
-          madrid_hm=$(TZ=Europe/Madrid date '+%H:%M')
+          madrid_hour=$(TZ=Europe/Madrid date '+%H')
+          madrid_minute=$(TZ=Europe/Madrid date '+%M')
+          minutes_now=$((10#$madrid_hour * 60 + 10#$madrid_minute))
+
           echo "Evento: $EVENT_NAME"
           echo "Hora Madrid: $madrid_now"
           echo "Expresión schedule: ${SCHEDULE_EXPR:-manual}"
 
-          # Las ejecuciones manuales siempre ejecutan el pipeline completo.
+          # Las ejecuciones manuales siempre hacen una actualización completa.
           if [ "$EVENT_NAME" != "schedule" ]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             echo "reason=ejecución manual" >> "$GITHUB_OUTPUT"
             echo "slot=manual" >> "$GITHUB_OUTPUT"
+            echo "Ejecución manual: se ejecutará el pipeline completo."
             exit 0
           fi
 
-          # La entrada principal de cada franja siempre intenta actualizar.
-          if [ "$SCHEDULE_EXPR" = "30 4,12 * * *" ]; then
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            echo "reason=ejecución principal programada" >> "$GITHUB_OUTPUT"
-            echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-            echo "Ejecución principal $madrid_hm: se ejecutará el pipeline completo."
+          # Antes de las 04:30 no existe ninguna franja pendiente.
+          if [ "$minutes_now" -lt 270 ]; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "reason=watchdog fuera de ventana: todavía no son las 04:30" >> "$GITHUB_OUTPUT"
+            echo "slot=sin-objetivo" >> "$GITHUB_OUTPUT"
+            echo "Todavía no existe una actualización objetivo para hoy."
             exit 0
           fi
 
-          # Los respaldos se agrupan por objetivo de actualización.
-          case "$SCHEDULE_EXPR" in
-            "47 4,12 * * *")
-              if [ "${madrid_hm%%:*}" -lt 10 ]; then target_hm="04:30"; else target_hm="12:30"; fi
-              ;;
-            "13 5,13 * * *"|"41 5,13 * * *")
-              if [ "${madrid_hm%%:*}" -lt 10 ]; then target_hm="04:30"; else target_hm="12:30"; fi
-              ;;
-            *)
-              echo "::warning::Schedule no reconocido: $SCHEDULE_EXPR. Se ejecutará por seguridad."
-              echo "should_run=true" >> "$GITHUB_OUTPUT"
-              echo "reason=schedule no reconocido; ejecución por seguridad" >> "$GITHUB_OUTPUT"
-              echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-              exit 0
-              ;;
-          esac
+          # Entre 04:30 y 12:29 exigimos el build de mañana.
+          # Desde 12:30 exigimos un segundo build posterior a las 12:30.
+          if [ "$minutes_now" -lt 750 ]; then
+            target_hm="04:30"
+            target_label="mañana"
+          else
+            target_hm="12:30"
+            target_label="mediodía"
+          fi
 
           target_epoch=$(TZ=Europe/Madrid date -d "$madrid_date $target_hm:00" +%s)
-          bust=$(date -u +%s)
+          echo "Objetivo activo: $target_label · $madrid_date $target_hm Europe/Madrid"
+          echo "Epoch objetivo: $target_epoch"
+
           manifest=$(mktemp)
+          trap 'rm -f "$manifest"' EXIT
+          bust="${GITHUB_RUN_ID:-gate}-$(date -u +%s)-$RANDOM"
           url="${PAGES_BASE_URL%/}/assets/site-build.json?gate=$bust"
 
-          echo "Respaldo $madrid_hm para objetivo $target_hm."
-          echo "Comprobando el build realmente publicado en: $url"
+          echo "Comprobando build publicado: $url"
 
           if curl --fail --silent --show-error --location \
             --connect-timeout 10 --max-time 30 \
             -H 'Cache-Control: no-cache, no-store, max-age=0' \
             "$url" -o "$manifest"; then
+
             published_at=$(jq -r '.generated_at_utc // empty' "$manifest" 2>/dev/null || true)
             build_id=$(jq -r '.build_id // empty' "$manifest" 2>/dev/null || true)
-          else
-            published_at=""
-            build_id=""
-          fi
 
-          if [ -n "$published_at" ] && published_epoch=$(date -u -d "$published_at" +%s 2>/dev/null); then
-            echo "Build público: ${build_id:-s/d}"
-            echo "Generado UTC: $published_at"
-            if [ "$published_epoch" -ge "$target_epoch" ]; then
-              echo "should_run=false" >> "$GITHUB_OUTPUT"
-              echo "reason=respaldo omitido: Pages ya contiene un build posterior al objetivo $target_hm" >> "$GITHUB_OUTPUT"
-              echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-              echo "Pages ya está actualizado para la franja $target_hm; no se repite el pipeline."
-              exit 0
+            if [ -n "$published_at" ] && \
+               published_epoch=$(date -u -d "$published_at" +%s 2>/dev/null); then
+              echo "Build público: ${build_id:-s/d}"
+              echo "Generado UTC: $published_at"
+              echo "Epoch publicado: $published_epoch"
+
+              if [ "$published_epoch" -ge "$target_epoch" ]; then
+                echo "should_run=false" >> "$GITHUB_OUTPUT"
+                echo "reason=watchdog omitido: Pages ya contiene el build de la franja $target_hm" >> "$GITHUB_OUTPUT"
+                echo "slot=$target_hm" >> "$GITHUB_OUTPUT"
+                echo "Pages ya está actualizado para $target_hm; no se ejecuta el pipeline pesado."
+                exit 0
+              fi
+            else
+              echo "::warning::site-build.json no contiene generated_at_utc interpretable."
             fi
+          else
+            echo "::warning::No se pudo consultar site-build.json; se ejecutará por seguridad."
           fi
 
           echo "should_run=true" >> "$GITHUB_OUTPUT"
-          echo "reason=respaldo activado: Pages no contiene un build posterior al objetivo $target_hm" >> "$GITHUB_OUTPUT"
-          echo "slot=$madrid_hm" >> "$GITHUB_OUTPUT"
-          echo "::warning::La web aún no está actualizada para $target_hm; se ejecutará el pipeline completo."
+          echo "reason=watchdog activado: Pages no contiene un build posterior a $target_hm" >> "$GITHUB_OUTPUT"
+          echo "slot=$target_hm" >> "$GITHUB_OUTPUT"
+          echo "::warning::La web está pendiente de la franja $target_hm; se ejecutará el pipeline completo."
 
       - name: Resumen de decisión
         run: |
@@ -149,7 +151,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
-      - name: Preflight de fuente v0.6.30
+      - name: Preflight de fuente v0.6.31
         run: |
           set -euo pipefail
 
@@ -159,7 +161,7 @@ jobs:
           echo "SHA256 index.qmd: $(sha256sum index.qmd | awk '{print $1}')"
           echo "SHA256 sw.js: $(sha256sum sw.js | awk '{print $1}')"
 
-          if [ "$declared_version" != "0.6.30" ]; then
+          if [ "$declared_version" != "0.6.31" ]; then
             echo "::error::DESCRIPTION debe declarar Version: 0.6.30 y declara: $declared_version"
             exit 1
           fi
@@ -174,7 +176,7 @@ jobs:
           )
           for marker in "${source_markers[@]}"; do
             if ! grep -Fqi "$marker" index.qmd; then
-              echo "::error::index.qmd no contiene la arquitectura runtime v0.6.30. Falta: $marker"
+              echo "::error::index.qmd no contiene la arquitectura runtime v0.6.31. Falta: $marker"
               exit 1
             fi
           done
@@ -189,20 +191,20 @@ jobs:
           fi
 
           cache_markers=(
-            'const VERSION = "0.6.30"'
+            'const VERSION = "0.6.31"'
             'navigator.serviceWorker.register'
             'updateViaCache: "none"'
-            'VISOR_FUEGO_SW_VERSION = "0.6.30"'
+            'VISOR_FUEGO_SW_VERSION = "0.6.31"'
             'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"'
           )
           for marker in "${cache_markers[@]}"; do
             if ! grep -Fq "$marker" browser-cache.html sw.js; then
-              echo "::error::Control de caché incoherente en v0.6.30. Falta: $marker"
+              echo "::error::Control de caché incoherente en v0.6.31. Falta: $marker"
               exit 1
             fi
           done
 
-          echo "Preflight runtime/cache v0.6.30 OK."
+          echo "Preflight runtime/cache v0.6.31 OK."
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -397,7 +399,7 @@ jobs:
           valid_min=$(jq -r '.aemet.valid_min // empty' assets/site-build.json)
 
           if [ -z "$build_id" ] || [ -z "$runtime_aemet" ] || [ -z "$expected_sha" ]; then
-            echo "::error::site-build.json no contiene el snapshot runtime v0.6.30."
+            echo "::error::site-build.json no contiene el snapshot runtime v0.6.31."
             cat assets/site-build.json
             exit 1
           fi
@@ -437,11 +439,11 @@ jobs:
             exit 1
           }
           grep -Fq "navigator.serviceWorker.register" docs/index.html || {
-            echo "::error::docs/index.html no registra el service worker v0.6.30"
+            echo "::error::docs/index.html no registra el service worker v0.6.31"
             exit 1
           }
-          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.30"' docs/sw.js || {
-            echo "::error::docs/sw.js no corresponde a v0.6.30"
+          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.31"' docs/sw.js || {
+            echo "::error::docs/sw.js no corresponde a v0.6.31"
             exit 1
           }
           grep -Fq 'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"' docs/sw.js || {
@@ -576,17 +578,17 @@ jobs:
           sw_bust="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-sw-$(date +%s)"
           remote_sw=$(mktemp)
           if curl --fail --silent --show-error --location             -H 'Cache-Control: no-cache, no-store, max-age=0'             "$base/sw.js?build=$sw_bust" -o "$remote_sw"; then
-            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.30"' "$remote_sw"; then
+            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.31"' "$remote_sw"; then
               sw_ok=true
             fi
           fi
           rm -f "$remote_sw"
           if [ "$sw_ok" != "true" ]; then
-            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.30."
+            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.31."
             exit 1
           fi
 
-          echo "GitHub Pages sirve correctamente el build $expected, su snapshot AEMET inmutable y sw.js v0.6.30."
+          echo "GitHub Pages sirve correctamente el build $expected, su snapshot AEMET inmutable y sw.js v0.6.31."
 
       - name: Guardar datos generados en Git
         env:

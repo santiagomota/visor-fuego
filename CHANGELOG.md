@@ -1,3 +1,15 @@
+## [0.6.31] - 2026-08-31
+
+### Changed
+
+- Mantiene 04:30 y 12:30 (`Europe/Madrid`) como horas objetivo de actualización.
+- Añade un watchdog cada 20 minutos (`07`, `27`, `47`) entre las 04:00 y las 23:59.
+- El gate deja de basarse en el historial de ejecuciones de Actions y consulta directamente `assets/site-build.json` de GitHub Pages.
+- Entre 04:30 y 12:29 exige un build posterior a las 04:30; desde 12:30 exige un build posterior a las 12:30.
+- Si Pages ya está actualizado, el watchdog termina sin instalar R/Quarto ni ejecutar el pipeline pesado.
+- Si GitHub descarta un evento programado, falla la consulta del manifiesto o el build sigue atrasado, el siguiente watchdog ejecuta la actualización.
+
+
 ## [0.6.30] - 2026-08-31
 
 ### Fixed

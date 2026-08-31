@@ -1,4 +1,4 @@
-const VISOR_FUEGO_SW_VERSION = "0.6.30";
+const VISOR_FUEGO_SW_VERSION = "0.6.31";
 const VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/";
 
 self.addEventListener("install", (event) => {

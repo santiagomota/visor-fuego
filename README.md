@@ -171,3 +171,21 @@ ficheros que habían quedado desalineados en `main`.
 - `R/site_build.R` genera `assets/runtime/<build_id>/` con checksums SHA-256.
 - El objetivo de esta revisión es impedir commits parciales en los que cambie la
   versión declarada pero no `index.qmd` o el workflow.
+
+
+## v0.6.31: watchdog de actualización programada
+
+Las horas objetivo siguen siendo **04:30** y **12:30** (`Europe/Madrid`).
+Además del disparo exacto, GitHub Actions crea un watchdog ligero cada 20 minutos
+entre las 04:00 y las 23:59.
+
+El watchdog consulta `assets/site-build.json` de la web pública:
+
+- de 04:30 a 12:29 exige un build generado después de las 04:30;
+- desde 12:30 exige un segundo build generado después de las 12:30;
+- si el build ya existe, termina en pocos segundos;
+- si falta, está atrasado o no puede consultar Pages, ejecuta el pipeline completo;
+- las ejecuciones manuales siempre ejecutan el pipeline.
+
+Así la actualización ya no depende de que GitHub cree exactamente uno o dos
+eventos `schedule` concretos.
