@@ -1,3 +1,15 @@
+## [0.6.28] - 2026-08-31
+
+### Fixed
+
+- Publica un snapshot runtime inmutable por `build_id` bajo `assets/runtime/<build_id>/`.
+- El navegador carga primero `site-build.json` y después AEMET/FIRMS/alertas/resumen desde rutas únicas del build.
+- Evita depender de `assets/aemet/layers.json` como URL runtime cacheable.
+- Añade SHA-256 al manifiesto para cada recurso runtime.
+- El workflow valida el checksum local y remoto del catálogo AEMET inmutable.
+- El despliegue falla si Pages mezcla un manifiesto nuevo con un catálogo AEMET antiguo.
+
+
 ## [0.6.27] - 2026-08-31
 
 ### Fixed

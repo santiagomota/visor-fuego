@@ -30,8 +30,8 @@ if (!file.exists("docs/sw.js") || file.info("docs/sw.js")$size <= 0) {
   fail("Service worker no publicado: docs/sw.js")
 } else {
   sw_text <- paste(readLines("docs/sw.js", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
-  if (!grepl('VISOR_FUEGO_SW_VERSION = "0.6.27"', sw_text, fixed = TRUE)) {
-    fail("docs/sw.js no corresponde a v0.6.27")
+  if (!grepl('VISOR_FUEGO_SW_VERSION = "0.6.28"', sw_text, fixed = TRUE)) {
+    fail("docs/sw.js no corresponde a v0.6.28")
   }
   if (!grepl('VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"', sw_text, fixed = TRUE)) {
     fail("docs/sw.js no usa el scope absoluto /visor-fuego/")
@@ -544,3 +544,46 @@ if (!is.null(territorial)) {
   cat("Territorios: CCAA=", nrow(territorial$ccaa), "; provincias=", nrow(territorial$provincias), "\n", sep = "")
 }
 if (!is.na(index_size_mb)) cat(sprintf("Tamaño docs/index.html: %.2f MB\n", index_size_mb))
+
+
+# v0.6.28: snapshot runtime inmutable por build.
+manifest_path <- "docs/assets/site-build.json"
+if (!file.exists(manifest_path) || file.info(manifest_path)$size <= 2) {
+  fail("No existe docs/assets/site-build.json para validar el runtime inmutable.")
+} else {
+  manifest_runtime <- tryCatch(
+    jsonlite::fromJSON(manifest_path, simplifyVector = FALSE),
+    error = function(e) NULL
+  )
+
+  runtime_path <- tryCatch(
+    as.character(manifest_runtime$runtime$paths$aemet_layers),
+    error = function(e) ""
+  )
+  runtime_sha <- tryCatch(
+    as.character(manifest_runtime$runtime$sha256$aemet_layers),
+    error = function(e) ""
+  )
+
+  if (!nzchar(runtime_path) || !nzchar(runtime_sha)) {
+    fail("site-build.json no contiene runtime.paths/sha256.aemet_layers.")
+  } else {
+    published_runtime <- file.path("docs", runtime_path)
+    if (!file.exists(published_runtime) || file.info(published_runtime)$size <= 2) {
+      fail(paste("Falta el catálogo AEMET runtime inmutable:", published_runtime))
+    } else if (requireNamespace("digest", quietly = TRUE)) {
+      actual_sha <- unname(digest::digest(
+        file = published_runtime,
+        algo = "sha256",
+        serialize = FALSE
+      ))
+      if (!identical(actual_sha, runtime_sha)) {
+        fail(paste(
+          "Checksum AEMET runtime incorrecto:",
+          "esperado", runtime_sha,
+          "actual", actual_sha
+        ))
+      }
+    }
+  }
+}

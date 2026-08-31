@@ -789,21 +789,41 @@ function(el, x) {
     }
   }
 
+  function runtimePath(key, fallback) {
+    const runtime = siteBuild && siteBuild.runtime ? siteBuild.runtime : null;
+    const paths = runtime && runtime.paths ? runtime.paths : null;
+    const value = paths && paths[key] ? String(paths[key]) : '';
+    return value || String(fallback || '');
+  }
+
   async function loadRuntimeData() {
-    setRuntimeSourceStatus('Cargando datos actuales desde assets/…', 'loading');
+    setRuntimeSourceStatus('Cargando manifiesto del build actual…', 'loading');
 
-    const buildTask = fetchJsonNoStore('assets/site-build.json')
-      .then(remote => {
-        applyRuntimeSiteBuild(remote);
-        return true;
-      })
-      .catch(error => {
-        runtimeLoadState.build = 'fallback';
-        console.warn('No se pudo cargar site-build.json en vivo:', error);
-        return false;
-      });
+    // El manifiesto se carga primero. A partir de él usamos rutas inmutables
+    // específicas del build; nunca pedimos primero un JSON genérico que pueda
+    // estar retenido por una caché intermedia.
+    try {
+      const remoteBuild = await fetchJsonNoStore('assets/site-build.json');
+      applyRuntimeSiteBuild(remoteBuild);
+    } catch (error) {
+      runtimeLoadState.build = 'error';
+      console.error('No se pudo cargar site-build.json en vivo:', error);
+      setRuntimeSourceStatus('No se pudo obtener el build actual · reintenta la carga', 'error');
+      return;
+    }
 
-    const aemetTask = fetchJsonNoStore('assets/aemet/layers.json')
+    const aemetPath = runtimePath('aemet_layers', 'assets/aemet/layers.json');
+    const firmsGeoPath = runtimePath('firms_geojson', 'assets/firms/firms_active_fires.geojson');
+    const firmsStatusPath = runtimePath('firms_status', 'assets/firms/status.json');
+    const alertsPath = runtimePath('alerts_geojson', 'assets/alerts/operational_alerts.geojson');
+    const territorialPath = runtimePath('territorial_summary', 'assets/summary/territorial_summary.json');
+
+    setRuntimeSourceStatus(
+      'Build ' + String(siteBuild.build_id || 's/d') + ' · cargando snapshot runtime…',
+      'loading'
+    );
+
+    const aemetTask = fetchJsonNoStore(aemetPath)
       .then(remote => {
         applyRuntimeAemetLayers(remote, 'live');
         return true;
@@ -824,8 +844,8 @@ function(el, x) {
       });
 
     const firmsTask = Promise.all([
-      fetchJsonNoStore('assets/firms/firms_active_fires.geojson'),
-      fetchJsonNoStore('assets/firms/status.json')
+      fetchJsonNoStore(firmsGeoPath),
+      fetchJsonNoStore(firmsStatusPath)
     ]).then(values => {
       const count = applyRuntimeFirmsGeoJson(values[0]);
       applyRuntimeFirmsStatus(values[1]);
@@ -836,7 +856,7 @@ function(el, x) {
       return null;
     });
 
-    const alertsTask = fetchJsonNoStore('assets/alerts/operational_alerts.geojson')
+    const alertsTask = fetchJsonNoStore(alertsPath)
       .then(remote => applyRuntimeAlertsGeoJson(remote))
       .catch(error => {
         runtimeLoadState.alerts = 'fallback';
@@ -844,7 +864,7 @@ function(el, x) {
         return null;
       });
 
-    const territorialTask = fetchJsonNoStore('assets/summary/territorial_summary.json')
+    const territorialTask = fetchJsonNoStore(territorialPath)
       .then(remote => {
         applyRuntimeTerritorial(remote);
         return true;
@@ -855,12 +875,12 @@ function(el, x) {
         return false;
       });
 
-    await Promise.allSettled([buildTask, aemetTask, firmsTask, alertsTask, territorialTask]);
+    await Promise.allSettled([aemetTask, firmsTask, alertsTask, territorialTask]);
     updateFreshnessIndicator();
 
     const liveCount = Object.values(runtimeLoadState).filter(value => value === 'live').length;
     if (runtimeLoadState.aemet === 'live' && runtimeLoadState.firms === 'live') {
-      setRuntimeSourceStatus('Datos operativos cargados en vivo · ' + liveCount + '/5 fuentes dinámicas', 'fresh');
+      setRuntimeSourceStatus('Snapshot runtime inmutable cargado · ' + liveCount + '/5 fuentes dinámicas', 'fresh');
     } else {
       setRuntimeSourceStatus('Datos cargados con algún respaldo local · revisa Actualidad de datos', 'warning');
     }

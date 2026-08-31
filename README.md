@@ -172,3 +172,15 @@ scope `/visor-fuego/`). Tras una navegación de bootstrap versionada, la URL
 se limpia con `history.replaceState()` sin volver a solicitar la raíz cacheada.
 Las navegaciones posteriores se sirven con estrategia network-first y
 cache-busting desde el worker.
+
+
+### Snapshot runtime inmutable (v0.6.28)
+
+Cada build genera un directorio único `assets/runtime/<build_id>/` con una copia
+inmutable del catálogo AEMET, FIRMS, alertas y resumen territorial. El navegador
+carga primero `assets/site-build.json` y después las rutas únicas declaradas por
+ese manifiesto. Esto evita que una caché de GitHub Pages/CDN pueda mezclar un
+`site-build.json` nuevo con un `layers.json` antiguo.
+
+El workflow compara además el SHA-256 del catálogo AEMET publicado con el
+snapshot generado localmente antes de declarar el despliegue correcto.

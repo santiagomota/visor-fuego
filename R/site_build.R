@@ -12,6 +12,73 @@ current_madrid_date <- function() {
   as.Date(format(Sys.time(), tz = "Europe/Madrid", format = "%Y-%m-%d"))
 }
 
+sha256_file <- function(path) {
+  if (!file.exists(path) || file.info(path)$size <= 0) return(NA_character_)
+  if (!requireNamespace("digest", quietly = TRUE)) {
+    stop("Se necesita el paquete digest para generar checksums SHA-256.", call. = FALSE)
+  }
+  unname(digest::digest(file = path, algo = "sha256", serialize = FALSE))
+}
+
+runtime_snapshot_sources <- function() {
+  c(
+    aemet_layers = "assets/aemet/layers.json",
+    firms_geojson = "assets/firms/firms_active_fires.geojson",
+    firms_status = "assets/firms/status.json",
+    alerts_geojson = "assets/alerts/operational_alerts.geojson",
+    territorial_summary = "assets/summary/territorial_summary.json"
+  )
+}
+
+runtime_snapshot_names <- function() {
+  c(
+    aemet_layers = "aemet-layers.json",
+    firms_geojson = "firms-active-fires.geojson",
+    firms_status = "firms-status.json",
+    alerts_geojson = "operational-alerts.geojson",
+    territorial_summary = "territorial-summary.json"
+  )
+}
+
+write_runtime_snapshot <- function(build_id) {
+  sources <- runtime_snapshot_sources()
+  names_out <- runtime_snapshot_names()
+
+  runtime_root <- file.path("assets", "runtime")
+  runtime_dir <- file.path(runtime_root, build_id)
+
+  # Cada ejecución publica un único snapshot inmutable. Los anteriores se
+  # eliminan del árbol de trabajo para no hacer crecer el repositorio.
+  if (dir.exists(runtime_root)) {
+    unlink(runtime_root, recursive = TRUE, force = TRUE)
+  }
+  fs::dir_create(runtime_dir)
+
+  paths <- list()
+  checksums <- list()
+
+  for (key in names(sources)) {
+    src <- unname(sources[[key]])
+    if (!file.exists(src) || file.info(src)$size <= 0) {
+      stop("Falta el recurso runtime requerido: ", src, call. = FALSE)
+    }
+
+    dst <- file.path(runtime_dir, unname(names_out[[key]]))
+    fs::file_copy(src, dst, overwrite = TRUE)
+
+    # Las rutas del manifiesto son relativas a la raíz del sitio.
+    rel <- gsub("\\\\", "/", dst)
+    paths[[key]] <- rel
+    checksums[[key]] <- sha256_file(dst)
+  }
+
+  list(
+    root = gsub("\\\\", "/", runtime_dir),
+    paths = paths,
+    sha256 = checksums
+  )
+}
+
 site_build_payload <- function() {
   layers <- read_json_if_exists("assets/aemet/layers.json", data.frame())
   aemet_status <- read_json_if_exists("assets/aemet/status.json", list())
@@ -63,6 +130,8 @@ site_build_payload <- function() {
 
 write_site_build_manifest <- function(path = "assets/site-build.json") {
   payload <- site_build_payload()
+  payload$runtime <- write_runtime_snapshot(payload$build_id)
+
   fs::dir_create(dirname(path))
   jsonlite::write_json(
     payload,
@@ -72,11 +141,15 @@ write_site_build_manifest <- function(path = "assets/site-build.json") {
     null = "null",
     na = "null"
   )
+
   message("Build del sitio: ", payload$build_id)
   message(
     "AEMET válido ", payload$aemet$valid_min %||% "s/d", " .. ", payload$aemet$valid_max %||% "s/d",
     " · emisión ", payload$aemet$issue_date %||% "s/d",
     " · FIRMS ", payload$firms$n_detections %||% "s/d"
   )
+  message("Snapshot runtime: ", payload$runtime$root)
+  message("SHA256 AEMET runtime: ", payload$runtime$sha256$aemet_layers)
+
   invisible(payload)
 }

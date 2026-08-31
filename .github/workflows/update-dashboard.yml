@@ -149,7 +149,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
-      - name: Preflight de fuente v0.6.27
+      - name: Preflight de fuente v0.6.28
         run: |
           set -euo pipefail
           echo "Commit checkout: $(git rev-parse HEAD)"
@@ -163,19 +163,20 @@ jobs:
           )
           for marker in "${cache_required[@]}"; do
             if ! grep -Fq "$marker" browser-cache.html sw.js; then
-              echo "::error::Falta el control de caché v0.6.27: $marker"
+              echo "::error::Falta el control de caché v0.6.28: $marker"
               exit 1
             fi
           done
           required=(
             "async function loadRuntimeData()"
-            "fetchJsonNoStore('assets/aemet/layers.json')"
+            "function runtimePath(key, fallback)"
+            "await fetchJsonNoStore('assets/site-build.json')"
             "cache: 'no-store'"
             "Cargando datos actuales"
           )
           for marker in "${required[@]}"; do
             if ! grep -Fq "$marker" index.qmd; then
-              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.27. Falta: $marker"
+              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.28. Falta: $marker"
               echo "::error::No se instalará R ni se publicará un snapshot antiguo."
               exit 1
             fi
@@ -186,7 +187,7 @@ jobs:
           fi
           grep -n -F "async function loadRuntimeData()" index.qmd | head -1
           grep -n -F "fetchJsonNoStore('assets/aemet/layers.json')" index.qmd | head -1
-          echo "Preflight runtime v0.6.27 OK."
+          echo "Preflight runtime v0.6.28 OK."
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -397,6 +398,41 @@ jobs:
           set -euo pipefail
           Rscript scripts/99_run_all.R
 
+      - name: Validar snapshot runtime inmutable
+        run: |
+          set -euo pipefail
+          build_id=$(jq -r '.build_id // empty' assets/site-build.json)
+          runtime_aemet=$(jq -r '.runtime.paths.aemet_layers // empty' assets/site-build.json)
+          expected_sha=$(jq -r '.runtime.sha256.aemet_layers // empty' assets/site-build.json)
+          valid_min=$(jq -r '.aemet.valid_min // empty' assets/site-build.json)
+
+          if [ -z "$build_id" ] || [ -z "$runtime_aemet" ] || [ -z "$expected_sha" ]; then
+            echo "::error::site-build.json no contiene el snapshot runtime v0.6.28."
+            cat assets/site-build.json
+            exit 1
+          fi
+          test -s "$runtime_aemet" || {
+            echo "::error::No existe el catálogo AEMET inmutable: $runtime_aemet"
+            exit 1
+          }
+
+          actual_sha=$(sha256sum "$runtime_aemet" | awk '{print $1}')
+          if [ "$actual_sha" != "$expected_sha" ]; then
+            echo "::error::Checksum AEMET runtime incoherente: esperado=$expected_sha actual=$actual_sha"
+            exit 1
+          fi
+
+          first_valid=$(jq -r '.[0].valid_date // .[0].date // empty' "$runtime_aemet")
+          echo "Build runtime: $build_id"
+          echo "AEMET runtime: $runtime_aemet"
+          echo "SHA256: $actual_sha"
+          echo "Primer válido: $first_valid · manifiesto valid_min: $valid_min"
+
+          if [ -n "$valid_min" ] && [ "$first_valid" != "$valid_min" ]; then
+            echo "::error::El primer día del catálogo runtime ($first_valid) no coincide con valid_min ($valid_min)."
+            exit 1
+          fi
+
       - name: Renderizar sitio desde cero
         run: |
           set -euo pipefail
@@ -411,11 +447,11 @@ jobs:
             exit 1
           }
           grep -Fq "navigator.serviceWorker.register" docs/index.html || {
-            echo "::error::docs/index.html no registra el service worker v0.6.27"
+            echo "::error::docs/index.html no registra el service worker v0.6.28"
             exit 1
           }
-          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.27"' docs/sw.js || {
-            echo "::error::docs/sw.js no corresponde a v0.6.27"
+          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.28"' docs/sw.js || {
+            echo "::error::docs/sw.js no corresponde a v0.6.28"
             exit 1
           }
           grep -Fq 'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"' docs/sw.js || {
@@ -431,7 +467,7 @@ jobs:
             echo "::error::El HTML renderizado no contiene el basemap CARTO. Revisa CARTO_BASEMAP_KEY."
             exit 1
           fi
-          for marker in "loadRuntimeData" "assets/aemet/layers.json" "runtime-source-status"; do
+          for marker in "loadRuntimeData" "runtimePath" "assets/site-build.json" "runtime-source-status"; do
             if ! grep -Fq "$marker" docs/index.html; then
               echo "::error::docs/index.html no contiene el runtime dinámico esperado: $marker"
               exit 1
@@ -514,21 +550,53 @@ jobs:
             exit 1
           fi
 
+          # Verificar también el catálogo AEMET inmutable usado por este build.
+          runtime_aemet=$(jq -r '.runtime.paths.aemet_layers // empty' assets/site-build.json)
+          runtime_sha=$(jq -r '.runtime.sha256.aemet_layers // empty' assets/site-build.json)
+          if [ -z "$runtime_aemet" ] || [ -z "$runtime_sha" ]; then
+            echo "::error::El manifiesto local no contiene runtime AEMET."
+            exit 1
+          fi
+
+          runtime_ok=false
+          for intento in $(seq 1 12); do
+            runtime_bust="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-runtime-${intento}-$(date +%s)"
+            remote_runtime=$(mktemp)
+            if curl --fail --silent --show-error --location \
+              -H 'Cache-Control: no-cache, no-store, max-age=0' \
+              "$base/$runtime_aemet?build=$runtime_bust" -o "$remote_runtime"; then
+              remote_sha=$(sha256sum "$remote_runtime" | awk '{print $1}')
+              echo "Runtime AEMET público intento $intento: $remote_sha"
+              if [ "$remote_sha" = "$runtime_sha" ]; then
+                runtime_ok=true
+                rm -f "$remote_runtime"
+                break
+              fi
+            fi
+            rm -f "$remote_runtime"
+            sleep 5
+          done
+          if [ "$runtime_ok" != "true" ]; then
+            echo "::error::Pages no sirve el catálogo AEMET inmutable del build $expected."
+            echo "::error::Ruta: $runtime_aemet · SHA esperado: $runtime_sha"
+            exit 1
+          fi
+
           sw_ok=false
           sw_bust="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-sw-$(date +%s)"
           remote_sw=$(mktemp)
           if curl --fail --silent --show-error --location             -H 'Cache-Control: no-cache, no-store, max-age=0'             "$base/sw.js?build=$sw_bust" -o "$remote_sw"; then
-            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.27"' "$remote_sw"; then
+            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.28"' "$remote_sw"; then
               sw_ok=true
             fi
           fi
           rm -f "$remote_sw"
           if [ "$sw_ok" != "true" ]; then
-            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.27."
+            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.28."
             exit 1
           fi
 
-          echo "GitHub Pages sirve correctamente el build $expected y sw.js v0.6.27."
+          echo "GitHub Pages sirve correctamente el build $expected, su snapshot AEMET inmutable y sw.js v0.6.28."
 
       - name: Guardar datos generados en Git
         env:
