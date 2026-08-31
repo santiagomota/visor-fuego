@@ -1,13 +1,13 @@
 # visor-fuego
 
-> **v0.6.24:** mantiene 04:30 y 12:30 como horas objetivo y añade tres respaldos por franja. Los respaldos consultan el `site-build.json` realmente publicado y solo ejecutan el pipeline si Pages sigue sin actualizar.
+> **v0.6.25:** mantiene 04:30 y 12:30 como horas objetivo y añade tres respaldos por franja. Los respaldos consultan el `site-build.json` realmente publicado y solo ejecutan el pipeline si Pages sigue sin actualizar.
 
 
-## v0.6.24: programación redundante basada en el build publicado
+## v0.6.25: programación redundante basada en el build publicado
 
 GitHub Actions puede retrasar o descartar eventos `schedule`. Esta versión mantiene las actualizaciones objetivo de las **04:30** y **12:30** (Europe/Madrid), pero añade respaldos a las **04:47, 05:13 y 05:41**, y a las **12:47, 13:13 y 13:41**.
 
-### Cambios principales de v0.6.24
+### Cambios principales de v0.6.25
 
 - Las ejecuciones principales siguen siendo 04:30 y 12:30.
 - Se añaden tres oportunidades de respaldo por franja para reducir la probabilidad de perder una actualización si GitHub descarta un evento programado.
@@ -147,3 +147,13 @@ Crea un secret del repositorio llamado `CARTO_BASEMAP_KEY` en **Settings → Sec
 ### Publicación
 
 Desde v0.6.13 GitHub Actions actualiza los datos, renderiza el sitio en `docs/`, valida los recursos y despliega directamente el artefacto mediante `actions/upload-pages-artifact` y `actions/deploy-pages`. En **Settings → Pages → Build and deployment**, la fuente debe ser **GitHub Actions**. Los commits automáticos mantienen `data/processed` y `assets`, pero no `docs/`.
+
+
+### Caché del navegador (v0.6.25)
+
+El visor registra `sw.js` con estrategia **network-first** para las navegaciones y los
+JSON/GeoJSON/CSV operativos. Esto evita que Chrome/Edge reutilicen un `index.html`
+antiguo después de un despliegue de GitHub Pages. Tras desplegar v0.6.25 puede ser
+necesaria una única apertura con una URL versionada para instalar el service worker;
+a partir de entonces la URL normal queda controlada por el navegador.
+

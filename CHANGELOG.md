@@ -1,3 +1,14 @@
+## [0.6.25] - 2026-08-31
+
+### Fixed
+
+- Añade un service worker `network-first` para impedir que Chrome/Edge sigan sirviendo un `index.html` antiguo tras un despliegue de GitHub Pages.
+- Fuerza `cache-busting` para navegaciones y datos runtime (`JSON`, `GeoJSON`, `CSV`).
+- Registra el service worker con `updateViaCache: "none"` y activa inmediatamente nuevas versiones con `skipWaiting()` + `clients.claim()`.
+- El workflow valida antes y después del despliegue que `index.qmd` conserva la arquitectura runtime dinámica y que Pages sirve `sw.js` v0.6.25.
+- El paquete de actualización se limita a los ficheros necesarios para evitar sobrescribir accidentalmente código o datos no relacionados.
+
+
 # Changelog
 
 ## v0.6.24 - programación redundante validada contra Pages

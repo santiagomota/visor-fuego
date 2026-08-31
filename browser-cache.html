@@ -1,0 +1,31 @@
+<script>
+(function () {
+  const VERSION = "0.6.25";
+  if (!("serviceWorker" in navigator)) return;
+
+  let controllerReloaded = false;
+
+  navigator.serviceWorker.addEventListener("controllerchange", function () {
+    if (controllerReloaded) return;
+    const key = "visor-fuego-sw-controller-" + VERSION;
+    if (sessionStorage.getItem(key) === "1") return;
+    controllerReloaded = true;
+    sessionStorage.setItem(key, "1");
+    const url = new URL(window.location.href);
+    url.searchParams.set("_vf_sw", VERSION + "-" + Date.now());
+    window.location.replace(url.toString());
+  });
+
+  window.addEventListener("load", async function () {
+    try {
+      const registration = await navigator.serviceWorker.register(
+        "./sw.js?v=" + encodeURIComponent(VERSION),
+        { scope: "./", updateViaCache: "none" }
+      );
+      await registration.update();
+    } catch (error) {
+      console.warn("No se pudo activar el control de caché del visor:", error);
+    }
+  });
+})();
+</script>

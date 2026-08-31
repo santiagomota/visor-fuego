@@ -23,6 +23,28 @@ for (path in required_pages) {
   }
 }
 
+# Control de caché del navegador: GitHub Pages no permite definir Cache-Control
+# por fichero, por lo que usamos un service worker network-first para navegación
+# y datos runtime.
+if (!file.exists("docs/sw.js") || file.info("docs/sw.js")$size <= 0) {
+  fail("Service worker no publicado: docs/sw.js")
+} else {
+  sw_text <- paste(readLines("docs/sw.js", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  if (!grepl('VISOR_FUEGO_SW_VERSION = "0.6.25"', sw_text, fixed = TRUE)) {
+    fail("docs/sw.js no corresponde a v0.6.25")
+  }
+}
+
+if (file.exists("docs/index.html")) {
+  index_text_cache <- paste(readLines("docs/index.html", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  if (!grepl("navigator.serviceWorker.register", index_text_cache, fixed = TRUE)) {
+    fail("docs/index.html no registra el service worker")
+  }
+  if (!grepl("updateViaCache", index_text_cache, fixed = TRUE)) {
+    fail("docs/index.html no desactiva la caché del script del service worker")
+  }
+}
+
 # Manifiesto único de build: permite detectar un render congelado aunque los
 # assets se hayan actualizado correctamente.
 site_build_source_path <- "assets/site-build.json"
