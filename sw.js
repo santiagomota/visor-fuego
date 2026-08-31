@@ -1,4 +1,5 @@
-const VISOR_FUEGO_SW_VERSION = "0.6.25";
+const VISOR_FUEGO_SW_VERSION = "0.6.26";
+const VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(self.skipWaiting());
@@ -12,14 +13,26 @@ self.addEventListener("activate", (event) => {
         .filter((key) => key.startsWith("visor-fuego-"))
         .map((key) => caches.delete(key))
     );
+
+    // Permite que el worker controle inmediatamente pestañas ya abiertas.
     await self.clients.claim();
   })());
 });
 
 function cacheBustedUrl(input) {
   const url = new URL(input);
-  url.searchParams.set("_vf_sw", VISOR_FUEGO_SW_VERSION + "-" + Date.now());
+  url.searchParams.set(
+    "_vf_sw",
+    VISOR_FUEGO_SW_VERSION + "-" + Date.now()
+  );
   return url.toString();
+}
+
+function isInsideVisor(url) {
+  return (
+    url.origin === self.location.origin &&
+    url.pathname.startsWith(VISOR_FUEGO_SCOPE_PATH)
+  );
 }
 
 self.addEventListener("fetch", (event) => {
@@ -27,7 +40,7 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
+  if (!isInsideVisor(url)) return;
 
   const isNavigation =
     request.mode === "navigate" ||
@@ -40,14 +53,27 @@ self.addEventListener("fetch", (event) => {
   if (!isNavigation && !isRuntimeAsset) return;
 
   event.respondWith((async () => {
+    const busted = cacheBustedUrl(url.toString());
+
     try {
-      return await fetch(cacheBustedUrl(url.toString()), {
+      const response = await fetch(busted, {
         cache: "no-store",
         credentials: "same-origin",
-        redirect: "follow"
+        redirect: "follow",
+        headers: {
+          "Cache-Control": "no-cache, no-store, max-age=0",
+          "Pragma": "no-cache"
+        }
       });
+
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      return response;
     } catch (error) {
-      return fetch(request);
+      // Solo como recuperación de red. Nunca escribimos respuestas en CacheStorage.
+      return fetch(request, { cache: "reload" });
     }
   })());
 });

@@ -1,28 +1,60 @@
 <script>
 (function () {
-  const VERSION = "0.6.25";
+  const VERSION = "0.6.26";
+  const BASE_PATH = "/visor-fuego/";
+  const SW_URL = BASE_PATH + "sw.js?v=" + encodeURIComponent(VERSION);
+  const SW_SCOPE = BASE_PATH;
+
   if (!("serviceWorker" in navigator)) return;
 
   let controllerReloaded = false;
 
+  function cacheBustedPageUrl() {
+    const url = new URL(BASE_PATH, window.location.origin);
+    url.searchParams.set("_vf_sw", VERSION + "-" + Date.now());
+    return url.toString();
+  }
+
+  function cleanVisibleUrl() {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("_vf_sw")) return;
+    url.searchParams.delete("_vf_sw");
+    const clean = url.pathname + (url.searchParams.toString() ? "?" + url.searchParams.toString() : "") + url.hash;
+    window.history.replaceState(window.history.state, document.title, clean);
+  }
+
   navigator.serviceWorker.addEventListener("controllerchange", function () {
     if (controllerReloaded) return;
-    const key = "visor-fuego-sw-controller-" + VERSION;
-    if (sessionStorage.getItem(key) === "1") return;
     controllerReloaded = true;
-    sessionStorage.setItem(key, "1");
-    const url = new URL(window.location.href);
-    url.searchParams.set("_vf_sw", VERSION + "-" + Date.now());
-    window.location.replace(url.toString());
+
+    // Una navegación versionada garantiza que el nuevo worker responde con
+    // network-first. Después se limpia la barra de direcciones sin volver a
+    // pedir la raíz potencialmente cacheada.
+    window.location.replace(cacheBustedPageUrl());
   });
 
   window.addEventListener("load", async function () {
     try {
       const registration = await navigator.serviceWorker.register(
-        "./sw.js?v=" + encodeURIComponent(VERSION),
-        { scope: "./", updateViaCache: "none" }
+        SW_URL,
+        { scope: SW_SCOPE, updateViaCache: "none" }
       );
+
       await registration.update();
+      await navigator.serviceWorker.ready;
+
+      if (navigator.serviceWorker.controller) {
+        cleanVisibleUrl();
+      } else if (registration.active) {
+        // En navegadores Chromium la primera navegación puede no quedar
+        // controlada aunque el worker ya esté activo. Forzamos una única
+        // navegación versionada; clients.claim() tomará el control.
+        const key = "visor-fuego-sw-bootstrap-" + VERSION;
+        if (sessionStorage.getItem(key) !== "1") {
+          sessionStorage.setItem(key, "1");
+          window.location.replace(cacheBustedPageUrl());
+        }
+      }
     } catch (error) {
       console.warn("No se pudo activar el control de caché del visor:", error);
     }

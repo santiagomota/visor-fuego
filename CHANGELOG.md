@@ -1,3 +1,14 @@
+## [0.6.26] - 2026-08-31
+
+### Fixed
+
+- Registra el service worker con URL y scope absolutos bajo `/visor-fuego/`.
+- Fuerza una única navegación de bootstrap versionada cuando Chromium todavía no tiene controller.
+- Limpia después `_vf_sw` de la barra de direcciones mediante `history.replaceState()` sin volver a pedir la raíz cacheada.
+- Refuerza la estrategia network-first para documentos y datos runtime con cabeceras `no-cache`.
+- El workflow valida que el service worker publicado corresponde a v0.6.26 y controla `/visor-fuego/`.
+
+
 ## [0.6.25] - 2026-08-31
 
 ### Fixed
