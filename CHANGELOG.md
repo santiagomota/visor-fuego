@@ -1,43 +1,11 @@
-## [0.6.28] - 2026-08-31
+## [0.6.29] - 2026-08-31
 
 ### Fixed
 
-- Publica un snapshot runtime inmutable por `build_id` bajo `assets/runtime/<build_id>/`.
-- El navegador carga primero `site-build.json` y después AEMET/FIRMS/alertas/resumen desde rutas únicas del build.
-- Evita depender de `assets/aemet/layers.json` como URL runtime cacheable.
-- Añade SHA-256 al manifiesto para cada recurso runtime.
-- El workflow valida el checksum local y remoto del catálogo AEMET inmutable.
-- El despliegue falla si Pages mezcla un manifiesto nuevo con un catálogo AEMET antiguo.
-
-
-## [0.6.27] - 2026-08-31
-
-### Fixed
-
-- Corrige el preflight de v0.6.26, que seguía buscando accidentalmente `VISOR_FUEGO_SW_VERSION = "0.6.25"`.
-- Alinea preflight, validación post-render y comprobación post-deploy con `sw.js` v0.6.27.
-- No modifica AEMET, FIRMS, EFFIS ni la lógica del mapa.
-
-## [0.6.26] - 2026-08-31
-
-### Fixed
-
-- Registra el service worker con URL y scope absolutos bajo `/visor-fuego/`.
-- Fuerza una única navegación de bootstrap versionada cuando Chromium todavía no tiene controller.
-- Limpia después `_vf_sw` de la barra de direcciones mediante `history.replaceState()` sin volver a pedir la raíz cacheada.
-- Refuerza la estrategia network-first para documentos y datos runtime con cabeceras `no-cache`.
-- El workflow valida que el service worker publicado corresponde a v0.6.26 y controla `/visor-fuego/`.
-
-
-## [0.6.25] - 2026-08-31
-
-### Fixed
-
-- Añade un service worker `network-first` para impedir que Chrome/Edge sigan sirviendo un `index.html` antiguo tras un despliegue de GitHub Pages.
-- Fuerza `cache-busting` para navegaciones y datos runtime (`JSON`, `GeoJSON`, `CSV`).
-- Registra el service worker con `updateViaCache: "none"` y activa inmediatamente nuevas versiones con `skipWaiting()` + `clients.claim()`.
-- El workflow valida antes y después del despliegue que `index.qmd` conserva la arquitectura runtime dinámica y que Pages sirve `sw.js` v0.6.25.
-- El paquete de actualización se limita a los ficheros necesarios para evitar sobrescribir accidentalmente código o datos no relacionados.
+- Corrige el preflight de v0.6.28, que todavía ejecutaba un `grep` sobre la llamada antigua `fetchJsonNoStore('assets/aemet/layers.json')`; con `set -euo pipefail` ese diagnóstico abortaba el workflow.
+- Elimina la segunda validación runtime duplicada que seguía exigiendo la arquitectura anterior.
+- Alinea `browser-cache.html`, `sw.js` y las comprobaciones post-render/post-deploy en v0.6.29.
+- Mantiene intacto el snapshot runtime inmutable por `build_id` y su validación SHA-256.
 
 
 # Changelog

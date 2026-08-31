@@ -149,45 +149,60 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
-      - name: Preflight de fuente v0.6.28
+      - name: Preflight de fuente v0.6.29
         run: |
           set -euo pipefail
+
+          declared_version=$(awk -F': ' '$1=="Version" {print $2}' DESCRIPTION)
           echo "Commit checkout: $(git rev-parse HEAD)"
-          echo "Versión declarada: $(awk -F': ' '$1=="Version" {print $2}' DESCRIPTION)"
+          echo "Versión declarada: $declared_version"
           echo "SHA256 index.qmd: $(sha256sum index.qmd | awk '{print $1}')"
           echo "SHA256 sw.js: $(sha256sum sw.js | awk '{print $1}')"
-          cache_required=(
-            "navigator.serviceWorker.register"
-            "updateViaCache: \"none\""
-            "VISOR_FUEGO_SW_VERSION = \"0.6.27\""
-          )
-          for marker in "${cache_required[@]}"; do
-            if ! grep -Fq "$marker" browser-cache.html sw.js; then
-              echo "::error::Falta el control de caché v0.6.28: $marker"
-              exit 1
-            fi
-          done
-          required=(
+
+          if [ "$declared_version" != "0.6.29" ]; then
+            echo "::error::DESCRIPTION debe declarar Version: 0.6.29 y declara: $declared_version"
+            exit 1
+          fi
+
+          source_markers=(
             "async function loadRuntimeData()"
             "function runtimePath(key, fallback)"
             "await fetchJsonNoStore('assets/site-build.json')"
+            "fetchJsonNoStore(aemetPath)"
             "cache: 'no-store'"
-            "Cargando datos actuales"
+            "cargando snapshot runtime"
           )
-          for marker in "${required[@]}"; do
-            if ! grep -Fq "$marker" index.qmd; then
-              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.28. Falta: $marker"
-              echo "::error::No se instalará R ni se publicará un snapshot antiguo."
+          for marker in "${source_markers[@]}"; do
+            if ! grep -Fqi "$marker" index.qmd; then
+              echo "::error::index.qmd no contiene la arquitectura runtime v0.6.29. Falta: $marker"
               exit 1
             fi
           done
+
           if grep -Fq "const layers = __LAYERS_JSON__;" index.qmd; then
-            echo "::error::El checkout contiene el index.qmd antiguo con catálogo AEMET embebido."
+            echo "::error::index.qmd contiene el catálogo AEMET embebido antiguo."
             exit 1
           fi
-          grep -n -F "async function loadRuntimeData()" index.qmd | head -1
-          grep -n -F "fetchJsonNoStore('assets/aemet/layers.json')" index.qmd | head -1
-          echo "Preflight runtime v0.6.28 OK."
+          if grep -Fq "applyRuntimeAemetLayers(embeddedLayers" index.qmd; then
+            echo "::error::index.qmd conserva un fallback AEMET embebido obsoleto."
+            exit 1
+          fi
+
+          cache_markers=(
+            'const VERSION = "0.6.29"'
+            'navigator.serviceWorker.register'
+            'updateViaCache: "none"'
+            'VISOR_FUEGO_SW_VERSION = "0.6.29"'
+            'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"'
+          )
+          for marker in "${cache_markers[@]}"; do
+            if ! grep -Fq "$marker" browser-cache.html sw.js; then
+              echo "::error::Control de caché incoherente en v0.6.29. Falta: $marker"
+              exit 1
+            fi
+          done
+
+          echo "Preflight runtime/cache v0.6.29 OK."
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -368,31 +383,6 @@ jobs:
             exit 1
           fi
 
-      - name: Verificar arquitectura runtime antes del pipeline
-        run: |
-          set -euo pipefail
-          required=(
-            "async function loadRuntimeData()"
-            "fetchJsonNoStore('assets/aemet/layers.json')"
-            "cache: 'no-store'"
-            "Cargando datos actuales"
-          )
-          for marker in "${required[@]}"; do
-            if ! grep -Fq "$marker" index.qmd; then
-              echo "::error::index.qmd no contiene la arquitectura dinámica requerida: $marker"
-              exit 1
-            fi
-          done
-          if grep -Fq "const layers = __LAYERS_JSON__;" index.qmd; then
-            echo "::error::index.qmd sigue usando el catálogo AEMET embebido antiguo."
-            exit 1
-          fi
-          if grep -Fq "applyRuntimeAemetLayers(embeddedLayers" index.qmd; then
-            echo "::error::index.qmd conserva un fallback AEMET embebido que puede mostrar fechas obsoletas."
-            exit 1
-          fi
-          echo "Arquitectura runtime AEMET verificada antes del pipeline."
-
       - name: Actualizar datos y validar entradas
         run: |
           set -euo pipefail
@@ -407,7 +397,7 @@ jobs:
           valid_min=$(jq -r '.aemet.valid_min // empty' assets/site-build.json)
 
           if [ -z "$build_id" ] || [ -z "$runtime_aemet" ] || [ -z "$expected_sha" ]; then
-            echo "::error::site-build.json no contiene el snapshot runtime v0.6.28."
+            echo "::error::site-build.json no contiene el snapshot runtime v0.6.29."
             cat assets/site-build.json
             exit 1
           fi
@@ -447,11 +437,11 @@ jobs:
             exit 1
           }
           grep -Fq "navigator.serviceWorker.register" docs/index.html || {
-            echo "::error::docs/index.html no registra el service worker v0.6.28"
+            echo "::error::docs/index.html no registra el service worker v0.6.29"
             exit 1
           }
-          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.28"' docs/sw.js || {
-            echo "::error::docs/sw.js no corresponde a v0.6.28"
+          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.29"' docs/sw.js || {
+            echo "::error::docs/sw.js no corresponde a v0.6.29"
             exit 1
           }
           grep -Fq 'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"' docs/sw.js || {
@@ -586,17 +576,17 @@ jobs:
           sw_bust="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-sw-$(date +%s)"
           remote_sw=$(mktemp)
           if curl --fail --silent --show-error --location             -H 'Cache-Control: no-cache, no-store, max-age=0'             "$base/sw.js?build=$sw_bust" -o "$remote_sw"; then
-            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.28"' "$remote_sw"; then
+            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.29"' "$remote_sw"; then
               sw_ok=true
             fi
           fi
           rm -f "$remote_sw"
           if [ "$sw_ok" != "true" ]; then
-            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.28."
+            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.29."
             exit 1
           fi
 
-          echo "GitHub Pages sirve correctamente el build $expected, su snapshot AEMET inmutable y sw.js v0.6.28."
+          echo "GitHub Pages sirve correctamente el build $expected, su snapshot AEMET inmutable y sw.js v0.6.29."
 
       - name: Guardar datos generados en Git
         env:
