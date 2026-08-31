@@ -149,7 +149,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
-      - name: Preflight de fuente v0.6.26
+      - name: Preflight de fuente v0.6.27
         run: |
           set -euo pipefail
           echo "Commit checkout: $(git rev-parse HEAD)"
@@ -159,11 +159,11 @@ jobs:
           cache_required=(
             "navigator.serviceWorker.register"
             "updateViaCache: \"none\""
-            "VISOR_FUEGO_SW_VERSION = \"0.6.25\""
+            "VISOR_FUEGO_SW_VERSION = \"0.6.27\""
           )
           for marker in "${cache_required[@]}"; do
             if ! grep -Fq "$marker" browser-cache.html sw.js; then
-              echo "::error::Falta el control de caché v0.6.26: $marker"
+              echo "::error::Falta el control de caché v0.6.27: $marker"
               exit 1
             fi
           done
@@ -175,7 +175,7 @@ jobs:
           )
           for marker in "${required[@]}"; do
             if ! grep -Fq "$marker" index.qmd; then
-              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.26. Falta: $marker"
+              echo "::error::El checkout NO contiene el index.qmd runtime v0.6.27. Falta: $marker"
               echo "::error::No se instalará R ni se publicará un snapshot antiguo."
               exit 1
             fi
@@ -186,7 +186,7 @@ jobs:
           fi
           grep -n -F "async function loadRuntimeData()" index.qmd | head -1
           grep -n -F "fetchJsonNoStore('assets/aemet/layers.json')" index.qmd | head -1
-          echo "Preflight runtime v0.6.26 OK."
+          echo "Preflight runtime v0.6.27 OK."
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -411,11 +411,11 @@ jobs:
             exit 1
           }
           grep -Fq "navigator.serviceWorker.register" docs/index.html || {
-            echo "::error::docs/index.html no registra el service worker v0.6.26"
+            echo "::error::docs/index.html no registra el service worker v0.6.27"
             exit 1
           }
-          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.26"' docs/sw.js || {
-            echo "::error::docs/sw.js no corresponde a v0.6.26"
+          grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.27"' docs/sw.js || {
+            echo "::error::docs/sw.js no corresponde a v0.6.27"
             exit 1
           }
           grep -Fq 'VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"' docs/sw.js || {
@@ -518,17 +518,17 @@ jobs:
           sw_bust="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-sw-$(date +%s)"
           remote_sw=$(mktemp)
           if curl --fail --silent --show-error --location             -H 'Cache-Control: no-cache, no-store, max-age=0'             "$base/sw.js?build=$sw_bust" -o "$remote_sw"; then
-            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.26"' "$remote_sw"; then
+            if grep -Fq 'VISOR_FUEGO_SW_VERSION = "0.6.27"' "$remote_sw"; then
               sw_ok=true
             fi
           fi
           rm -f "$remote_sw"
           if [ "$sw_ok" != "true" ]; then
-            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.26."
+            echo "::error::GitHub Pages no está sirviendo sw.js v0.6.27."
             exit 1
           fi
 
-          echo "GitHub Pages sirve correctamente el build $expected y sw.js v0.6.26."
+          echo "GitHub Pages sirve correctamente el build $expected y sw.js v0.6.27."
 
       - name: Guardar datos generados en Git
         env:

@@ -30,8 +30,8 @@ if (!file.exists("docs/sw.js") || file.info("docs/sw.js")$size <= 0) {
   fail("Service worker no publicado: docs/sw.js")
 } else {
   sw_text <- paste(readLines("docs/sw.js", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
-  if (!grepl('VISOR_FUEGO_SW_VERSION = "0.6.26"', sw_text, fixed = TRUE)) {
-    fail("docs/sw.js no corresponde a v0.6.26")
+  if (!grepl('VISOR_FUEGO_SW_VERSION = "0.6.27"', sw_text, fixed = TRUE)) {
+    fail("docs/sw.js no corresponde a v0.6.27")
   }
   if (!grepl('VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"', sw_text, fixed = TRUE)) {
     fail("docs/sw.js no usa el scope absoluto /visor-fuego/")

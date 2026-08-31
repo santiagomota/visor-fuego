@@ -1,3 +1,11 @@
+## [0.6.27] - 2026-08-31
+
+### Fixed
+
+- Corrige el preflight de v0.6.26, que seguía buscando accidentalmente `VISOR_FUEGO_SW_VERSION = "0.6.25"`.
+- Alinea preflight, validación post-render y comprobación post-deploy con `sw.js` v0.6.27.
+- No modifica AEMET, FIRMS, EFFIS ni la lógica del mapa.
+
 ## [0.6.26] - 2026-08-31
 
 ### Fixed

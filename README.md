@@ -1,6 +1,13 @@
 # visor-fuego
 
-> **v0.6.26:** mantiene 04:30 y 12:30 como horas objetivo y añade tres respaldos por franja. Los respaldos consultan el `site-build.json` realmente publicado y solo ejecutan el pipeline si Pages sigue sin actualizar.
+> **v0.6.27:** corrige el preflight de v0.6.26, que buscaba por error `VISOR_FUEGO_SW_VERSION = "0.6.25"` y abortaba el workflow antes del render. No cambia AEMET, FIRMS ni el mapa; solo alinea la validación con el service worker actual.
+
+## v0.6.27: corrección del preflight de caché
+
+- Corrige el marcador de versión del service worker comprobado justo después del checkout.
+- Mantiene las rutas absolutas `/visor-fuego/` y el comportamiento network-first introducido en v0.6.26.
+- Actualiza las comprobaciones post-render y post-deploy a `sw.js` v0.6.27.
+- No modifica fuentes de datos ni lógica cartográfica.
 
 
 ## v0.6.26: programación redundante basada en el build publicado
