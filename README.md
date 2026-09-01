@@ -1,136 +1,134 @@
-# visor-fuego
+# Visor fuego
 
-> **v0.6.24:** mantiene 04:30 y 12:30 como horas objetivo y añade tres respaldos por franja. Los respaldos consultan el `site-build.json` realmente publicado y solo ejecutan el pipeline si Pages sigue sin actualizar.
+Visor web operativo para seguir el peligro meteorológico de incendios, las
+detecciones tÃ©rmicas recientes y las áreas quemadas en EspaÃ±a.
 
+**Versión actual:** `v0.6.31`
 
-## v0.6.24: programación redundante basada en el build publicado
+**Visor publicado:** <https://santiagomota.github.io/visor-fuego/>
 
-GitHub Actions puede retrasar o descartar eventos `schedule`. Esta versión mantiene las actualizaciones objetivo de las **04:30** y **12:30** (Europe/Madrid), pero añade respaldos a las **04:47, 05:13 y 05:41**, y a las **12:47, 13:13 y 13:41**.
+El proyecto combina R, Quarto y Leaflet. GitHub Actions actualiza los datos,
+construye un snapshot verificable y despliega el sitio en GitHub Pages.
 
-### Cambios principales de v0.6.24
+> [!IMPORTANT]
+> El visor integra fuentes externas y sirve como apoyo a la consulta. No
+> sustituye la información, las alertas ni las instrucciones de los organismos
+> oficiales de protección civil y emergencias.
 
-- Las ejecuciones principales siguen siendo 04:30 y 12:30.
-- Se añaden tres oportunidades de respaldo por franja para reducir la probabilidad de perder una actualización si GitHub descarta un evento programado.
-- Los respaldos ya no confían en una ejecución `success` del historial de Actions: consultan `assets/site-build.json` de GitHub Pages con `no-cache`.
-- Si Pages contiene un build generado después del objetivo de la franja, el respaldo termina en pocos segundos sin instalar R/Quarto.
-- Si Pages no está actualizado, si el manifiesto no puede leerse o si la ejecución principal no llegó a crearse, el respaldo ejecuta el pipeline completo.
-- Se conserva `concurrency` con `cancel-in-progress: false`: si una principal retrasada termina antes de un respaldo en cola, el respaldo comprobará Pages y se omitirá.
+## Contenido del visor
 
+- **Mapa:** peligro AEMET, focos NASA FIRMS, áreas quemadas EFFIS y límites
+  administrativos, con navegación temporal y consulta territorial.
+- **Resumen:** síntesis de la situación por comunidad autónoma y provincia.
+- **Informe:** alertas y lectura operativa de las detecciones recientes.
+- **Evolución:** histórico de los principales indicadores del visor.
+- **Copernicus:** información específica de las áreas quemadas EFFIS.
 
-## v0.6.23: AEMET runtime obligatorio y sin fallback obsoleto
+El mapa permite recorrer los horizontes de AEMET, reproducir la secuencia
+temporal, seleccionar comunidades o provincias y consultar indicadores FIRMS,
+EFFIS y AEMET para el territorio elegido.
 
-Esta versión corrige el despliegue incompleto detectado el 30 de agosto de 2026: `assets/aemet/layers.json` estaba actualizado, pero el `index.qmd` publicado en `main` seguía usando un catálogo embebido anterior.
+## Fuentes de datos
 
-### Cambios principales de v0.6.23
+| Fuente | Información utilizada | Tratamiento en el proyecto |
+| --- | --- | --- |
+| [AEMET](https://www.aemet.es/) | Índice de peligro de incendios previsto para Península/Baleares y Canarias | GeoTIFF oficiales, reproyectados a Web Mercator y representados con las seis clases IPIF y su simbología oficial |
+| [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | Detecciones tÃ©rmicas VIIRS recientes | Normalización, ventanas de 6, 12, 24 y 48 horas, FRP y agrupación de alertas |
+| [Copernicus EFFIS](https://effis.jrc.ec.europa.eu/) | Perámetros y superficies quemadas | Capa contextual de los Últimos 90 días, descargada y simplificada para la web |
+| [Eurostat GISCO](https://ec.europa.eu/eurostat/web/gisco/) | Límites NUTS | Comunidades autónomas y provincias para agregación y consulta territorial |
 
-- AEMET se carga en tiempo de ejecución desde `assets/aemet/layers.json` con `cache: no-store`.
-- Si el catálogo AEMET runtime falla, el visor muestra AEMET como no disponible; nunca recurre a un catálogo embebido antiguo.
-- El bloque «Fuente y actualización» deja de imprimir fechas y recuentos operativos congelados en el HTML.
-- El workflow valida antes del pipeline que `index.qmd` contiene `loadRuntimeData()` y el `fetch` AEMET dinámico.
-- Tras renderizar, se exige que `docs/index.html` contenga la arquitectura runtime.
+Las fechas de **emisión** y **validez** de AEMET se muestran por separado. El
+visor oculta las fechas válidas ya pasadas y evita interpretar una emisión de
+ayer válida para hoy como un dato obsoleto.
 
+## Garantías de actualidad y coherencia
 
-## v0.6.21: datos operativos cargados en vivo desde `assets/`
+Desde `v0.6.28`, cada actualización genera un snapshot inmutable en
+`assets/runtime/<build_id>/`. `assets/site-build.json` identifica el build
+publicado y registra sus recursos y comprobaciones SHA-256.
 
-Esta revisión desacopla los datos del `index.html`. El mapa puede haber quedado en caché, pero al abrirse vuelve a consultar con `cache: no-store` los catálogos y estados operativos publicados en `assets/`. Así una copia antigua del HTML no puede volver a iniciar AEMET en una fecha pasada ni mantener focos FIRMS de un snapshot anterior.
+El navegador carga los datos operativos en tiempo de ejecución con control de
+cachÃ©. El pipeline comprueba, antes y despuÃ©s del despliegue, que el HTML, el
+manifiesto y los recursos pertenecen al mismo build. Esto evita que una copia
+antigua del HTML vuelva a mostrar datos de una ejecución anterior.
 
-### Cambios principales de v0.6.21
+Otras salvaguardas relevantes:
 
-- **AEMET en tiempo de ejecución:** el selector se construye desde `assets/aemet/layers.json` mediante `fetch(..., {cache: "no-store"})`, con un parámetro de cache-busting. Las fechas válidas anteriores a hoy en Madrid se excluyen también en el navegador.
-- **PNG AEMET sin caché antigua:** cada `imageOverlay` usa una URL con identificador de runtime/build, por lo que una imagen regenerada para el mismo día no reutiliza una copia anterior del navegador.
-- **FIRMS en vivo:** los puntos del mapa ya no se incrustan en el HTML. Se cargan desde `assets/firms/firms_active_fires.geojson`; su estado se toma de `assets/firms/status.json`.
-- **Panel territorial en vivo:** `assets/summary/territorial_summary.json` se recarga al abrir el visor y actualiza la consulta territorial.
-- **Build en vivo:** `assets/site-build.json` actualiza la marca temporal y el identificador del build. Si el HTML pertenece a otro build, se solicita una única recarga con `?build=<id>`.
-- **Fallback local:** los JSON embebidos por Quarto se conservan solo como respaldo para ejecución local/offline si una petición runtime falla.
-- **Diagnóstico visible:** el panel indica si los datos operativos se cargaron en vivo o si alguna fuente tuvo que utilizar el respaldo embebido.
-- **EFFIS cache-busting:** la capa bajo demanda también se solicita sin reutilizar una respuesta antigua.
+- AEMET debe proporcionar una emisión de hoy o de ayer y una fuente oficial de
+  simbología (`ESCALA`, tabla de color, SLD o QML).
+- Si FIRMS falla o responde sin detecciones, puede conservarse hasta 72 horas el
+  último snapshot válido, marcado como `stale_preserved`, para evitar un falso
+  estado de cero focos.
+- EFFIS es opcional: una incidencia de esta capa contextual no impide actualizar
+  el resto del visor.
+- El sitio se renderiza siempre de nuevo (`freeze: false`) y se valida antes de
+  publicarse.
 
-Se mantienen `freeze: false`, la eliminación de `_freeze/` en Actions, la verificación post-deployment, la simbología oficial IPIF extraída de AEMET y la protección FIRMS frente a falsos ceros.
+## Actualización automática
 
-## v0.6.20: render siempre fresco y build verificable
+El workflow [Actualizar visor fuego](.github/workflows/update-dashboard.yml)
+mantiene dos horas objetivo diarias en la zona `Europe/Madrid`:
 
-Esta revisión corrige el problema por el que los datos de `assets/` podían estar actualizados mientras GitHub Pages seguía mostrando un `index.html` antiguo. La causa era `freeze: auto`: Quarto podía reutilizar la ejecución de `index.qmd` cuando el QMD no había cambiado, aunque sí hubieran cambiado los ficheros AEMET, FIRMS y EFFIS que consume.
+- **04:30**
+- **12:30**
 
-### Cambios principales de v0.6.20
+GitHub Actions ejecuta además un watchdog ligero cada 20 minutos, a los minutos
+`07`, `27` y `47`, entre las 04:00 y las 23:59. El watchdog consulta el
+`site-build.json` realmente publicado:
 
-- **Ejecución forzada:** `_quarto.yml` usa `freeze: false`. En GitHub Actions se eliminan además `_freeze/` y `docs/` antes de `quarto render`.
-- **Recursos completos:** Quarto publica `assets/**` entero, de modo que el HTML y todos los catálogos/estados proceden del mismo snapshot.
-- **Selector AEMET vigente:** con `AEMET_HIDE_PAST_VALID_DATES=true` no se publican fechas válidas anteriores al día actual en Madrid. Si la última emisión es de ayer, el selector comienza por el mapa de esa emisión que sea válido para hoy.
-- **Build identificable:** `scripts/12_build_site_manifest.R` genera `assets/site-build.json` con un `build_id` único y resumen temporal de AEMET, FIRMS y EFFIS.
-- **Coherencia antes de publicar:** `scripts/11_check_published_assets.R` exige que `docs/assets/site-build.json` y el `build_id` embebido en `docs/index.html` coincidan con el snapshot actual.
-- **Coherencia después de publicar:** tras `actions/deploy-pages`, el workflow consulta la web pública con cache-busting y verifica tanto el manifiesto como el HTML. Un deployment que continúe sirviendo un HTML viejo ya no puede terminar en verde.
-- **Autocorrección en navegador:** el mapa consulta `assets/site-build.json`; si el HTML cargado pertenece a otro build, recarga la URL añadiendo `?build=<id>`.
+- si Pages ya contiene el build correspondiente a la franja, termina sin
+  instalar dependencias ni repetir el pipeline;
+- si el build falta, está atrasado o no puede verificarse, ejecuta la
+  actualización completa;
+- una ejecución manual siempre ejecuta el pipeline completo.
 
-Se mantienen las garantías de v0.6.19: `assets/` es la fuente canónica, AEMET exige simbología oficial (`ESCALA`/SLD/QML), una emisión AEMET de más de un día detiene el pipeline y FIRMS conserva temporalmente el último snapshot válido ante respuestas vacías.
+La concurrencia está limitada a una actualización activa y las ejecuciones en
+cola no cancelan la que ya está en curso.
 
-## v0.6.19: snapshot web coherente y fuentes operativas robustas
+## Requisitos
 
-Esta revisión prioriza que el visor publicado reproduzca un único snapshot operativo y que una incidencia temporal de una fuente externa no se convierta en información engañosa. El render web utiliza exclusivamente `assets/` para AEMET, FIRMS, resúmenes, alertas y EFFIS.
+- R y los paquetes declarados en [`DESCRIPTION`](DESCRIPTION).
+- [Quarto](https://quarto.org/).
+- GDAL/PROJ/GEOS y las bibliotecas del sistema requeridas por `sf` y `terra`.
+- Una `MAP_KEY` de NASA FIRMS para descargar detecciones.
+- Opcionalmente, una clave de CARTO Basemaps restringida al dominio del visor.
 
-### Cambios principales de v0.6.19
+En Ubuntu, el workflow del proyecto sirve como referencia reproducible para las
+dependencias del sistema y de R.
 
-- **Fuente única del render:** `index.qmd` deja de mezclar `data/processed/` y `assets/`; los productos publicados se leen exclusivamente desde `assets/`.
-- **AEMET sin caché antigua:** la descarga clásica añade un parámetro de cache-busting y reintenta hasta tres veces si la emisión obtenida no es la del día.
-- **Control de actualidad AEMET:** se publica `assets/aemet/status.json`; una emisión con más de un día de antigüedad detiene el pipeline.
-- **Simbología AEMET estricta:** el workflow exige una fuente oficial de estilo. Se intenta `ESCALA` vía GDAL/terra, tabla de color del GeoTIFF y los estilos SLD/QML incluidos en el paquete. En producción ya no se acepta silenciosamente `IPIF fallback 1..6`.
-- **FIRMS protegido frente a falsos ceros:** si la descarga actual queda vacía o falla, se conserva el último snapshot válido durante un máximo de 72 horas y se marca como `stale_preserved`.
-- **Snapshot FIRMS canónico:** se publica también `assets/firms/firms_active_fires.csv` y `assets/firms/status.json`.
-- **Validación reforzada:** el workflow comprueba que el render no vuelva a consumir productos operativos desde `data/processed/`, que AEMET no use una paleta fallback cuando se exige estilo oficial y que existan los estados AEMET/FIRMS.
+## Configuración local
 
-AEMET documenta el IPIF actual como un raster GeoTIFF de 1 km con seis clases y expone la correspondencia nivel/color en el campo `ESCALA`, además de estilos SLD y QML. v0.6.19 usa esas fuentes como referencia de simbología.
+Clona el repositorio y entra en su directorio:
 
-## v0.6.18: ejecuciones programadas con respaldo
+```bash
+git clone https://github.com/santiagomota/visor-fuego.git
+cd visor-fuego
+```
 
-El workflow mantiene las actualizaciones principales a las **04:30** y **12:30** (Europe/Madrid) y añade ejecuciones de respaldo a las **04:50** y **12:50**. El respaldo consulta el historial de GitHub Actions antes de instalar dependencias: si ya existe una ejecución programada correcta en los últimos 45 minutos, termina sin ejecutar el pipeline; si la principal no se creó o falló, realiza la actualización completa. Las ejecuciones manuales siempre se ejecutan.
+Crea la configuración local a partir de la plantilla:
 
-### Cambios principales de v0.6.18
+```bash
+cp .Renviron.example .Renviron
+```
 
-- Horarios principales: 04:30 y 12:30, hora Madrid.
-- Horarios de respaldo: 04:50 y 12:50, hora Madrid.
-- Comprobación temprana mediante la API de GitHub Actions y `GITHUB_TOKEN`.
-- El respaldo se activa si no hay una ejecución `schedule` correcta en los 45 minutos anteriores.
-- Si la API de Actions no está disponible, el respaldo ejecuta el pipeline por seguridad.
-- Las ejecuciones manuales no se filtran.
-- Permiso `actions: read` añadido al token del workflow.
+Edita `.Renviron` y define, como mínimo:
 
-## v0.6.17: simbología AEMET IPIF oficial
+```dotenv
+FIRMS_MAP_KEY=tu_clave_firms
+CARTO_BASEMAP_KEY=tu_clave_carto
+```
 
-Esta revisión corrige la representación de los GeoTIFF de peligro de incendios de AEMET. El producto IPIF actual utiliza seis clases discretas, codificadas de 1 a 6. El visor ya no deduce el color según qué clases aparezcan en cada mapa: conserva siempre la correspondencia oficial entre valor, nivel y color.
+`CARTO_BASEMAP_KEY` es opcional; sin ella se utiliza OpenStreetMap. Al tratarse
+de un sitio estático, la clave CARTO llega al navegador y debe restringirse al
+dominio autorizado. No confirmes `.Renviron` en Git.
 
-Visor Quarto/Leaflet para el seguimiento operativo del peligro de incendios en España mediante:
+El proveedor AEMET configurado por defecto es `classic` y no necesita una clave
+de AEMET. El resto de opciones y sus valores recomendados están documentados en
+[`.Renviron.example`](.Renviron.example).
 
-- **AEMET**: peligro meteorológico previsto para Península/Baleares y Canarias.
-- **NASA FIRMS**: detecciones térmicas recientes y alertas agrupadas.
-- **Copernicus/EFFIS**: áreas quemadas como capa contextual.
-- **Eurostat/GISCO**: límites de comunidades autónomas y provincias.
+## Ejecución local
 
-### Cambios principales de v0.6.17
-
-- Clases fijas: `1 Muy bajo`, `2 Bajo`, `3 Moderado`, `4 Alto`, `5 Muy alto`, `6 Extremo`.
-- Lectura prioritaria del metadato `ESCALA` RGBA de AEMET.
-- Lectura alternativa de la tabla de color del GeoTIFF cuando esté disponible.
-- Paleta IPIF de respaldo solo si AEMET no expone el estilo; nunca se reenumeran las clases presentes.
-- Campo `style_source` en `assets/aemet/layers.json` para auditar la procedencia del estilo.
-- Los píxeles fuera de 1..6 se publican transparentes y generan un aviso.
-- Se mantienen la separación entre fecha válida/emisión, el panel territorial, la navegación temporal y el despliegue directo de Pages.
-
-> Al comparar con la web oficial de AEMET debe usarse la misma **fecha válida**. La base cartográfica y la transparencia pueden ser distintas, pero la clase IPIF de cada píxel debe coincidir.
-
-Se mantienen las mejoras anteriores:
-
-- Panel territorial interactivo para las 19 CCAA y las 59 provincias.
-- Indicadores FIRMS para 6, 12, 24 y 48 horas, FRP y última detección.
-- Superficie y perímetros EFFIS de los últimos 30 y 90 días.
-- Estimación puntual del nivel AEMET para el territorio y día seleccionados.
-- Navegación temporal AEMET con anterior, siguiente y reproducción automática.
-- Indicadores de actualidad de AEMET, FIRMS y EFFIS.
-- Ejecución diaria a las **04:30** y **12:30** con `timezone: Europe/Madrid`.
-- Publicación robusta mediante `fetch`, `rebase` y hasta tres reintentos de `push`.
-- Normalización explícita de tipos al combinar las fuentes NASA FIRMS.
-- Los PNG de AEMET se publican como recursos Quarto dentro de `docs/assets/aemet/`.
-- EFFIS se carga bajo demanda y no se incrusta en `docs/index.html`.
-
-### Ejecución local
+Ejecuta el pipeline canónico, renderiza el sitio y valida el resultado:
 
 ```bash
 Rscript scripts/99_run_all.R
@@ -138,54 +136,72 @@ quarto render
 Rscript scripts/11_check_published_assets.R
 ```
 
-Para descargar FIRMS es necesario definir `FIRMS_MAP_KEY`. Para usar la base clara de CARTO hay que definir `CARTO_BASEMAP_KEY`. Las variables operativas pueden configurarse en `.Renviron`; el workflow crea este fichero durante cada ejecución.
+La salida se genera en `docs/`. Para previsualizarla con recarga automática:
 
-### Clave CARTO en GitHub Actions
+```bash
+quarto preview
+```
 
-Crea un secret del repositorio llamado `CARTO_BASEMAP_KEY` en **Settings → Secrets and variables → Actions → New repository secret**. La clave se incorpora a la URL de teselas que consume el navegador, por lo que en un sitio estático no puede considerarse secreta frente al usuario final; debe solicitarse/restringirse para el dominio del visor. No se debe escribir manualmente en `index.qmd` ni en `.Renviron.example`.
+El pipeline realiza, en orden, la descarga y preparación de AEMET y FIRMS, la
+actualización opcional de EFFIS, los resúmenes territoriales, las alertas, el
+histórico, las validaciones y la creación del manifiesto del build.
 
-### Publicación
+## Estructura del repositorio
 
-Desde v0.6.13 GitHub Actions actualiza los datos, renderiza el sitio en `docs/`, valida los recursos y despliega directamente el artefacto mediante `actions/upload-pages-artifact` y `actions/deploy-pages`. En **Settings → Pages → Build and deployment**, la fuente debe ser **GitHub Actions**. Los commits automáticos mantienen `data/processed` y `assets`, pero no `docs/`.
+```text
+.
+â”œâ”€â”€ R/                 # Funciones del pipeline y del visor
+â”œâ”€â”€ scripts/           # Descarga, preparación, validación y orquestación
+â”œâ”€â”€ assets/            # Snapshot canónico publicado y recursos runtime
+â”œâ”€â”€ data/processed/    # Productos procesados versionados
+â”œâ”€â”€ docs/              # Sitio renderizado localmente
+â”œâ”€â”€ *.qmd              # Páginas Quarto
+â”œâ”€â”€ _quarto.yml        # Configuración del sitio
+â””â”€â”€ sw.js              # Control de cachÃ© y actualización del navegador
+```
 
+`scripts/99_run_all.R` es el único punto de entrada del pipeline completo. Los
+scripts numerados restantes pueden utilizarse para diagnóstico o para ejecutar
+una etapa concreta durante el desarrollo.
 
-## v0.6.29: preflight único y coherente
+## Publicación
 
-- Mantiene el snapshot runtime inmutable por `build_id` de v0.6.28.
-- Elimina la validación runtime duplicada que seguía buscando la llamada antigua directa a `assets/aemet/layers.json`.
-- Evita `grep` diagnósticos capaces de abortar el workflow bajo `set -euo pipefail`.
-- Alinea `browser-cache.html`, `sw.js`, validación local y validación remota en la misma versión 0.6.29.
+En **Settings â†’ Pages â†’ Build and deployment**, la fuente debe ser **GitHub
+Actions**. El workflow:
 
-## v0.6.30: reconciliación del estado fuente
+1. verifica que el código fuente y la versión sean coherentes;
+2. actualiza y valida los datos;
+3. renderiza desde cero el sitio en `docs/`;
+4. despliega el artefacto directamente en GitHub Pages;
+5. comprueba el build servido por la web pública;
+6. guarda en Git, como operación independiente, los cambios reproducibles de
+   `assets/` y `data/processed/`.
 
-Esta versión no introduce una nueva arquitectura: consolida en un único commit los
-ficheros que habían quedado desalineados en `main`.
+`docs/` no se confirma automáticamente: el artefacto ya desplegado contiene el
+render y así se evita guardar en el historial la URL de CARTO con su clave.
 
-- `index.qmd` usa obligatoriamente `loadRuntimeData()` y el snapshot inmutable
-  indicado por `assets/site-build.json`.
-- El workflow usa el preflight único compatible con `runtimePath()` y
-  `fetchJsonNoStore(aemetPath)`.
-- `_quarto.yml` publica `assets/**` y `sw.js`, incluye el bootstrap de caché y
-  mantiene `freeze: false`.
-- `sw.js` y `browser-cache.html` quedan versionados de forma coherente.
-- `R/site_build.R` genera `assets/runtime/<build_id>/` con checksums SHA-256.
-- El objetivo de esta revisión es impedir commits parciales en los que cambie la
-  versión declarada pero no `index.qmd` o el workflow.
+Los secretos necesarios en **Settings â†’ Secrets and variables â†’ Actions** son:
 
+- `FIRMS_MAP_KEY`
+- `CARTO_BASEMAP_KEY`
 
-## v0.6.31: watchdog de actualización programada
+## Diagnóstico
 
-Las horas objetivo siguen siendo **04:30** y **12:30** (`Europe/Madrid`).
-Además del disparo exacto, GitHub Actions crea un watchdog ligero cada 20 minutos
-entre las 04:00 y las 23:59.
+- [`assets/site-build.json`](assets/site-build.json): build y fecha que deben
+  estar publicados.
+- [`assets/aemet/status.json`](assets/aemet/status.json): emisión y estado de
+  AEMET.
+- [`assets/firms/status.json`](assets/firms/status.json): descarga vigente o
+  snapshot FIRMS preservado.
+- [`scripts/11_check_published_assets.R`](scripts/11_check_published_assets.R):
+  validación integral del sitio renderizado.
+- [Historial de Actions](https://github.com/santiagomota/visor-fuego/actions):
+  ejecuciones automáticas y manuales.
 
-El watchdog consulta `assets/site-build.json` de la web pública:
+## Versionado y licencia
 
-- de 04:30 a 12:29 exige un build generado después de las 04:30;
-- desde 12:30 exige un segundo build generado después de las 12:30;
-- si el build ya existe, termina en pocos segundos;
-- si falta, está atrasado o no puede consultar Pages, ejecuta el pipeline completo;
-- las ejecuciones manuales siempre ejecutan el pipeline.
+El proyecto utiliza versionado semántico. Los cambios de cada versión se
+documentan en [`CHANGELOG.md`](CHANGELOG.md) y las versiones publicadas están en
+[Releases](https://github.com/santiagomota/visor-fuego/releases).
 
-Así la actualización ya no depende de que GitHub cree exactamente uno o dos
-eventos `schedule` concretos.
+Código distribuido bajo licencia [MIT](LICENSE).
