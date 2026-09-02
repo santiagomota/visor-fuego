@@ -1,3 +1,21 @@
+## [0.6.32] - 2026-09-02
+
+### Fixed
+
+- Hace obligatorias las ejecuciones principales de las 04:30 y 12:30, aunque
+  Pages ya contenga un build posterior a la hora objetivo.
+- El watchdog deja de comprobar únicamente `generated_at_utc`: valida también
+  `aemet.issue_date` y `firms.download_status` del manifiesto publicado.
+- Si AEMET sigue con una emisión anterior o FIRMS no está fresco, programa un
+  nuevo intento cuando el último build tenga al menos 60 minutos, evitando tres
+  ejecuciones pesadas por hora mientras la fuente todavía no se haya renovado.
+- Mantiene la recuperación inmediata cuando falta el build de la franja o no se
+  puede consultar el manifiesto publicado.
+- Alinea en `0.6.32` DESCRIPTION, preflight, service worker, validación, plantilla
+  de entorno y mensaje final del pipeline.
+- Corrige caracteres UTF-8 dañados en el README.
+
+
 ## [0.6.31] - 2026-08-31
 
 ### Changed

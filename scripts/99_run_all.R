@@ -53,4 +53,4 @@ run_script(10, total, "Comprobando entradas del dashboard", "scripts/04_check_da
 run_script(11, total, "Validando fechas AEMET", "scripts/24_check_aemet_valid_dates.R")
 run_script(12, total, "Generando manifiesto del build publicado", "scripts/12_build_site_manifest.R")
 
-message("Pipeline v0.6.24 completado")
+message("Pipeline v0.6.32 completado")
