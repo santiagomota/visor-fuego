@@ -1,9 +1,9 @@
 {
-  "build_id": "20260916T125653Z-0f12be61-35098165376-1",
-  "generated_at_utc": "2026-09-16T12:56:53Z",
+  "build_id": "20260916T151048Z-08bc70e6-35112796230-1",
+  "generated_at_utc": "2026-09-16T15:10:48Z",
   "generated_date_madrid": "2026-09-16",
-  "git_sha": "0f12be61f4753846625cb9a076b5cc276ad7ac91",
-  "github_run_id": "35098165376",
+  "git_sha": "08bc70e6054a95f8d4d12f8996e8c0d368d43d15",
+  "github_run_id": "35112796230",
   "github_run_attempt": "1",
   "aemet": {
     "issue_date": "2026-09-15",
@@ -13,29 +13,29 @@
     "style_sources": "AEMET GeoTIFF ESCALA (GDAL)"
   },
   "firms": {
-    "n_detections": 933,
-    "last_observation_utc": "2026-09-16T03:40:00Z",
+    "n_detections": 1027,
+    "last_observation_utc": "2026-09-16T13:23:00Z",
     "download_status": "fresh"
   },
   "effis": {
-    "generated_at": "2026-09-16T12:56:51+0000",
+    "generated_at": "2026-09-16T15:10:46+0000",
     "n_features": 776
   },
   "runtime": {
-    "root": "assets/runtime/20260916T125653Z-0f12be61-35098165376-1",
+    "root": "assets/runtime/20260916T151048Z-08bc70e6-35112796230-1",
     "paths": {
-      "aemet_layers": "assets/runtime/20260916T125653Z-0f12be61-35098165376-1/aemet-layers.json",
-      "firms_geojson": "assets/runtime/20260916T125653Z-0f12be61-35098165376-1/firms-active-fires.geojson",
-      "firms_status": "assets/runtime/20260916T125653Z-0f12be61-35098165376-1/firms-status.json",
-      "alerts_geojson": "assets/runtime/20260916T125653Z-0f12be61-35098165376-1/operational-alerts.geojson",
-      "territorial_summary": "assets/runtime/20260916T125653Z-0f12be61-35098165376-1/territorial-summary.json"
+      "aemet_layers": "assets/runtime/20260916T151048Z-08bc70e6-35112796230-1/aemet-layers.json",
+      "firms_geojson": "assets/runtime/20260916T151048Z-08bc70e6-35112796230-1/firms-active-fires.geojson",
+      "firms_status": "assets/runtime/20260916T151048Z-08bc70e6-35112796230-1/firms-status.json",
+      "alerts_geojson": "assets/runtime/20260916T151048Z-08bc70e6-35112796230-1/operational-alerts.geojson",
+      "territorial_summary": "assets/runtime/20260916T151048Z-08bc70e6-35112796230-1/territorial-summary.json"
     },
     "sha256": {
       "aemet_layers": "4e26705cb60eb5e4e0d50ba9045446c0e33326a5af81299587a9775e54c6ac6d",
-      "firms_geojson": "cdbcd0a889103f20cb2e8e5f9e6dd79e6e62a1b8f3b4bfe837417584543c0719",
-      "firms_status": "8a4b69e25216f0d77d7a52a496e476cac53faefb6e4fa9495f7482e7f2149802",
-      "alerts_geojson": "51600b10080812699842e77dd377b133d36844b941e0e1c4f8de927b1403d704",
-      "territorial_summary": "5cad11de0528e0a41f15afca562aff670f3e3df80c0a1351970bcc17cb30bc00"
+      "firms_geojson": "4e2086579f8ff51ea12161afaeaa1e987bde0b79ac7d72b383807d2173013a47",
+      "firms_status": "63cce3bad7571024591c6f139f99a281efa30fe441e6d66789c0f3c571f53d88",
+      "alerts_geojson": "39f029c51f6927f739dce337559d0e3403c1bd73b8447ef747fcda1f60030479",
+      "territorial_summary": "ec7df0c5d7b2cae2e6f68053a519830563c282d8235e0bf9b0f99b29c5e0f2e5"
     }
   }
 }
