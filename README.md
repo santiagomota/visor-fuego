@@ -3,12 +3,15 @@
 Visor web operativo para seguir el peligro meteorológico de incendios, las
 detecciones térmicas recientes y las áreas quemadas en España.
 
-**Versión actual:** `v0.6.32`
+**Versión actual:** `v0.6.33`
 
 **Visor publicado:** <https://santiagomota.github.io/visor-fuego/>
 
 El proyecto combina R, Quarto y Leaflet. GitHub Actions actualiza los datos,
 construye un snapshot verificable y despliega el sitio en GitHub Pages.
+
+La pestaña del navegador utiliza como icono una miniatura del mapa de peligro
+AEMET, con variantes optimizadas para navegadores y dispositivos móviles.
 
 > [!IMPORTANT]
 > El visor integra fuentes externas y sirve como apoyo a la consulta. No

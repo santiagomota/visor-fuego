@@ -1,3 +1,16 @@
+## [0.6.33] - 2026-10-31
+
+### Added
+
+- Añade un favicon basado en el mapa de peligro AEMET.
+- Publica variantes PNG de 32, 180 y 512 píxeles y un `favicon.ico`
+  multirresolución para mejorar la compatibilidad entre navegadores.
+- Configura el favicon globalmente en Quarto y añade soporte
+  `apple-touch-icon`.
+- Verifica durante el workflow que los iconos se hayan publicado y que
+  `index.html` los referencie.
+
+
 ## [0.6.32] - 2026-09-02
 
 ### Fixed

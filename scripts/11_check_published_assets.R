@@ -30,8 +30,8 @@ if (!file.exists("docs/sw.js") || file.info("docs/sw.js")$size <= 0) {
   fail("Service worker no publicado: docs/sw.js")
 } else {
   sw_text <- paste(readLines("docs/sw.js", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
-  if (!grepl('VISOR_FUEGO_SW_VERSION = "0.6.32"', sw_text, fixed = TRUE)) {
-    fail("docs/sw.js no corresponde a v0.6.32")
+  if (!grepl('VISOR_FUEGO_SW_VERSION = "0.6.33"', sw_text, fixed = TRUE)) {
+    fail("docs/sw.js no corresponde a v0.6.33")
   }
   if (!grepl('VISOR_FUEGO_SCOPE_PATH = "/visor-fuego/"', sw_text, fixed = TRUE)) {
     fail("docs/sw.js no usa el scope absoluto /visor-fuego/")
@@ -45,6 +45,21 @@ if (file.exists("docs/index.html")) {
   }
   if (!grepl("updateViaCache", index_text_cache, fixed = TRUE)) {
     fail("docs/index.html no desactiva la caché del script del service worker")
+  }
+  if (!grepl("assets/favicon/favicon", index_text_cache, fixed = TRUE)) {
+    fail("docs/index.html no referencia el favicon del visor")
+  }
+}
+
+required_icons <- c(
+  "docs/assets/favicon/favicon.png",
+  "docs/assets/favicon/favicon-32.png",
+  "docs/assets/favicon/favicon.ico",
+  "docs/assets/favicon/apple-touch-icon.png"
+)
+for (path in required_icons) {
+  if (!file.exists(path) || file.info(path)$size <= 0) {
+    fail(paste("Icono ausente o vacío:", path))
   }
 }
 
@@ -546,7 +561,7 @@ if (!is.null(territorial)) {
 if (!is.na(index_size_mb)) cat(sprintf("Tamaño docs/index.html: %.2f MB\n", index_size_mb))
 
 
-# v0.6.32: snapshot runtime inmutable por build y gate por actualidad de fuentes.
+# v0.6.33: snapshot runtime inmutable, gate por actualidad y favicon verificable.
 manifest_path <- "docs/assets/site-build.json"
 if (!file.exists(manifest_path) || file.info(manifest_path)$size <= 2) {
   fail("No existe docs/assets/site-build.json para validar el runtime inmutable.")
