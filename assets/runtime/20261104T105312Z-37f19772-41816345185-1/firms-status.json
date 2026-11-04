@@ -1,20 +1,20 @@
 {
-  "generated_at_utc": "2026-11-03T18:37:39Z",
-  "n_detections": 625,
-  "last_observation_utc": "2026-11-03T13:44:00Z",
+  "generated_at_utc": "2026-11-04T10:50:37Z",
+  "n_detections": 225,
+  "last_observation_utc": "2026-11-04T03:42:00Z",
   "download_status": "fresh",
   "used_previous": false,
   "reason": "Descarga FIRMS correcta",
   "sources": {
     "VIIRS_SNPP_NRT": {
-      "status": "ok",
+      "status": "valid_empty",
       "detail": "HTTP 200",
-      "n": 180
+      "n": 0
     },
     "VIIRS_NOAA20_NRT": {
       "status": "ok",
       "detail": "HTTP 200",
-      "n": 445
+      "n": 225
     }
   }
 }
